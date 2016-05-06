@@ -19,5 +19,5 @@ Traits can be mapped to account, contact or lead custom fields.
 - `User -> Name` to `contact.name`
 - `User -> Email` to `contact.email`
 - `Traits -> Company` to `account.name`
-- `Traits ->  Custom` to `account.custom_field`
+- `Traits ->  Custom` to `custom_field`
 
