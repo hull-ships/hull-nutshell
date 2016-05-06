@@ -1,0 +1,63 @@
+{
+  "name" : "Nutshell",
+  "tags": ["outgoing","wideSettings"],
+  "description" : "Send Users as Leads or Contacts to Nutshell with custom mappings",
+  "version" : "0.1.0",
+  "picture": "picture.png",
+  "ui": false,
+  "readme" : "readme.md",
+  "settings" : [],
+  "private_settings" : [
+    {
+      "name": "form_api_url",
+      "title" : "Nutshell Form API url",
+      "type": "string",
+      "required" : true
+    },
+    {
+      "name": "synchronized_segments",
+      "title": "Filter users",
+      "description": "Only send users who match these segments to Segment.com. Keep empty to send everyone.",
+      "type": "array",
+      "format": "segment",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    {
+      "name" : "mapping",
+      "title" : "Fields Mapping",
+      "type" : "array",
+      "default" : [
+        { "hull" : "name", "nutshell" : "contact.name", "is_required" : true },
+        { "hull" : "email", "nutshell" : "contact.email", "is_required" : true }
+      ],
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "hull" : {
+            "type" : "string",
+            "format" : "trait",
+            "title" : "Hull Field"
+          },
+          "nutshell" : {
+            "type" : "string",
+            "title" : "Nutshell Field"
+          },
+          "is_required" : {
+            "title" : "Is required",
+            "description" : "Skip sync if this field is not defined",
+            "type" : "boolean"
+          }
+        },
+        "required" : [
+          "hull",
+          "nutshell",
+          "is_required"
+        ]
+      }
+    }
+  ],
+  "subscriptions" : [ { "url" : "/notify" } ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Hull Nutshell",
+  "description": "A Hull Ship for Nutshell CRM Sync.",
+  "repository": "https://github.com/hull-ships/hull-nutshell",
+  "website": "http://www.hull.io",
+  "success_url": "/admn.html",
+  "env": {},
+  "scripts": {}
+}

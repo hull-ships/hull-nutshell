@@ -1,0 +1,36 @@
+{
+  "name": "hull-nutshell",
+  "version": "0.0.2",
+  "description": "Hull Nutshell CRM integration",
+  "main": "index.js",
+  "scripts": {
+    "start": "./bin/start"
+  },
+  "engines": {
+    "node": "5.x",
+    "npm": "2.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hull-ships/hull-nutshell.git"
+  },
+  "keywords": [
+    "hull",
+    "nutshell",
+    "crm"
+  ],
+  "author": "Hull",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hull-ships/hull-nutshell/issues"
+  },
+  "homepage": "https://github.com/hull-ships/hull-nutshell",
+  "dependencies": {
+    "babel": "^5.8.3",
+    "express": "^4.13.1",
+    "hull": "0.6.7",
+    "lodash": "^3.10.0",
+    "object-mapper": "^3.0.1",
+    "request": "^2.72.0"
+  }
+}
