@@ -7,7 +7,7 @@ export default function({ message={} }, { ship={}, hull }) {
 
   const { user={}, segments=[] } = message;
 
-  if(!ship || !user || !user.id || !user.external_id) {
+  if (!ship || !user || !user.id) {
     console.warn("Skip update : who is this user", { user })
     return false;
   }
