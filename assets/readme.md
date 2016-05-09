@@ -1,4 +1,4 @@
-Push Hull users as Nutshell Leads using [Nuthsell's POST Api](https://www.nutshell.com/api/http-post-api.html)
+Push Hull users as Nutshell Leads using [Nuthsell's POST Api](https://www.nutshell.com/api/http-post-api.html).
 
 ## Getting started
 
@@ -21,3 +21,5 @@ Traits can be mapped to account, contact or lead custom fields.
 - `Traits -> Company` to `account.name`
 - `Traits ->  Custom` to `custom_field`
 
+
+__Please note that users are only pushed once to Nutshell and never updated afterwards.__
