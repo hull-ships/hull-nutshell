@@ -2,6 +2,8 @@ import _ from 'lodash';
 import request from 'request';
 import objectMapper from 'object-mapper';
 
+const NUTSHELL_CREATED_AT = 'nutshell/created_at';
+
 
 export default function({ message={} }, { ship={}, hull }) {
 
@@ -14,7 +16,7 @@ export default function({ message={} }, { ship={}, hull }) {
 
 
   // User has already been pushed to nutshell
-  if (user.traits_nutshell_pushed_at) {
+  if (user[`traits_${NUTSHELL_CREATED_AT}`]) {
     console.warn("Skip update : user already imported")
     return false;
   }
@@ -44,7 +46,10 @@ export default function({ message={} }, { ship={}, hull }) {
 
   const userMapping = mapping.reduce((r,m) => {
     if (r && (user[m.hull] || !m.is_required)) {
-      r[m.hull] = m.nutshell;
+      r[m.hull] = {
+        key: m.nutshell,
+        transform: (val) => _.isArray(val) ? val.join(", ") : val
+      };
     } else {
       r = false
     }
@@ -57,12 +62,15 @@ export default function({ message={} }, { ship={}, hull }) {
   }
 
   const form = objectMapper(user, userMapping);
+  const traits = {
+    [NUTSHELL_CREATED_AT]: new Date().toISOString()
+  }
+
+  console.warn("Create user", user.id, JSON.stringify({form }));
 
   request.post({ url: form_api_url, form }, (err, res, body) => {
     if (!err && res.statusCode < 400) {
-      return hull.as(user.id).traits({
-        'nutshell/created_at': new Date().toISOString()
-      });
+      return hull.as(user.id).traits(traits);
     }
   });
 
