@@ -10,14 +10,14 @@ export default function({ message={} }, { ship={}, hull }) {
   const { user={}, segments=[] } = message;
 
   if (!ship || !user || !user.id) {
-    console.warn("Skip update : who is this user", { user })
+    console.warn("Skip update: who is this", { user, ship })
     return false;
   }
 
 
   // User has already been pushed to nutshell
   if (user[`traits_${NUTSHELL_CREATED_AT}`]) {
-    console.warn("Skip update : user already imported")
+    console.warn("Skip update: user already imported", user.id)
     return false;
   }
 
@@ -44,6 +44,7 @@ export default function({ message={} }, { ship={}, hull }) {
     return false;
   }
 
+  let missingField;
   const userMapping = mapping.reduce((r,m) => {
     if (r && (user[m.hull] || !m.is_required)) {
       r[m.hull] = {
@@ -51,13 +52,14 @@ export default function({ message={} }, { ship={}, hull }) {
         transform: (val) => _.isArray(val) ? val.join(", ") : val
       };
     } else {
+      missingField = m;
       r = false
     }
     return r;
   }, {});
 
   if (!userMapping) {
-    console.log('Skip update:  missing required field')
+    console.log('Skip update:  missing required field: ', { missingField, user });
     return false;
   }
 
