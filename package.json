@@ -28,9 +28,9 @@
   "dependencies": {
     "babel": "^5.8.3",
     "express": "^4.13.1",
-    "hull": "0.6.7",
+    "hogan.js": "^3.0.2",
+    "hull": "0.9.3",
     "lodash": "^3.10.0",
-    "object-mapper": "^3.0.1",
     "request": "^2.72.0"
   }
 }

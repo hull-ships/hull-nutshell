@@ -1,6 +1,6 @@
 {
   "name" : "Nutshell",
-  "tags": ["outgoing","wideSettings"],
+  "tags": ["outgoing","batch", "oneColumn"],
   "description" : "Send Users as Leads or Contacts to Nutshell with custom mappings",
   "version" : "0.1.0",
   "picture": "picture.png",
@@ -38,7 +38,7 @@
         "properties" : {
           "hull" : {
             "type" : "string",
-            "format" : "trait",
+            "format" : "template",
             "title" : "Hull Field"
           },
           "nutshell" : {
