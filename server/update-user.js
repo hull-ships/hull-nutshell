@@ -73,7 +73,7 @@ export default function updateUser({ message={} }, { ship={}, hull }) {
 
   request.post({ url: form_api_url, form }, (err, res, body) => {
     if (!err && res.statusCode < 400) {
-      return hull.as(user.id).traits({ created_at: new Date().toISOString() }, { group: 'nutshell' });
+      return hull.as(user.id).traits({ created_at: new Date().toISOString() }, { source: 'nutshell' });
     }
   });
 
