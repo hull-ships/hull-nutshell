@@ -4,44 +4,31 @@ import Hogan from 'hogan.js';
 
 export default function updateUser({ message={} }, { ship={}, hull }) {
 
-  console.warn("Hello updateUser", message);
+  hull.logger.debug("nutshell.user.update", message);
 
   const { user={}, segments=[] } = message;
 
 
   if (!ship || !user || !user.id) {
-    console.warn("Bye bye")
-    return false;
+    return hull.logger.debug("nutshell.user.error", { message: "missing data", ship, user });
   }
 
 
   // User has already been pushed to nutshell
-  if (user[`traits_nutshell/created_at`]) {
-    console.warn("Skip update: user already imported", { id: user.id, email: user.email });
-    return false;
-  }
+  if (user[`traits_nutshell/created_at`]) return hull.logger.warn("Skip update: user already imported", { id: user.id, email: user.email });
 
   // Ignore if form_api_url is not present
   const { form_api_url, synchronized_segments, mapping } = ship.private_settings || {};
 
-  if (!form_api_url) {
-    console.warn('No credentials for ship', ship.id);
-    return Promise.reject(new Error("Missing credentials"));
-  }
+  if (!form_api_url) return hull.logger.error('nutshell.error.credentials', { message: "missing form_api_url" });
 
   if (
     synchronized_segments.length > 0 &&
     !_.intersection(_.map(segments, 'id'), synchronized_segments).length
-    ) {
-    console.warn(`Skip update for ${user.id} because not matching any segment`);
-    return false;
-  }
+    ) return hull.logger.warn("nutshell.user.skip", { message: "not matching any segments", user: user.id});
 
   // Ignore if mapping is not defined
-  if (!mapping || !mapping.length) {
-    console.log('Skip update:  no mapping defined', mapping)
-    return false;
-  }
+  if (!mapping || !mapping.length) return hull.logger.info('nutshell.user.skip',{ message: "no mapping defined", mapping });
 
 
   let missingField = false;
@@ -52,7 +39,7 @@ export default function updateUser({ message={} }, { ship={}, hull }) {
       try {
         value = Hogan.compile(m.hull).render(user);
       } catch (err) {
-        console.warn("Error in hogan render ", err);
+        hull.logger.error("nutshell.user.template.update ", err.message);
       }
 
       if (_.isEmpty(value) && m.is_required) {
@@ -65,11 +52,11 @@ export default function updateUser({ message={} }, { ship={}, hull }) {
   }, {});
 
   if (!form) {
-    console.log('Skip update:  missing required field: ', { missingField, user });
+    hull.logger.info('nutshell.user.skip', { message:"missing field", missingField, user });
     return false;
   }
 
-  console.warn("Create user", user.id, JSON.stringify({form }));
+  hull.logger.warn("Create user", user.id, JSON.stringify({ form }));
 
   request.post({ url: form_api_url, form }, (err, res, body) => {
     if (!err && res.statusCode < 400) {

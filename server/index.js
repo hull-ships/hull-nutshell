@@ -1,35 +1,20 @@
-import express from 'express';
-import path from 'path';
-import { NotifHandler, BatchHandler } from 'hull';
-
-import updateUser from './update-user';
-
-export function Server({ hostSecret = '123' }) {
-
-  const app = express();
-  app.use(express.static(path.resolve(__dirname, '..', 'dist')));
-  app.use(express.static(path.resolve(__dirname, '..', 'assets')));
-
-  app.post('/notify', NotifHandler({
-    hostSecret,
-    groupTraits: false,
-    handlers: {
-      'user:update': updateUser
-    }
-  }));
-
-  app.post('/batch', BatchHandler({
-    hostSecret,
-    groupTraits: false,
-    handler(notifications, context) {
-      return notifications.map(n => updateUser(n, context))
-    }
-  }));
-
-  app.get('/manifest.json', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '..', 'manifest.json'));
-  });
-
-  return app;
-
+if (process.env.NEW_RELIC_LICENSE_KEY) {
+  console.warn("Starting newrelic agent with key: ", process.env.NEW_RELIC_LICENSE_KEY);
+  require("newrelic"); // eslint-disable-line global-require
 }
+
+const Hull = require("hull");
+const Server = require("./server");
+
+if (process.env.LOG_LEVEL) {
+  Hull.logger.transports.console.level = process.env.LOG_LEVEL;
+}
+
+Hull.logger.info("nutshell.boot");
+
+Server({
+  Hull,
+  hostSecret: process.env.SECRET || "1234",
+  devMode: process.env.NODE_ENV === "development",
+  port: process.env.PORT || 8082
+});
