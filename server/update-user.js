@@ -33,13 +33,12 @@ export default function updateUser({ message={} }, { ship={}, hull }) {
 
   let missingField = false;
   const form = mapping.reduce((r, m) => {
-
     if (r) {
       let value;
       try {
         value = Hogan.compile(m.hull).render(user);
       } catch (err) {
-        hull.logger.error("nutshell.user.template.update ", err.message);
+        hull.logger.error("nutshell.user.template.error ", err.message);
       }
 
       if (_.isEmpty(value) && m.is_required) {
@@ -51,12 +50,9 @@ export default function updateUser({ message={} }, { ship={}, hull }) {
     }
   }, {});
 
-  if (!form) {
-    hull.logger.info('nutshell.user.skip', { message:"missing field", missingField, user });
-    return false;
-  }
+  if (!form) return hull.logger.info('nutshell.user.skip', { message:"missing field", field: missingField, user });
 
-  hull.logger.warn("Create user", user.id, JSON.stringify({ form }));
+  hull.logger.warn("nutshell.user.create", JSON.stringify({ id: user.id, form }));
 
   request.post({ url: form_api_url, form }, (err, res, body) => {
     if (!err && res.statusCode < 400) {
