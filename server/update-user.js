@@ -15,7 +15,7 @@ export default function updateUser({ message={} }, { ship={}, hull }) {
 
 
   // User has already been pushed to nutshell
-  if (user[`traits_nutshell/created_at`]) return hull.logger.warn("Skip update: user already imported", { id: user.id, email: user.email });
+  if (user[`traits_nutshell/created_at`]) return hull.logger.warn('nutshell.user.skip',{ message: "already imported", id: user.id, email: user.email });
 
   // Ignore if form_api_url is not present
   const { form_api_url, synchronized_segments, mapping } = ship.private_settings || {};
@@ -40,10 +40,13 @@ export default function updateUser({ message={} }, { ship={}, hull }) {
       } catch (err) {
         hull.logger.error("nutshell.user.template.error ", err.message);
       }
-
-      if (_.isEmpty(value) && m.is_required) {
-        missingField = m;
-        return false;
+    
+      if (_.isEmpty(value)) {
+        if(m.is_required){
+          missingField = m;
+          return false;
+        }
+        return r;
       }
 
       return _.set(r, m.nutshell, value);
