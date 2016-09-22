@@ -40,7 +40,7 @@ export default function updateUser({ message={} }, { ship={}, hull, force = fals
       } catch (err) {
         hull.logger.error("nutshell.user.template.error ", err.message);
       }
-    
+
       if (_.isEmpty(value)) {
         if(m.is_required){
           missingField = m;
@@ -59,7 +59,7 @@ export default function updateUser({ message={} }, { ship={}, hull, force = fals
 
   request.post({ url: form_api_url, form }, (err, res, body) => {
     if (!err && res.statusCode < 400) {
-      return hull.as(user.id).traits({ created_at: new Date().toISOString() }, { source: 'nutshell' });
+      return hull.as(user.id).traits({ created_at: new Date().toISOString() }, { source: 'nutshell', sync: true });
     }
   });
 
