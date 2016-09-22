@@ -2,7 +2,7 @@ import _ from 'lodash';
 import request from 'request';
 import Hogan from 'hogan.js';
 
-export default function updateUser({ message={} }, { ship={}, hull }) {
+export default function updateUser({ message={} }, { ship={}, hull, force }) {
 
   hull.logger.debug("nutshell.user.update", message);
 
@@ -15,7 +15,7 @@ export default function updateUser({ message={} }, { ship={}, hull }) {
 
 
   // User has already been pushed to nutshell
-  if (user[`traits_nutshell/created_at`]) return hull.logger.warn('nutshell.user.skip',{ message: "already imported", id: user.id, email: user.email });
+  if (!force && user[`traits_nutshell/created_at`]) return hull.logger.warn('nutshell.user.skip',{ message: "already imported", id: user.id, email: user.email });
 
   // Ignore if form_api_url is not present
   const { form_api_url, synchronized_segments, mapping } = ship.private_settings || {};
