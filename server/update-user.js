@@ -2,7 +2,7 @@ import _ from 'lodash';
 import request from 'request';
 import Hogan from 'hogan.js';
 
-export default function updateUser({ message={} }, { ship={}, hull, force }) {
+export default function updateUser({ message={} }, { ship={}, hull, force = false }) {
 
   hull.logger.debug("nutshell.user.update", message);
 
