@@ -23,7 +23,7 @@ module.exports = function Server(options = {}) {
     groupTraits: false,
     handler: (notifications = [], { hull, ship }) => {
       hull.logger.debug("nutshell.batch.process", { notifications: notifications.length });
-      notifications.map(n => updateUser(n, { hull, ship }));
+      notifications.map(n => updateUser(n, { hull, ship, force: true }));
     }
   }));
 
