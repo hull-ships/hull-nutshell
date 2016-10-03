@@ -78,7 +78,10 @@ export default function updateUser({ message={} }, { ship={}, hull, force = fals
   hull.logger.warn("nutshell.user.create", JSON.stringify({ id: user.id, form }));
 
   Limiter.schedule(createUser, form_api_url, form).then(
-    ok => hull.logger.info('nutshell.user.create.success', { id: user.id }),
+    ok => {
+      hull.logger.info('nutshell.user.create.success', { id: user.id });
+      return hull.as(user.id).traits({ created_at: new Date().toISOString() }, { source: 'nutshell', sync: true });
+    },
     err => hull.logger.warn('nutshell.user.create.error', { id: user.id, err: JSON.stringify(err) })
   );
 
