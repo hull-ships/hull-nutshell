@@ -1,6 +1,25 @@
 import _ from 'lodash';
 import request from 'request';
 import Hogan from 'hogan.js';
+import Promise from 'bluebird';
+import Bottleneck from 'bottleneck';
+
+const Limiter = new Bottleneck(1, 1000);
+
+
+function createUser(url, form) {
+  return new Promise((resolve, reject) => {
+    request.post({ url, form }, (err, res, body) => {
+      if (!err && res.statusCode < 400) {
+        resolve(res);
+      } else {
+        const error = err || new Error(res.body);
+        reject(error)
+      }
+    });
+  })
+}
+
 
 export default function updateUser({ message={} }, { ship={}, hull, force = false }) {
 
@@ -57,19 +76,9 @@ export default function updateUser({ message={} }, { ship={}, hull, force = fals
 
   hull.logger.warn("nutshell.user.create", JSON.stringify({ id: user.id, form }));
 
-  request.post({ url: form_api_url, form }, (err, res, body) => {
-    if (!err && res.statusCode < 400) {
-      hull.logger.info('nutshell.user.success', { id: user.id });
-      return hull.as(user.id).traits({ created_at: new Date().toISOString() }, { source: 'nutshell', sync: true });
-    } else {
-      try {
-        hull.logger.warn('nutshell.user.error', { userId: user.id, err, res: JSON.stringify(res) })
-      } catch(e) {
-        console.warn('Oops ', err);
-      }
-
-    }
-  });
-
+  createUser(form_api_url, form).then(
+    ok => hull.logger.info('nutshell.user.create.success', { id: user.id }),
+    err => hull.logger.warn('nutshell.user.create.error', { id: user.id, err })
+  );
 
 }
