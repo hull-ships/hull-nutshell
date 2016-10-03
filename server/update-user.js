@@ -8,6 +8,7 @@ const Limiter = new Bottleneck(1, 1000);
 
 
 function createUser(url, form) {
+  console.warn('---> create user');
   return new Promise((resolve, reject) => {
     request.post({ url, form }, (err, res, body) => {
       if (!err && res.statusCode < 400) {
@@ -76,9 +77,9 @@ export default function updateUser({ message={} }, { ship={}, hull, force = fals
 
   hull.logger.warn("nutshell.user.create", JSON.stringify({ id: user.id, form }));
 
-  createUser(form_api_url, form).then(
+  Limiter.schedule(createUser, form_api_url, form).then(
     ok => hull.logger.info('nutshell.user.create.success', { id: user.id }),
-    err => hull.logger.warn('nutshell.user.create.error', { id: user.id, err })
+    err => hull.logger.warn('nutshell.user.create.error', { id: user.id, err: JSON.stringify(err) })
   );
 
 }
