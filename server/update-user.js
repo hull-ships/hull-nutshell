@@ -59,7 +59,15 @@ export default function updateUser({ message={} }, { ship={}, hull, force = fals
 
   request.post({ url: form_api_url, form }, (err, res, body) => {
     if (!err && res.statusCode < 400) {
+      hull.logger.info('nutshell.user.success', { id: user.id });
       return hull.as(user.id).traits({ created_at: new Date().toISOString() }, { source: 'nutshell', sync: true });
+    } else {
+      try {
+        hull.logger.warn('nutshell.user.error', { err, res: JSON.stringify(res) })
+      } catch(e) {
+        console.warn('Oops ', err);
+      }
+
     }
   });
 
