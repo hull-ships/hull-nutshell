@@ -43,6 +43,7 @@ export default function updateUser({ message={} }, { ship={}, hull, force = fals
   if (!form_api_url) return hull.logger.error('nutshell.error.credentials', { message: "missing form_api_url" });
 
   if (
+    !force &&
     synchronized_segments.length > 0 &&
     !_.intersection(_.map(segments, 'id'), synchronized_segments).length
     ) return hull.logger.warn("nutshell.user.skip", { message: "not matching any segments", user: user.id});
