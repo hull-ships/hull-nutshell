@@ -1,6 +1,6 @@
 {
   "name": "hull-nutshell",
-  "version": "0.0.2",
+  "version": "0.2.0",
   "description": "Hull Nutshell CRM integration",
   "main": "index.js",
   "scripts": {
@@ -43,8 +43,9 @@
     "bottleneck": "^1.13.1",
     "express": "^4.14.0",
     "hogan.js": "^3.0.2",
-    "hull": "0.9.7",
+    "hull": "0.11.6",
     "lodash": "^4.14.1",
+    "lru-cache": "^4.1.1",
     "request": "^2.72.0",
     "rimraf": "^2.5.4"
   },

@@ -2,7 +2,7 @@
   "name" : "Nutshell",
   "tags": ["outgoing","batch", "oneColumn"],
   "description" : "Send Users as Leads or Contacts to Nutshell with custom mappings",
-  "version" : "0.1.0",
+  "version" : "0.2.0",
   "picture": "picture.png",
   "ui": false,
   "readme" : "readme.md",
