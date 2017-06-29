@@ -5,7 +5,7 @@ if (process.env.NEW_RELIC_LICENSE_KEY) {
 const Hull = require("hull");
 const express = require("express");
 
-const server  = require("./server");
+const server  = require("./server").default;
 
 if (process.env.LOG_LEVEL) {
   Hull.logger.transports.console.level = process.env.LOG_LEVEL;
