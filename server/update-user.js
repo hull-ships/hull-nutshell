@@ -1,8 +1,8 @@
-import _ from 'lodash';
-import request from 'request';
-import Hogan from 'hogan.js';
-import Promise from 'bluebird';
-import Bottleneck from 'bottleneck';
+import _ from "lodash";
+import request from "request";
+import Hogan from "hogan.js";
+import Promise from "bluebird";
+import Bottleneck from "bottleneck";
 import LRU from "lru-cache";
 
 const Limiter = new Bottleneck(1, 1000);
@@ -11,50 +11,54 @@ const cache = LRU({ max: 1000, maxAge: 24 * 3600 * 1000 }); // Max age 1 day
 
 function createUser(url, form) {
   return new Promise((resolve, reject) => {
-    request.post({ url, form }, (err, res, body) => {
+    request.post({ url, form }, (err, res) => {
       if (!err && res.statusCode < 400) {
         resolve(res);
       } else {
         const error = err || new Error(res.body);
-        reject(error)
+        reject(error);
       }
     });
-  })
+  });
 }
 
 // return updateUser({ message }, { ship, hull });
-export default function updateUser({ message={} }, { ship={}, hull, force = false }) {
-
+export default function updateUser({ message = {} }, { ship = {}, hull, force = false }) { // eslint-disable-line consistent-return
   hull.logger.debug("nutshell.user.update", message);
 
-  const { user={}, segments=[] } = message;
-
+  const { user = {}, segments = [] } = message;
 
   if (!ship || !user || !user.id) {
     return hull.logger.debug("nutshell.user.error", { message: "missing data", ship, user });
   }
 
   // User has already been pushed to nutshell
-  if (!force && cache.get(user.id)) return hull.logger.warn('nutshell.user.skip',{ message: "id in cache", id: user.id, email: user.email });
-  // if (!force && user[`traits_nutshell/created_at`]) return hull.logger.warn('nutshell.user.skip',{ message: "already imported", id: user.id, email: user.email, nutshell_created_at: user[`traits_nutshell/created_at`] });
+  if (!force && cache.get(user.id)) {
+    return hull.logger.warn("nutshell.user.skip", { message: "id in cache", id: user.id, email: user.email });
+  }
+  // if (!force && user[`traits_nutshell/created_at`]) return hull.logger.warn("nutshell.user.skip",{ message: "already imported", id: user.id, email: user.email, nutshell_created_at: user[`traits_nutshell/created_at`] });
 
   // Ignore if form_api_url is not present
   const { form_api_url, synchronized_segments, mapping } = ship.private_settings || {};
 
-  if (!form_api_url) return hull.logger.error('nutshell.error.credentials', { message: "missing form_api_url" });
+  if (!form_api_url) return hull.logger.error("nutshell.error.credentials", { message: "missing form_api_url" });
 
   if (
     !force &&
     synchronized_segments.length > 0 &&
-    !_.intersection(_.map(segments, 'id'), synchronized_segments).length
-    ) return hull.logger.warn("nutshell.user.skip", { message: "not matching any segments", user: user.id});
+    !_.intersection(_.map(segments, "id"), synchronized_segments).length
+  ) {
+    return hull.logger.warn("nutshell.user.skip", { message: "not matching any segments", user: user.id });
+  }
 
   // Ignore if mapping is not defined
-  if (!mapping || !mapping.length) return hull.logger.info('nutshell.user.skip',{ message: "no mapping defined", mapping });
+  if (!mapping || !mapping.length) {
+    return hull.logger.info("nutshell.user.skip", { message: "no mapping defined", mapping });
+  }
 
 
   let missingField = false;
-  const form = mapping.reduce((r, m) => {
+  const form = mapping.reduce((r, m) => { // eslint-disable-line array-callback-return, consistent-return
     if (r) {
       let value;
       try {
@@ -64,7 +68,7 @@ export default function updateUser({ message={} }, { ship={}, hull, force = fals
       }
 
       if (_.isEmpty(value)) {
-        if(m.is_required){
+        if (m.is_required) {
           missingField = m;
           return false;
         }
@@ -77,9 +81,13 @@ export default function updateUser({ message={} }, { ship={}, hull, force = fals
 
   const formEmail = _.get(form, "contact.email");
 
-  if (!force && formEmail && cache.get(formEmail)) return hull.logger.warn('nutshell.user.skip',{ message: "email in cache", id: user.id, email: formEmail });
+  if (!force && formEmail && cache.get(formEmail)) {
+    return hull.logger.warn("nutshell.user.skip", { message: "email in cache", id: user.id, email: formEmail });
+  }
 
-  if (!form) return hull.logger.info('nutshell.user.skip', { message:"missing field", field: missingField, user });
+  if (!form) {
+    return hull.logger.info("nutshell.user.skip", { message: "missing field", field: missingField, user });
+  }
 
   hull.logger.warn("nutshell.user.create", { id: user.id, form });
 
@@ -88,15 +96,17 @@ export default function updateUser({ message={} }, { ship={}, hull, force = fals
   if (formEmail) cache.set(formEmail, new Date().getTime());
 
   Limiter.schedule(createUser, form_api_url, form).then(
-    ok => {
-      hull.logger.info('nutshell.user.create.success', { id: user.id, email: formEmail });
-      return hull.asUser({ id: user.id }).traits({ created_at: new Date().toISOString() }, { source: 'nutshell', sync: true });
+    () => {
+      hull.logger.info("nutshell.user.create.success", { id: user.id, email: formEmail });
+      return hull.asUser({ id: user.id }).traits({ created_at: new Date().toISOString() }, { source: "nutshell", sync: true });
     },
-    err => {
+    (err) => {
       cache.del(user.id);
-      if (formEmail) cache.del(formEmail);
-      hull.logger.warn('nutshell.user.create.error', { id: user.id, err: JSON.stringify(err) })
+      if (formEmail) {
+        cache.del(formEmail);
+      }
+      hull.logger.warn("nutshell.user.create.error", { id: user.id, err: JSON.stringify(err) });
     }
   );
-
 }
+
