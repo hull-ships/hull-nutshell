@@ -6,3 +6,9 @@ tmp
 config.json
 dist
 /lib
+
+# VS Code settings
+.vscode
+
+# NPM lock file
+package-lock.json
