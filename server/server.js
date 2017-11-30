@@ -1,5 +1,4 @@
 import { notifHandler } from "hull/lib/utils";
-
 import updateUser from "./update-user";
 
 const NotifyHandler = notifHandler({

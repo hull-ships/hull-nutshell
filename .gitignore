@@ -12,3 +12,6 @@ dist
 
 # NPM lock file
 package-lock.json
+
+# Coverage files
+coverage

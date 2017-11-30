@@ -6,8 +6,24 @@
   "picture": "picture.png",
   "ui": false,
   "readme" : "readme.md",
-  "settings" : [],
+  "settings" : [ ],
   "private_settings" : [
+    {
+      "name": "credentials_hero",
+      "title": "Authentication",
+      "format": "title",
+      "type": "string"
+    },
+    {
+      "name": "api_username",
+      "title": "Nutshell Username",
+      "type": "string"
+    },
+    {
+      "name": "api_key",
+      "title": "Nutshell API Key",
+      "type": "string"
+    },
     {
       "name": "form_api_url",
       "title" : "Nutshell Form API url",
