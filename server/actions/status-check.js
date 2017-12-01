@@ -6,7 +6,6 @@ const _ = require("lodash");
 const Agent = require("../lib/agent");
 
 function statusCheckAction(req: $Request, res: $Response): void {
-  console.log(req, _.has(req, "hull.ship.private_settings"));
   if (_.has(req, "hull.ship.private_settings")) {
     const { client, ship, metric } = (req: any).hull;
     const messages: Array<string> = [];

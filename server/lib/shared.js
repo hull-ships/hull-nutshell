@@ -63,6 +63,9 @@ export interface IAttributesMapper {
 
 const DISCOVERY_ENDPOINT = "http://api.nutshell.com/v1/json";
 
+const SUPPORTED_RESOURCETYPES: Array<TResourceType> = ["Account", "Contact"];
+
 module.exports = {
-  DISCOVERY_ENDPOINT
+  DISCOVERY_ENDPOINT,
+  SUPPORTED_RESOURCETYPES
 };
