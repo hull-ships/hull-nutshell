@@ -8,10 +8,10 @@ const Agent = require("../lib/agent");
 const Cache = cacheManager.caching({ store: "memory", max: 100, ttl: 60 });
 
 
-function fieldsAccountAction(req: $Request, res: $Response): $Response {
+function fieldsContactAction(req: $Request, res: $Response): $Response {
   const { client, ship, metric } = (req: any).hull;
   const { secret } = client.configuration();
-  const cacheKey = [ship.id, ship.updated_at, secret, "af"].join("/");
+  const cacheKey = [ship.id, ship.updated_at, secret, "cf"].join("/");
   const agent = new Agent(client, ship, metric);
 
   if (!agent.isAuthenticationConfigured()) {
@@ -19,18 +19,18 @@ function fieldsAccountAction(req: $Request, res: $Response): $Response {
   }
 
   return Cache.wrap(cacheKey, () => {
-    return agent.getAccountFields();
-  }).then((af) => {
-    const fields = (af).map((f) => {
+    return agent.getContactFields();
+  }).then((cf) => {
+    const fields = (cf).map((f) => {
       return { value: f.value, label: f.label };
     });
     return res.json({ options: fields });
   }).catch((err) => {
     if (_.has(client, "logger")) {
-      client.logger.error("connector.metadata.error", { status: err.status, message: err.message, type: "/fields-account" });
+      client.logger.error("connector.metadata.error", { status: err.status, message: err.message, type: "/fields-contact" });
     }
     return res.json({ ok: false, error: err.message, options: [] });
   });
 }
 
-module.exports = fieldsAccountAction;
+module.exports = fieldsContactAction;

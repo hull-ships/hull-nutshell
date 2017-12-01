@@ -9,7 +9,7 @@ export interface ILogger {
   log(message?: any, ...optionalParams: any[]): void;
 }
 
-export interface IMetricClient {
+export interface IMetricsClient {
   value(name: string, value: number): void;
   increment(name: string, value: number): void;
 }
@@ -35,6 +35,7 @@ export interface IFilterResult {
 export interface INutshellClientOptions {
   userId: string;
   apiKey: string;
+  metricsClient?: IMetricsClient;
 }
 
 export interface INutshellClientResponse {

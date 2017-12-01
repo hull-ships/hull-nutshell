@@ -45,7 +45,15 @@
     ],
     "arrow-parens": [
       0
-    ]
+    ],
+    "flowtype-errors/show-errors": 2
   },
-  "extends": ["airbnb-base"]
+  "extends": [
+    "airbnb-base",
+    "plugin:flowtype/recommended"
+  ],
+  "plugins": [
+    "flowtype",
+    "flowtype-errors"
+  ]
 }

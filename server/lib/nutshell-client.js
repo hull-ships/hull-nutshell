@@ -1,8 +1,9 @@
 // @flow
-import { INutshellClientOptions, INutshellClientResponse, INutshellOperationOptions } from "./shared";
+import type { INutshellClientOptions, INutshellClientResponse, INutshellOperationOptions, IMetricsClient } from "./shared";
 
 const Promise = require("bluebird");
 const rpc = require("jayson");
+const _ = require("lodash");
 const shared = require("./shared");
 
 function _initHttpsClient(options: Object): Object {
@@ -34,9 +35,20 @@ class NutshellClient {
    */
   apiKey: string;
 
+  /**
+   * Gets or sets the client for logging metrics.
+   *
+   * @type {IMetricsClient}
+   * @memberof NutshellClient
+   */
+  metricsClient: IMetricsClient;
+
   constructor(options: INutshellClientOptions) {
     this.userId = options.userId;
     this.apiKey = options.apiKey;
+    if (_.has(options, "metricsClient")) {
+      _.set(this, "metricsClient", options.metricsClient);
+    }
   }
 
   /**
@@ -70,6 +82,7 @@ class NutshellClient {
   createContact(data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
       const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      this.incrementApiCalls(1);
       client.request("newContact", { contact: data }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -90,6 +103,7 @@ class NutshellClient {
   createAccount(data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
       const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      this.incrementApiCalls(1);
       client.request("newAccount", { account: data }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -119,6 +133,7 @@ class NutshellClient {
   editContact(id: string, rev: string, data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
       const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      this.incrementApiCalls(1);
       client.request("editContact", { contactId: id, rev, contact: data }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -148,6 +163,7 @@ class NutshellClient {
   editAccount(id: string, rev: string, data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
       const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      this.incrementApiCalls(1);
       client.request("editAccount", { accountId: id, rev, account: data }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -176,6 +192,7 @@ class NutshellClient {
   findCustomFields(options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
       const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      this.incrementApiCalls(1);
       client.request("findCustomFields", [], options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -200,6 +217,7 @@ class NutshellClient {
   searchAccounts(query: string, limit: number, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
       const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      this.incrementApiCalls(1);
       client.request("searchAccounts", { string: query, limit }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -229,6 +247,7 @@ class NutshellClient {
   searchByEmail(emailAddress: string, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
       const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      this.incrementApiCalls(1);
       client.request("searchByEmail", { emailAddressString: emailAddress }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -236,6 +255,19 @@ class NutshellClient {
         return resolve(result);
       });
     });
+  }
+
+  /**
+   * Increments the number of API calls via the metrics client,
+   * if one is configured.
+   *
+   * @param {number} [value=1] The amount by which API calls will increase; default to one.
+   * @memberof CloseIoClient
+   */
+  incrementApiCalls(value: number = 1): void {
+    if (this.metricsClient) {
+      this.metricsClient.increment("ship.service_api.call", value);
+    }
   }
 }
 
