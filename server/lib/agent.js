@@ -130,7 +130,7 @@ class Agent {
       }
       return Promise.resolve(endpoint);
     }).catch((err) => {
-      this.logger.error("connector.metadata.error", { status: err.status, message: err.message, type: "/fields-contact" });
+      this.logger.error("connector.metadata.error", { status: err.status, message: err.message, type: "endpoint-discovery" });
       return Promise.reject(err);
     });
   }
