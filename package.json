@@ -4,10 +4,10 @@
   "description": "Hull Nutshell CRM integration",
   "main": "index.js",
   "scripts": {
-    "build": "npm run clean && npm run build:server",
+    "build": "yarn run clean && yarn run build:server",
     "build:server": "babel server -d build",
     "clean": "rimraf build",
-    "test": "npm run test:lint && npm run test:flow && npm run test:integration && npm run test:unit",
+    "test": "yarn run test:lint && yarn run test:integration && yarn run test:unit && yarn run test:manifest",
     "test:unit": "NODE_ENV=test jest ./test/unit",
     "test:integration": "NODE_ENV=test jest ./test/integration",
     "test:flow": "flow check",
@@ -15,7 +15,7 @@
     "test:manifest": "jsonlint manifest.json -q",
     "start": "node -r newrelic build",
     "start:dev": "NODE_ENV=development babel-watch -L server",
-    "postinstall": "npm run build"
+    "postinstall": "yarn run build"
   },
   "engines": {
     "node": "8.9.x",
