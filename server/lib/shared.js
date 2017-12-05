@@ -61,6 +61,15 @@ export interface IAttributesMapper {
   mapToHullIdentObject(resource: TResourceType, sObject: any): any;
 }
 
+export interface IPatchResult {
+  hasChanges: boolean;
+  patchObject: any;
+}
+
+export interface IPatchUtil {
+  createPatchObject(resource: TResourceType, newObject: any, currentObject: any): IPatchResult;
+}
+
 const DISCOVERY_ENDPOINT = "http://api.nutshell.com/v1/json";
 
 const SUPPORTED_RESOURCETYPES: Array<TResourceType> = ["Account", "Contact"];

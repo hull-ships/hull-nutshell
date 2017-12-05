@@ -29,6 +29,13 @@ describe("AttributesMapper", () => {
     expect(mapper.mappingsOutbound).toEqual(expectedMappings);
   });
 
+  test("should not fail and return the original string if the url is not a valid url", () => {
+    const mapper = new AttributesMapper(CONNECTOR_SETTINGS);
+    const expected = "somefoo123";
+    const actual = mapper.normalizeUrl("somefoo123");
+    expect(actual).toEqual(expected);
+  });
+
   test("should map a hull object to an account", () => {
     const hullUser = {
       account: {
@@ -131,13 +138,13 @@ describe("AttributesMapper", () => {
       name: "Test Account Hull 1",
       htmlUrl: "https://app.nutshell.com/company/7-test-account-hull-1",
       accountType: { id: 1, name: "Standard Account" },
-      industry: null,
+      industry: { id: 1, name: "Accounting" },
       creator: null,
       owner: null,
-      tags: [],
-      lastContactedDate: null,
+      tags: ["test"],
+      lastContactedDate: "2017-11-30T03:08:26+0000",
       contacts: [],
-      description: null,
+      description: "awesome customer",
       url:
          {
            1: "http://hull-test1.io",
@@ -158,7 +165,12 @@ describe("AttributesMapper", () => {
       "nutshell/link": { value: sObject.htmlUrl },
       "nutshell/accounttype_id": { value: sObject.accountType.id },
       "nutshell/accounttype_name": { value: sObject.accountType.name },
-      "nutshell/url1": { value: sObject.url[1] }
+      "nutshell/url1": { value: sObject.url[1] },
+      "nutshell/industry_id": { value: sObject.industry.id },
+      "nutshell/industry_name": { value: sObject.industry.name },
+      "nutshell/description": { value: sObject.description },
+      "nutshell/tags": { value: sObject.tags },
+      "nutshell/last_contacted_at": { value: sObject.lastContactedDate }
     };
 
     const mapper = new AttributesMapper(CONNECTOR_SETTINGS);
@@ -261,10 +273,10 @@ describe("AttributesMapper", () => {
       leads: [],
       accounts: [],
       notes: [],
-      lastContactedDate: null,
+      lastContactedDate: "2017-11-30T02:14:48+0000",
       contactedCount: 0,
-      tags: [],
-      description: null,
+      tags: ["test"],
+      description: "nice guy",
       email: { 1: "test1@hull.io", "--primary": "test1@hull.io" }
     };
 
@@ -280,7 +292,10 @@ describe("AttributesMapper", () => {
       last_name: { value: sObject.name.familyName, operation: "setIfNull" },
       "nutshell/link": { value: sObject.htmlUrl },
       "nutshell/email1": { value: sObject.email[1] },
-      "nutshell/contacted_count": { value: sObject.contactedCount }
+      "nutshell/contacted_count": { value: sObject.contactedCount },
+      "nutshell/last_contacted_at": { value: sObject.lastContactedDate },
+      "nutshell/tags": { value: sObject.tags },
+      "nutshell/description": { value: sObject.description }
     };
 
     const mapper = new AttributesMapper(CONNECTOR_SETTINGS);

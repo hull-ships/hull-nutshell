@@ -1,11 +1,14 @@
 /* @flow */
-import type { IMetricsClient, ILogger, IFilterUtil, IAttributesMapper, IDropdownEntry, INutshellOperationOptions, INutshellClientOptions } from "./shared";
+import type { IMetricsClient, ILogger, IFilterUtil, IAttributesMapper, IDropdownEntry, INutshellOperationOptions, INutshellClientOptions, IPatchUtil } from "./shared";
 
 const _ = require("lodash");
 const Promise = require("bluebird");
 const NutshellClient = require("./nutshell-client");
 const uuid = require("uuid/v4");
 const cacheManager = require("cache-manager");
+const AttributesMapper = require("./utils/attributes-mapper");
+const PatchUtil = require("./utils/patch-util");
+const FilterUtil = require("./utils/filter-util");
 
 function composeNutshellClientOptions(settings: Object, metricsClient: IMetricsClient): INutshellClientOptions {
   const result: INutshellClientOptions = {
@@ -35,6 +38,8 @@ class Agent {
 
   cache: Object;
 
+  patchUtil: IPatchUtil;
+
   constructor(hullClient: any, connector: any, metricsClient: IMetricsClient) {
     this.connector = connector;
     this.synchronizedSegments = connector.private_settings.synchronized_segments;
@@ -43,6 +48,9 @@ class Agent {
     this.metricsClient = metricsClient;
     this.cache = cacheManager.caching({ store: "memory", max: 100, ttl: 1800 });
     this.nutshellClient = new NutshellClient(composeNutshellClientOptions(connector.private_settings, metricsClient));
+    this.attributesMapper = new AttributesMapper(connector.private_settings);
+    this.patchUtil = new PatchUtil(connector.private_settings);
+    this.filterUtil = new FilterUtil(connector.private_settings);
   }
 
   /**
