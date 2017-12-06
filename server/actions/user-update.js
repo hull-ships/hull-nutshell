@@ -1,14 +1,14 @@
 /* @flow */
 const _ = require("lodash");
-const Promise = require("bluebird");
 
 const Agent = require("../lib/agent");
 
 function userUpdateHandlerFactory(options: Object = {}): Function {
   const {
-    flowControl = null
+    flowControl = null,
+    isBatch = false
   } = options;
-  return function userUpdateHandler(ctx: Object, messages: Array<Object>): Promise {
+  return function userUpdateHandler(ctx: Object, messages: Array<Object>): Promise<any> {
     if (ctx.smartNotifierResponse && flowControl) {
       ctx.smartNotifierResponse.setFlowControl(flowControl);
     }
@@ -22,7 +22,7 @@ function userUpdateHandlerFactory(options: Object = {}): Function {
       });
 
     if (enrichedMessages.length > 0) {
-      return agent.sendUserMessages(enrichedMessages);
+      return agent.sendUserMessages(enrichedMessages, isBatch);
     }
     return Promise.resolve();
   };

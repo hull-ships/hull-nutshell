@@ -31,14 +31,15 @@ class FilterUtil implements IFilterUtil {
    * Filters accounts to update, insert or skip.
    *
    * @param {Array<IUserUpdateEnvelope>} envelopes The envelopes to filter.
+   * @param {boolean} [skipSegmentCheck=false] True for batch mode to skip segment filter; otherwise false.
    * @returns {IFilterResult} A filter result that determines which accounts to insert, update or skip.
    * @memberof FilterUtil
    */
-  filterAccounts(envelopes: Array<IUserUpdateEnvelope>): IFilterResult {
+  filterAccounts(envelopes: Array<IUserUpdateEnvelope>, skipSegmentCheck: boolean = false): IFilterResult {
     const results: IFilterResult = new FilterResult();
 
     envelopes.forEach((envelope) => {
-      if (this.matchesWhitelistedSegments(envelope)) {
+      if (skipSegmentCheck === true || (this.matchesWhitelistedSegments(envelope) && skipSegmentCheck === false)) {
         if (_.has(envelope.message, "account.nutshell/id")) {
           return results.toUpdate.push(envelope);
         }
@@ -56,14 +57,15 @@ class FilterUtil implements IFilterUtil {
    * Filters users to update, insert or skip.
    *
    * @param {Array<IUserUpdateEnvelope>} envelopes The envelopes to filter.
+   * @param {boolean} [skipSegmentCheck=false] True for batch mode to skip segment filter; otherwise false.
    * @returns {IFilterResult} A filter result that determines which users to insert, update or skip.
    * @memberof FilterUtil
    */
-  filterUsers(envelopes: Array<IUserUpdateEnvelope>): IFilterResult {
+  filterUsers(envelopes: Array<IUserUpdateEnvelope>, skipSegmentCheck: boolean = false): IFilterResult {
     const results: IFilterResult = new FilterResult();
 
     envelopes.forEach((envelope) => {
-      if (this.matchesWhitelistedSegments(envelope)) {
+      if (skipSegmentCheck === true || (this.matchesWhitelistedSegments(envelope) && skipSegmentCheck === false)) {
         if (_.has(envelope.message, "user.traits_nutshell/id")) {
           return results.toUpdate.push(envelope);
         }

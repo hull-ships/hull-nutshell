@@ -54,7 +54,7 @@
       "type": "string"
     },
     {
-      "name": "account_sync_enable",
+      "name": "account_sync_enabled",
       "title": "Account synchronization",
       "type": "boolean",
       "description": "Enable synchronization of Hull accounts with Nutshell"
@@ -136,6 +136,7 @@
       } 
     }
   ],
+  "admin": "admin",
   "schedules": [
     {
       "url": "/status",

@@ -1,15 +1,32 @@
-import express from "express";
-import Hull from "hull";
-import server from "./server";
+const Hull = require("hull");
+const express = require("express");
 
-const config = {
-  hostSecret: process.env.SECRET,
-  port: process.env.PORT || 8082,
-  devMode: process.env.NODE_ENV === "development"
+const { middleware } = require("./lib/utils/crypto");
+const server = require("./server");
+
+const {
+  LOG_LEVEL,
+  SECRET,
+  PORT
+} = process.env;
+
+if (LOG_LEVEL) {
+  Hull.logger.transports.console.level = LOG_LEVEL;
+}
+
+Hull.logger.transports.console.json = true;
+
+const options = {
+  hostSecret: SECRET || "1234",
+  port: PORT || 8091
 };
 
-const connector = new Hull.Connector(config);
 const app = express();
+const connector = new Hull.Connector(options);
 
+app.use(middleware(connector.hostSecret));
 connector.setupApp(app);
+
 server(app);
+connector.startApp(app);
+

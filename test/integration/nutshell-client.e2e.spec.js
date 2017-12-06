@@ -710,4 +710,89 @@ describe("NutshellClient", () => {
       done();
     });
   });
+
+  test("should get an account by id", (done) => {
+    const client = new NutshellClient(options);
+
+    const reqOpts = {
+      host: "app.nutshell.com",
+      requestId: "apeye"
+    };
+
+    const expected = {
+      result:
+      {
+        id: 7,
+        entityType: "Accounts",
+        rev: "1",
+        modifiedTime: "2017-11-30T04:28:56+0000",
+        createdTime: "2017-11-30T03:08:26+0000",
+        name: "New Account Name",
+        htmlUrl: "https://app.nutshell.com/company/7-new-account-name",
+        accountType: { id: 1, name: "Standard Account" },
+        industry: null,
+        creator: null,
+        owner: null,
+        tags: [],
+        lastContactedDate: null,
+        contacts: [],
+        description: null,
+        phone: {
+          cell: "717-555-0467",
+          office: "877-000-9237",
+          "--primary": "717-555-0467"
+        },
+        url:
+         {
+           1: "http://hull-test1.io",
+           "--primary": "http://hull-test1.io"
+         },
+        notes: [],
+        leads: []
+      },
+      id: "apeye",
+      error: null,
+      jsonrpc: "2.0"
+    };
+
+    nock("https://app.nutshell.com")
+      .post("/api/v1/json")
+      .reply(200, (uri, body) => {
+        expect(JSON.parse(body)).toEqual({
+          method: "getAccount",
+          jsonrpc: "2.0",
+          params: {
+            accountId: 7
+          },
+          id: "apeye"
+        });
+        return expected;
+      });
+
+    client.getResourceById("Account", 7, null, reqOpts).then((result) => {
+      expect(result).toEqual(expected);
+      done();
+    });
+  });
+
+  test("should reject the promise to get an account by id when an error occurs", (done) => {
+    const client = new NutshellClient(options);
+
+    const reqOpts = {
+      host: "app.nutshell.com",
+      requestId: "apeye"
+    };
+
+    nock("https://app.nutshell.com")
+      .post("/api/v1/json")
+      .reply(500);
+
+    client.getResourceById("Account", 7, null, reqOpts).then(() => {
+      expect(false).toEqual(true);
+      done();
+    }, (err) => {
+      expect(err).toBeDefined();
+      done();
+    });
+  });
 });

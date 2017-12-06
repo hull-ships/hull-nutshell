@@ -1,7 +1,6 @@
 // @flow
-import type { INutshellClientOptions, INutshellClientResponse, INutshellOperationOptions, IMetricsClient } from "./shared";
+import type { INutshellClientOptions, INutshellClientResponse, INutshellOperationOptions, IMetricsClient, TResourceType } from "./shared";
 
-const Promise = require("bluebird");
 const rpc = require("jayson");
 const _ = require("lodash");
 const shared = require("./shared");
@@ -249,6 +248,34 @@ class NutshellClient {
       const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       this.incrementApiCalls(1);
       client.request("searchByEmail", { emailAddressString: emailAddress }, options.requestId, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      });
+    });
+  }
+
+  /**
+   * Gets a resource by its identifier.
+   *
+   * @param {TResourceType} resource The name of the Nutshell resource.
+   * @param {(string | number)} id The identifier of the resource.
+   * @param {(string | null)} [rev=null] The revision number, or `null`.
+   * @param {INutshellOperationOptions} options The options for the operation.
+   * @returns {Promise<INutshellClientResponse>} The result of the operation.
+   * @memberof NutshellClient
+   */
+  getResourceById(resource: TResourceType, id: string | number, rev: string | null = null, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
+    const params = {};
+    _.set(params, `${resource.toLowerCase()}Id`, id);
+    if (!_.isNil(rev)) {
+      _.set(params, "rev", rev);
+    }
+    return new Promise((resolve, reject) => {
+      const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      this.incrementApiCalls(1);
+      client.request(`get${resource}`, params, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
         }

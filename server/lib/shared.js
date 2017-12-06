@@ -1,5 +1,5 @@
 // @flow
-export type TResourceType = "Account" | "Contact";
+export type TResourceType = "Account" | "Contact" | "Activity";
 
 export interface ILogger {
   info(message?: any, ...optionalParams: any[]): void;
@@ -51,8 +51,8 @@ export interface INutshellOperationOptions {
 }
 
 export interface IFilterUtil {
-  filterAccounts(envelopes: Array<IUserUpdateEnvelope>): IFilterResult;
-  filterUsers(envelopes: Array<IUserUpdateEnvelope>): IFilterResult;
+  filterAccounts(envelopes: Array<IUserUpdateEnvelope>, skipSegmentCheck: boolean): IFilterResult;
+  filterUsers(envelopes: Array<IUserUpdateEnvelope>, skipSegmentCheck: boolean): IFilterResult;
 }
 
 export interface IAttributesMapper {
