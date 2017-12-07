@@ -113,6 +113,27 @@ class NutshellClient {
   }
 
   /**
+   * Creates a new lead in Nutshell.
+   *
+   * @param {Object} data The account data.
+   * @param {INutshellOperationOptions} options The options for the operation.
+   * @returns {Promise<INutshellClientResponse>} The result of the operation.
+   * @memberof NutshellClient
+   */
+  createLead(data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
+    return new Promise((resolve, reject) => {
+      const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      this.incrementApiCalls(1);
+      client.request("newLead", { account: data }, options.requestId, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      });
+    });
+  }
+
+  /**
    * Edit a contact.
    *
    * Warning: Fields which allow multiples (phone, email, URL, etc.) will be completely replaced by
@@ -164,6 +185,36 @@ class NutshellClient {
       const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       this.incrementApiCalls(1);
       client.request("editAccount", { accountId: id, rev, account: data }, options.requestId, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      });
+    });
+  }
+
+  /**
+   * Edit an lead.
+   *
+   * Warning: Fields which allow multiples (phone, email, URL, etc.) will be completely replaced by
+   * whatever data you supply, if you supply any data for the field. (Eg. the new phone array replaces
+   * all previously known phone numbers.) If you are updating a multi-value field, you must include
+   * all values you wish to keep (not just the new values) for the field.
+   *
+   * If a note is specified, it will be added to the existing notes (preexisting notes are not affected).
+   *
+   * @param {string} id The lead ID to edit.
+   * @param {string} rev The revision number.
+   * @param {Object} data The updated lead information
+   * @param {INutshellOperationOptions} options The options for the operation.
+   * @returns {Promise<INutshellClientResponse>} The result of the operation.
+   * @memberof NutshellClient
+   */
+  editLead(id: string, rev: string, data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
+    return new Promise((resolve, reject) => {
+      const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      this.incrementApiCalls(1);
+      client.request("editLead", { leadId: id, rev, lead: data }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
         }

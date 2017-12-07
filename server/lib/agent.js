@@ -119,6 +119,35 @@ class Agent {
   }
 
   /**
+   * Returns the fields for Nutshell leads.
+   *
+   * @returns {Promise<Array<IDropdownEntry>>} The list of leads fields.
+   * @memberof Agent
+   */
+  getLeadFields(): Promise<Array<IDropdownEntry>> {
+    return this.getApiBaseHostName()
+      .then((baseHostname: string) => {
+        const reqId = uuid();
+        const options: INutshellOperationOptions = {
+          host: baseHostname,
+          requestId: reqId
+        };
+
+        const defaultFields = [
+          { value: "name", label: "Name" },
+          { value: "description", label: "Description" }
+        ];
+        return this.nutshellClient.findCustomFields(options).then((opsResult) => {
+          const customFields = _.map(opsResult.result.Leads, (field) => {
+            return { value: field.name, label: field.name };
+          });
+
+          return _.concat(defaultFields, customFields);
+        });
+      });
+  }
+
+  /**
    * Retrieves the base url of the API that is cached.
    *
    * @returns {Promise<string>} The base endpoint host name.
@@ -326,6 +355,7 @@ class Agent {
         const response = await this.nutshellClient.createContact(data, options);
         this.handleNutshellResponse("Contact", envelope, response);
       } catch (err) {
+        console.log(">>> ERROR", err);
         this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to create a new user", details: err });
       }
     });
@@ -367,30 +397,59 @@ class Agent {
     return Promise.resolve(messages);
   }
 
-  handleNutshellResponse(resource: TResourceType, envelope: IUserUpdateEnvelope, response: INutshellClientResponse): void {
+  async handleWebhookPayload(body: Object): Promise<boolean> {
+    _.forEach(_.get(body, "payloads"), (p) => {
+      const payloadType = _.get(p, "type", "n/a");
+      if (payloadType === "activities") {
+        // We don't have a real object in this case, but we can query the API
+        // and process the response
+        // TODO: Add async function to the agent which takes the id and handles the rest
+        const id = this.extractIdentifierFromPayload(p);
+        console.log(id);
+      } else if (payloadType === "contacts") {
+        // We potentially have the correct data but
+        // the payload is lacking the revision number,
+        // so we need to fetch the entire object from the API
+        // TODO: Add async function to the agent which takes the id and handles the rest
+        const id = this.extractIdentifierFromPayload(p);
+        console.log(id);
+      }
+    });
+    return Promise.resolve(_.isObject(body));
+  }
+
+  extractIdentifierFromPayload(payload: Object): string {
+    return _.replace(_.get(payload, "id", ""), `-${payload.type}`, "");
+  }
+
+  handleNutshellResponse(resource: TResourceType, envelope: IUserUpdateEnvelope, response: INutshellClientResponse): Promise<any> {
     if (!_.isNil(response.error)) {
       if (resource === "Account") {
         this.hullClient.asAccount(_.get(envelope, "message.user.account", {})).logger.error("outgoing.account.error", { reason: "Failed to execute an operation for an account", details: response });
       } else if (resource === "Contact") {
         this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to execute an operation for a contact", details: response });
       }
-      return;
+      return Promise.resolve();
     }
 
     const traitsObj = this.attributesMapper.mapToHullAttributeObject(resource, response.result);
     if (resource === "Account") {
       const asAccount = this.hullClient.asAccount(_.get(envelope, "message.user.account", {}));
-      asAccount.traits(traitsObj).then(() => {
+      return asAccount.traits(traitsObj).then(() => {
         asAccount.logger.info("outgoing.account.success", { data: response.result });
         this.incrementOutgoingCount(resource);
+        return Promise.resolve();
       });
     } else if (resource === "Contact") {
       const asUser = this.hullClient.asUser(_.get(envelope, "message.user", {}));
-      asUser.traits(traitsObj).then(() => {
+      return asUser.traits(traitsObj).then(() => {
         asUser.logger.info("outgoing.user.success", { data: response.result });
         this.incrementOutgoingCount(resource);
+        return Promise.resolve();
       });
     }
+
+    return Promise.resolve();
   }
 
   incrementOutgoingCount(resource: TResourceType, value: number = 1) {
