@@ -186,7 +186,7 @@ describe("FiterUtil", () => {
     const filterResult = util.filterUsers([envelope]);
 
     const envResult = _.cloneDeep(envelope);
-    envResult.skipReason = "User doesn't belong to synchronized segments";
+    envResult.skipReason = "User doesn't belong to synchronized lead segments or is part of both lead and contact segments.";
 
     expect(filterResult.toSkip).toEqual([envResult]);
     expect(filterResult.toUpdate).toHaveLength(0);

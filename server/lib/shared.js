@@ -1,5 +1,5 @@
 // @flow
-export type TResourceType = "Account" | "Contact" | "Activity";
+export type TResourceType = "Account" | "Contact" | "Activity" | "Lead";
 
 export interface ILogger {
   info(message?: any, ...optionalParams: any[]): void;
@@ -72,7 +72,7 @@ export interface IPatchUtil {
 
 const DISCOVERY_ENDPOINT = "http://api.nutshell.com/v1/json";
 
-const SUPPORTED_RESOURCETYPES: Array<TResourceType> = ["Account", "Contact"];
+const SUPPORTED_RESOURCETYPES: Array<TResourceType> = ["Account", "Contact", "Lead"];
 
 module.exports = {
   DISCOVERY_ENDPOINT,

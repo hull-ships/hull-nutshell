@@ -37,9 +37,20 @@
       "type": "string"
     },
     {
+      "name": "lead_synchronized_segments",
+      "title": "Filter users to be treated as leads",
+      "description": "Only send users who match these segments to Nutshell.",
+      "type": "array",
+      "format": "segment",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    {
       "name": "synchronized_segments",
-      "title": "Filter users",
-      "description": "Only send users who match these segments to Segment.com. Keep empty to send everyone.",
+      "title": "Filter users and accounts to be treated as contacts and accounts",
+      "description": "Only send users who match these segments to Nutshell.",
       "type": "array",
       "format": "segment",
       "items": {

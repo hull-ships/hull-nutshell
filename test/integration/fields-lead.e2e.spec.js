@@ -1,12 +1,13 @@
 /* global describe, test, expect */
 
+const _ = require("lodash");
 const nock = require("nock");
 
-const fieldsContactAction = require("../../server/actions/fields-contact");
+const fieldsLeadAction = require("../../server/actions/fields-lead");
 
 const { ConnectorMock } = require("../helper/connector-mock");
 
-describe("fieldsContactAction", () => {
+describe("fieldsLeadAction", () => {
   beforeEach(() => {
     if (!nock.isActive()) {
       nock.activate();
@@ -17,7 +18,7 @@ describe("fieldsContactAction", () => {
     nock.cleanAll();
   });
 
-  test("should return contact fields if the connector is properly configured", (done) => {
+  test("should return lead fields if the connector is properly configured", (done) => {
     const private_settings = {
       api_username: "sven+dev@hull.io",
       api_key: "1234567abcd="
@@ -98,15 +99,26 @@ describe("fieldsContactAction", () => {
     const fields = [
       { value: "name", label: "Name" },
       { value: "description", label: "Description" },
-      { value: "territoryId", label: "Territory (ID)" },
-      { value: "email", label: "Email" },
-      { value: "phone", label: "Phone" },
-      { value: "url", label: "Url" }
+      { value: "confidence", label: "Confidence" },
+      { value: "note", label: "Note" },
+      { value: "contact.email", label: "Contact > Email" },
+      { value: "contact.name", label: "Contact > Name" },
+      { value: "contact.phone", label: "Contact > Phone" },
+      { value: "contact.title", label: "Contact > Title" },
+      { value: "contact.url", label: "Contact > Url" },
+      { value: "source.name", label: "Source (Name)" },
+      { value: "account.name", label: "Account > Name" },
+      { value: "account.url", label: "Account > Url" },
+      { value: "account.phone", label: "Account > Phone" }
     ];
 
-    const res = fieldsContactAction(req, responseMock);
+    const customFields = customFieldsData.result.Leads.map((cf) => {
+      return { value: cf.name, label: cf.name };
+    });
+
+    const res = fieldsLeadAction(req, responseMock);
     res.then(() => {
-      expect(jsonMock.mock.calls[0][0]).toEqual({ options: fields });
+      expect(jsonMock.mock.calls[0][0]).toEqual({ options: _.concat(fields, customFields) });
       done();
     });
   });
@@ -135,7 +147,7 @@ describe("fieldsContactAction", () => {
         ship: new ConnectorMock("1234", {}, private_settings)
       }
     };
-    fieldsContactAction(req, responseMock);
+    fieldsLeadAction(req, responseMock);
     expect(jsonMock.mock.calls[0][0]).toEqual({ ok: false, error: "The connector is not or not properly authenticated to Nutshell.", options: [] });
   });
 
@@ -191,7 +203,7 @@ describe("fieldsContactAction", () => {
       }
     };
 
-    const res = fieldsContactAction(req, responseMock);
+    const res = fieldsLeadAction(req, responseMock);
     res.then(() => {
       expect(jsonMock.mock.calls[0][0]).toEqual({ ok: false, error: "", options: [] });
       done();
@@ -257,11 +269,11 @@ describe("fieldsContactAction", () => {
       }
     };
 
-    const res = fieldsContactAction(req, responseMock);
+    const res = fieldsLeadAction(req, responseMock);
     res.then(() => {
       expect(jsonMock.mock.calls[0][0]).toEqual({ ok: false, error: "", options: [] });
       expect(errorMock.mock.calls[0][0]).toEqual("connector.metadata.error");
-      expect(errorMock.mock.calls[0][1]).toEqual({ status: undefined, message: "", type: "/fields-contact" });
+      expect(errorMock.mock.calls[0][1]).toEqual({ status: undefined, message: "", type: "/fields-lead" });
       done();
     });
   });

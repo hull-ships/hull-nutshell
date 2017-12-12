@@ -1,0 +1,240 @@
+{
+    "result": {
+        "id": 1000,
+        "entityType": "Leads",
+        "rev": "17",
+        "modifiedTime": "2016-12-13T13:00:00+0000",
+        "createdTime": "2016-11-11T15:59:00+0000",
+        "name": "Lead–1000",
+        "description": "",
+        "htmlUrl": "https://app.nutshell.com/lead/1000",
+        "creator": {
+            "stub": true,
+            "id": 1,
+            "rev": "2",
+            "entityType": "Users",
+            "modifiedTime": "2017-12-10T15:45:25+0000",
+            "createdTime": "2010-01-01T09:00:00+0000",
+            "name": "Charles Berry",
+            "emails": [
+                "charles.berry@arrowgrid.com",
+                "jim@demo.nutshell.com"
+            ],
+            "isEnabled": true,
+            "isAdministrator": true
+        },
+        "primaryAccount": {
+            "stub": true,
+            "id": 1,
+            "rev": "0",
+            "entityType": "Accounts",
+            "modifiedTime": "2017-12-10T15:45:29+0000",
+            "createdTime": "2017-12-10T15:45:29+0000",
+            "name": "Acme Corp",
+            "regions": [
+                "Richfield, Minnesota"
+            ],
+            "relationship": null,
+            "description": null
+        },
+        "milestone": {
+            "stub": true,
+            "id": 9,
+            "rev": "0",
+            "entityType": "Milestones",
+            "name": "Contracting"
+        },
+        "activitiesCount": {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "-1": 0
+        },
+        "status": 10,
+        "confidence": 93,
+        "completion": 100,
+        "urgency": "0",
+        "isOverdue": false,
+        "lastContactedDate": "2017-07-04T11:38:00+0000",
+        "market": {
+            "stub": true,
+            "id": 1,
+            "rev": "0",
+            "entityType": "Markets",
+            "name": "U.S."
+        },
+        "assignee": {
+            "stub": true,
+            "id": 1,
+            "rev": "2",
+            "entityType": "Users",
+            "modifiedTime": "2017-12-10T15:45:25+0000",
+            "createdTime": "2010-01-01T09:00:00+0000",
+            "name": "Charles Berry",
+            "emails": [
+                "charles.berry@arrowgrid.com",
+                "jim@demo.nutshell.com"
+            ],
+            "isEnabled": true,
+            "isAdministrator": true
+        },
+        "sources": [],
+        "competitors": [
+            {
+                "stub": true,
+                "id": 1,
+                "rev": "1",
+                "entityType": "Competitors",
+                "modifiedTime": "2017-12-10T15:45:25+0000",
+                "name": "Southwest Solar",
+                "relationship": null,
+                "status": 0
+            }
+        ],
+        "products": [
+            {
+                "stub": true,
+                "id": 1,
+                "rev": "1",
+                "entityType": "Products",
+                "modifiedTime": "2017-12-10T15:45:25+0000",
+                "createdTime": "2017-12-10T15:45:25+0000",
+                "name": "Sunrazor",
+                "relationship": null,
+                "price": {
+                    "currency": "USD",
+                    "amount": 2500
+                },
+                "quantity": 1
+            },
+            {
+                "stub": true,
+                "id": 5,
+                "rev": "1",
+                "entityType": "Products",
+                "modifiedTime": "2017-12-10T15:45:26+0000",
+                "createdTime": "2017-12-10T15:45:26+0000",
+                "name": "Turnkey Installation Service",
+                "relationship": null,
+                "price": {
+                    "currency": "USD",
+                    "amount": 6700
+                },
+                "quantity": 1
+            }
+        ],
+        "contacts": [
+            {
+                "stub": true,
+                "id": 1,
+                "rev": "4",
+                "entityType": "Contacts",
+                "modifiedTime": "2017-12-10T15:45:28+0000",
+                "createdTime": "2017-12-10T15:45:27+0000",
+                "name": "Virginia Sprague",
+                "jobTitle": "Acme Corp",
+                "description": null,
+                "relationship": null
+            }
+        ],
+        "accounts": [],
+        "tags": [
+            "Enterprise"
+        ],
+        "dueTime": "2016-12-16T08:43:00+0000",
+        "outcome": {
+            "id": 1,
+            "entityType": "Lead_Outcomes",
+            "rev": "0",
+            "description": "Won",
+            "type": 10
+        },
+        "closedTime": "2016-12-16T08:43:00+0000",
+        "value": {
+            "currency": "USD",
+            "amount": 9200
+        },
+        "normalizedValue": {
+            "currency": "USD",
+            "amount": 9200
+        },
+        "customFields": {
+            "Application": "Recreational & Custom"
+        },
+        "processes": [
+            {
+                "stub": true,
+                "id": 1,
+                "rev": "6",
+                "entityType": "Processes",
+                "name": "ArrowGrid Sales Process",
+                "type": "0",
+                "startedTime": "2016-11-11T15:59:00+0000",
+                "closedTime": null,
+                "currentMilestoneId": "9"
+            }
+        ],
+        "notes": [
+            {
+                "stub": true,
+                "id": 1,
+                "rev": "0",
+                "entityType": "Notes",
+                "createdTime": "2017-07-07T14:17:00+0000",
+                "note": "Lisa Williams Hey, could you please call Lisa to schedule a service call? See the conversation below.",
+                "noteMarkup": "@[users:3-users] Hey, could you please call Lisa to schedule a service call? See the conversation below.",
+                "noteHtml": "<span class=\"mention-rendered\" data-entity-id=\"3\" data-entity-name=\"Users\"><a href=\"/setup/user/3\" data-behavior=\"ignore-modal-click\">Lisa Williams</a></span> Hey, could you please call Lisa to schedule a service call? See the conversation below.",
+                "user": {
+                    "stub": true,
+                    "id": 1,
+                    "rev": "2",
+                    "entityType": "Users",
+                    "modifiedTime": "2017-12-10T15:45:25+0000",
+                    "createdTime": "2010-01-01T09:00:00+0000",
+                    "name": "Charles Berry",
+                    "emails": [
+                        "charles.berry@arrowgrid.com",
+                        "jim@demo.nutshell.com"
+                    ],
+                    "isEnabled": true,
+                    "isAdministrator": true
+                },
+                "originId": 1,
+                "date": "2017-07-07T14:17:00+0000"
+            },
+            {
+                "stub": true,
+                "id": 2,
+                "rev": "0",
+                "entityType": "Notes",
+                "createdTime": "2017-07-08T16:23:00+0000",
+                "note": "Sure thing, I'm on it!",
+                "noteMarkup": "Sure thing, I'm on it!",
+                "noteHtml": "Sure thing, I&#039;m on it!",
+                "user": {
+                    "stub": true,
+                    "id": 3,
+                    "rev": "2",
+                    "entityType": "Users",
+                    "modifiedTime": "2017-12-10T15:45:25+0000",
+                    "createdTime": "2010-01-01T09:00:00+0000",
+                    "name": "Lisa Williams",
+                    "emails": [
+                        "lisa.williams@arrowgrid.com"
+                    ],
+                    "isEnabled": true,
+                    "isAdministrator": true
+                },
+                "originId": 1,
+                "date": "2017-07-08T16:23:00+0000"
+            }
+        ],
+        "estimatedValue": {
+            "currency": "USD",
+            "amount": 9200
+        }
+    },
+    "id": "apeye",
+    "error": null,
+    "jsonrpc": "2.0"
+}

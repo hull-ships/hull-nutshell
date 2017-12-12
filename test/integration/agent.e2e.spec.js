@@ -5,11 +5,14 @@ const nock = require("nock");
 const Agent = require("../../server/lib/agent");
 const contactChangedPayload = require("../fixtures/webhook-contactchanged.json");
 const contactNewPayload = require("../fixtures/api_contact_new.json");
+const contactUpdatePayload = require("../fixtures/api_contact_edit.json");
 const accountNewPayload = require("../fixtures/api_account_new.json");
 const invalidRequestPayload = require("../fixtures/api_invalid_request.json");
 const discoveryPayload = require("../fixtures/api_discovery.json");
 const searchByEmailEmptyPayload = require("../fixtures/api_searchbyemail_empty.json");
 const messagesToInsert = require("../fixtures/messages_contact_insert.json");
+const messagesToUpdate = require("../fixtures/messages_contact_update.json");
+const messagesToSkip = require("../fixtures/messages_contact_skip.json");
 
 const { ConnectorMock } = require("../helper/connector-mock");
 const { HullClientMock } = require("../helper/hull-client-mock");
@@ -17,21 +20,23 @@ const { MetricsClientMock } = require("../helper/metrics-client-mock");
 
 describe("Agent", () => {
   const PRIVATE_SETTINGS = {
-    synchronized_segments: ["leads", "contacts"],
+    synchronized_segments: ["123"],
     account_attributes_outbound: [
       {
         hull_field_name: "account.domain",
-        nutshell_field_name: "url"
+        nutshell_field_name: "url",
+        overwrite: false
       },
       {
         hull_field_name: "account.name",
-        nutshell_field_name: "name"
+        nutshell_field_name: "name",
+        overwrite: true
       }
     ],
     contact_attributes_outbound: [
-      { hull_field_name: "name", nutshell_field_name: "name" },
-      { hull_field_name: "traits_title", nutshell_field_name: "title" },
-      { hull_field_name: "email", nutshell_field_name: "email" }
+      { hull_field_name: "name", nutshell_field_name: "name", overwrite: true },
+      { hull_field_name: "traits_title", nutshell_field_name: "title", overwrite: true },
+      { hull_field_name: "email", nutshell_field_name: "email", overwrite: false }
     ]
   };
 
@@ -402,7 +407,8 @@ describe("Agent", () => {
       .post("/v1/json")
       .reply(200, discoveryPayload);
 
-    nock("https://app.nutshell.com")
+    const nockScope = nock("https://app.nutshell.com")
+      .persist()
       .post("/api/v1/json")
       .reply(200, (uri, body) => {
         body = JSON.parse(body);
@@ -466,17 +472,190 @@ describe("Agent", () => {
       "nutshell/contacted_count": { value: sObject.contactedCount }
     };
 
-    agent.sendUserMessages(messagesToInsert, true).then(() => {
+    agent.sendUserMessages(messagesToInsert, false).then(() => {
       expect(traitsMock.mock.calls[0][0]).toEqual(expectedTraitsObject);
       expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.success");
       expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject });
-      expect(incrementMock.mock.calls[0][0]).toEqual("ship.outgoing.users");
+      expect(incrementMock.mock.calls[0][0]).toEqual("ship.service_api.call");
       expect(incrementMock.mock.calls[0][1]).toEqual(1);
+      expect(incrementMock.mock.calls[1][0]).toEqual("ship.service_api.call");
+      expect(incrementMock.mock.calls[1][1]).toEqual(1);
+      expect(incrementMock.mock.calls[2][0]).toEqual("ship.outgoing.users");
+      expect(incrementMock.mock.calls[2][1]).toEqual(1);
       expect(asUserMock.mock.calls[0][0]).toEqual(_.first(messagesToInsert).user);
+      nockScope.persist(false);
       done();
     })
       .catch((err) => {
         console.log(err);
+        nockScope.persist(false);
+        expect(false).toBeTruthy();
+        done();
+      });
+  });
+
+  test("should handle a contact to update (outgoing)", (done) => {
+    nock("http://api.nutshell.com")
+      .post("/v1/json")
+      .reply(200, discoveryPayload);
+
+    const nockScope = nock("https://app.nutshell.com")
+      .persist()
+      .post("/api/v1/json")
+      .reply(200, (uri, body) => {
+        body = JSON.parse(body);
+        if (body.method === "editContact") {
+          return contactUpdatePayload;
+        } else if (body.method === "getContact") {
+          return contactUpdatePayload;
+        } else if (body.method === "searchByEmail") {
+          return searchByEmailEmptyPayload;
+        }
+        expect(true).toBeFalsy();
+        return {};
+      });
+
+    const pSettings = _.merge({}, PRIVATE_SETTINGS, {
+      api_username: "someone@test.io",
+      api_key: "test1234demo=="
+    });
+    const loggerMock = {};
+    const infoMock = jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    });
+    loggerMock.info = infoMock.bind(loggerMock);
+    const traitsMock = jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    });
+    const asUserMock = jest.fn().mockImplementation(() => {
+      return {
+        logger: loggerMock,
+        traits: traitsMock
+      };
+    });
+    const configMock = jest.fn().mockImplementation(() => {
+      return {
+        secret: "123456"
+      };
+    });
+    const clientMock = {};
+    clientMock.asUser = asUserMock.bind(clientMock);
+    clientMock.configuration = configMock.bind(clientMock);
+    const connector = new ConnectorMock("1234", {}, pSettings);
+    const incrementMock = jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    });
+    const metricsMock = {};
+    metricsMock.increment = incrementMock.bind(metricsMock);
+
+    const agent = new Agent(clientMock, connector, metricsMock);
+
+    const sObject = contactUpdatePayload.result;
+    const expectedTraitsObject = {
+      "nutshell/id": { value: sObject.id },
+      "nutshell/rev": { value: sObject.rev },
+      "nutshell/first_name": { value: sObject.name.givenName },
+      "nutshell/last_name": { value: sObject.name.familyName },
+      "nutshell/created_at": { value: sObject.createdTime, operation: "setIfNull" },
+      "nutshell/updated_at": { value: sObject.modifiedTime },
+      email: { value: sObject.email["--primary"], operation: "setIfNull" },
+      first_name: { value: sObject.name.givenName, operation: "setIfNull" },
+      last_name: { value: sObject.name.familyName, operation: "setIfNull" },
+      "nutshell/link": { value: sObject.htmlUrl },
+      "nutshell/email1": { value: sObject.email[1] },
+      "nutshell/contacted_count": { value: sObject.contactedCount },
+      "nutshell/description": { value: sObject.description }
+    };
+
+    agent.sendUserMessages(messagesToUpdate, false).then(() => {
+      expect(traitsMock.mock.calls[0][0]).toEqual(expectedTraitsObject);
+      expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.success");
+      expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject });
+      expect(incrementMock.mock.calls[0][0]).toEqual("ship.service_api.call");
+      expect(incrementMock.mock.calls[0][1]).toEqual(1);
+      expect(incrementMock.mock.calls[1][0]).toEqual("ship.service_api.call");
+      expect(incrementMock.mock.calls[1][1]).toEqual(1);
+      expect(incrementMock.mock.calls[2][0]).toEqual("ship.outgoing.users");
+      expect(incrementMock.mock.calls[2][1]).toEqual(1);
+      expect(asUserMock.mock.calls[0][0]).toEqual(_.first(messagesToUpdate).user);
+      nockScope.persist(false);
+      done();
+    })
+      .catch((err) => {
+        console.log(err);
+        nockScope.persist(false);
+        expect(false).toBeTruthy();
+        done();
+      });
+  });
+
+  test("should handle a contact to skip (outgoing)", (done) => {
+    nock("http://api.nutshell.com")
+      .post("/v1/json")
+      .reply(200, discoveryPayload);
+
+    const nockScope = nock("https://app.nutshell.com")
+      .persist()
+      .post("/api/v1/json")
+      .reply(200, (uri, body) => {
+        body = JSON.parse(body);
+        if (body.method === "editContact") {
+          return contactUpdatePayload;
+        } else if (body.method === "getContact") {
+          return contactUpdatePayload;
+        } else if (body.method === "searchByEmail") {
+          return searchByEmailEmptyPayload;
+        }
+        expect(true).toBeFalsy();
+        return {};
+      });
+
+    const pSettings = _.merge({}, PRIVATE_SETTINGS, {
+      api_username: "someone@test.io",
+      api_key: "test1234demo=="
+    });
+    const loggerMock = {};
+    const infoMock = jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    });
+    loggerMock.info = infoMock.bind(loggerMock);
+    const traitsMock = jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    });
+    const asUserMock = jest.fn().mockImplementation(() => {
+      return {
+        logger: loggerMock,
+        traits: traitsMock
+      };
+    });
+    const configMock = jest.fn().mockImplementation(() => {
+      return {
+        secret: "123456"
+      };
+    });
+    const clientMock = {};
+    clientMock.asUser = asUserMock.bind(clientMock);
+    clientMock.configuration = configMock.bind(clientMock);
+    const connector = new ConnectorMock("1234", {}, pSettings);
+    const incrementMock = jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    });
+    const metricsMock = {};
+    metricsMock.increment = incrementMock.bind(metricsMock);
+
+    const agent = new Agent(clientMock, connector, metricsMock);
+
+    agent.sendUserMessages(messagesToSkip).then(() => {
+      expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.skip");
+      expect(infoMock.mock.calls[0][1]).toEqual({ reason: "User doesn't belong to synchronized lead segments or is part of both lead and contact segments." });
+      expect(asUserMock.mock.calls[0][0]).toEqual(_.first(messagesToSkip).user);
+      nockScope.persist(false);
+      done();
+    })
+      .catch((err) => {
+        console.log(err);
+        nockScope.persist(false);
+        expect(false).toBeTruthy();
         done();
       });
   });

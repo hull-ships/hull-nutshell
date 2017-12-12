@@ -38,7 +38,7 @@ class AttributesMapper implements IAttributesMapper {
    */
   mapToServiceObject(resource: TResourceType, hullObject: any): any {
     const sObject = { };
-    if (resource === "Contact") {
+    if (resource === "Contact" || resource === "Lead") {
       if (_.has(hullObject, "traits_nutshell/id")) {
         _.set(sObject, "id", _.get(hullObject, "traits_nutshell/id"));
       }
@@ -57,7 +57,6 @@ class AttributesMapper implements IAttributesMapper {
     }
 
     const mappings = _.cloneDeep(_.get(this.mappingsOutbound, resource));
-
     _.forEach(mappings, (m) => {
       const hullAttribValue = _.get(hullObject, m.hull_field_name);
       if (!_.isNil(hullAttribValue)) {
@@ -160,6 +159,62 @@ class AttributesMapper implements IAttributesMapper {
           }
         });
       }
+    } else if (resource === "Lead") {
+      if (_.has(sObject, "name") && !_.isNil(_.get(sObject, "name"))) {
+        _.set(hObject, "name", { value: _.get(sObject, "name"), operation: "setIfNull" });
+      }
+      if (_.has(sObject, "htmlUrl") && !_.isNil(_.get(sObject, "htmlUrl"))) {
+        _.set(hObject, "nutshell/link", { value: _.get(sObject, "htmlUrl") });
+      }
+      if (_.has(sObject, "milestone.id") && !_.isNil(_.get(sObject, "milestone.id"))) {
+        _.set(hObject, "nutshell/milestone_id", { value: _.get(sObject, "milestone.id") });
+      }
+      if (_.has(sObject, "milestone.name") && !_.isNil(_.get(sObject, "milestone.name"))) {
+        _.set(hObject, "nutshell/milestone_name", { value: _.get(sObject, "milestone.name") });
+      }
+      if (_.has(sObject, "lastContactedDate") && !_.isNil(_.get(sObject, "lastContactedDate"))) {
+        _.set(hObject, "nutshell/last_contacted_at", { value: _.get(sObject, "lastContactedDate") });
+      }
+      if (_.has(sObject, "dueTime") && !_.isNil(_.get(sObject, "dueTime"))) {
+        _.set(hObject, "nutshell/due_at", { value: _.get(sObject, "dueTime") });
+      }
+      if (_.has(sObject, "closedTime") && !_.isNil(_.get(sObject, "closedTime"))) {
+        _.set(hObject, "nutshell/closed_at", { value: _.get(sObject, "closedTime") });
+      }
+      if (_.has(sObject, "estimatedValue.amount") && !_.isNil(_.get(sObject, "estimatedValue.amount"))) {
+        _.set(hObject, "nutshell/estimated_value_amount", { value: _.get(sObject, "estimatedValue.amount") });
+      }
+      if (_.has(sObject, "estimatedValue.currency") && !_.isNil(_.get(sObject, "estimatedValue.currency"))) {
+        _.set(hObject, "nutshell/estimated_value_currency", { value: _.get(sObject, "estimatedValue.currency") });
+      }
+      if (_.has(sObject, "value.amount") && !_.isNil(_.get(sObject, "value.amount"))) {
+        _.set(hObject, "nutshell/value_amount", { value: _.get(sObject, "value.amount") });
+      }
+      if (_.has(sObject, "value.currency") && !_.isNil(_.get(sObject, "value.currency"))) {
+        _.set(hObject, "nutshell/value_currency", { value: _.get(sObject, "value.currency") });
+      }
+      if (_.has(sObject, "market.id") && !_.isNil(_.get(sObject, "market.id"))) {
+        _.set(hObject, "nutshell/market_id", { value: _.get(sObject, "market.id") });
+      }
+      if (_.has(sObject, "market.name") && !_.isNil(_.get(sObject, "market.name"))) {
+        _.set(hObject, "nutshell/market_name", { value: _.get(sObject, "market.name") });
+      }
+
+      const regularLeadMappings = [
+        "description",
+        "name",
+        "status",
+        "confidence",
+        "completion",
+        "urgency",
+        "isOverdue"
+      ];
+
+      _.forEach(regularLeadMappings, (m) => {
+        if (_.has(sObject, m) && !_.isNil(_.get(sObject, m))) {
+          _.set(hObject, `nutshell/${_.snakeCase(m)}`, { value: _.get(sObject, m) });
+        }
+      });
     }
     return hObject;
   }
@@ -182,6 +237,10 @@ class AttributesMapper implements IAttributesMapper {
       _.set(ident, "anonymous_id", `nutshell:${_.get(sObject, "id")}`);
     } else if (resource === "Account") {
       _.set(ident, "domain", this.normalizeUrl(_.get(sObject, "url.--primary")));
+    } else if (resource === "Lead") {
+      // A lead is tied to Contacts and Accounts in Nutshell, however
+      // in Hull it is a user, so map it via anonymous_id
+      _.set(ident, "anonymous_id", `nutshell:${_.get(sObject, "id")}`);
     }
 
     return ident;

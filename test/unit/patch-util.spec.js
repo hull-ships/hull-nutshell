@@ -29,6 +29,14 @@ describe("PatchUtil", () => {
       { hull_field_name: "name", nutshell_field_name: "name", overwrite: true },
       { hull_field_name: "traits_title", nutshell_field_name: "title", overwrite: true },
       { hull_field_name: "email", nutshell_field_name: "email", overwrite: false }
+    ],
+    lead_attributes_outbound: [
+      { hull_field_name: "name", nutshell_field_name: "name" },
+      { hull_field_name: "traits_title", nutshell_field_name: "title" },
+      { hull_field_name: "email", nutshell_field_name: "contact.email" },
+      { hull_field_name: "name", nutshell_field_name: "contact.name" },
+      { hull_field_name: "account.name", nutshell_field_name: "account.name" },
+      { hull_field_name: "account.domain", nutshell_field_name: "account.url" }
     ]
   };
 
@@ -36,7 +44,8 @@ describe("PatchUtil", () => {
     const util = new PatchUtil(CONNECTOR_SETTINGS);
     const expectedMappings = {
       Account: CONNECTOR_SETTINGS.account_attributes_outbound,
-      Contact: CONNECTOR_SETTINGS.contact_attributes_outbound
+      Contact: CONNECTOR_SETTINGS.contact_attributes_outbound,
+      Lead: CONNECTOR_SETTINGS.lead_attributes_outbound
     };
     expect(util.mappingsOutbound).toEqual(expectedMappings);
   });

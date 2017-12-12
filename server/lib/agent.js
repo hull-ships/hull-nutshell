@@ -106,7 +106,8 @@ class Agent {
           { value: "description", label: "Description" },
           { value: "territoryId", label: "Territory (ID)" },
           { value: "email", label: "Email" },
-          { value: "phone", label: "Phone" }
+          { value: "phone", label: "Phone" },
+          { value: "url", label: "Url" }
         ];
         return this.nutshellClient.findCustomFields(options).then((opsResult) => {
           const customFields = _.map(opsResult.result.Contacts, (field) => {
@@ -135,7 +136,18 @@ class Agent {
 
         const defaultFields = [
           { value: "name", label: "Name" },
-          { value: "description", label: "Description" }
+          { value: "description", label: "Description" },
+          { value: "confidence", label: "Confidence" },
+          { value: "note", label: "Note" },
+          { value: "contact.email", label: "Contact > Email" },
+          { value: "contact.name", label: "Contact > Name" },
+          { value: "contact.phone", label: "Contact > Phone" },
+          { value: "contact.title", label: "Contact > Title" },
+          { value: "contact.url", label: "Contact > Url" },
+          { value: "source.name", label: "Source (Name)" },
+          { value: "account.name", label: "Account > Name" },
+          { value: "account.url", label: "Account > Url" },
+          { value: "account.phone", label: "Account > Phone" }
         ];
         return this.nutshellClient.findCustomFields(options).then((opsResult) => {
           const customFields = _.map(opsResult.result.Leads, (field) => {
@@ -266,7 +278,7 @@ class Agent {
 
         try {
           const response = await this.nutshellClient.createAccount(data, options);
-          this.handleNutshellResponse("Account", envelope, response);
+          await this.handleNutshellResponse("Account", envelope, response);
         } catch (err) {
           this.hullClient.asAccount(_.get(envelope, "message.user.account", {})).logger.error("outgoing.account.error", { reason: "Failed to create a new account", details: err });
         }
@@ -290,7 +302,7 @@ class Agent {
             reqId = uuid();
             _.set(options, "requestId", reqId);
             const response = await this.nutshellClient.editAccount(_.get(newObject, "id"), _.get(newObject, "rev"), patchResult.patchObject, options);
-            this.handleNutshellResponse("Account", envelope, response);
+            await this.handleNutshellResponse("Account", envelope, response);
           } else {
             this.hullClient.asAccount(_.get(envelope, "message.user.account", {})).logger.info("outgoing.account.skip", { reason: "Data already in sync with Nutshell." });
           }
@@ -314,7 +326,7 @@ class Agent {
 
     // Attempt to retrieve contacts for all that are marked as `toInsert`
     // to check if we simply haven't retrieved them before
-    _.map(contactsFilterResult.toInsert, async (envelope) => {
+    await Promise.all(contactsFilterResult.toInsert.map(async (envelope) => {
       const reqId = uuid();
       const options: INutshellOperationOptions = {
         host: baseHostname,
@@ -332,38 +344,40 @@ class Agent {
           _.set(envelope, "message.user.traits_nutshell/id", _.get(currentContactData, "id", null));
           _.set(envelope, "message.user.traits_nutshell/rev", _.get(currentContactData, "rev", null));
         }
+        return Promise.resolve(true);
       } catch (err) {
-        this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.query.error", { reason: "Failed to search for contacts by email", details: err });
+        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.query.error", { reason: "Failed to search for contacts by email", details: err });
       }
-    });
+    }));
 
     // Re-run the filter to ensure that we handle inserts and updates appropriately
     contactsFilterResult = this.filterUtil.filterUsers(_.concat(contactsFilterResult.toInsert, contactsFilterResult.toUpdate, contactsFilterResult.toSkip), isBatch);
 
+    if (isBatch === false) {
+      console.log("Contacts Filter Result", contactsFilterResult);
+    }
     /*
      * --- Process: Contacts.toInsert
      */
-    _.map(contactsFilterResult.toInsert, async (envelope) => {
+    await Promise.all(contactsFilterResult.toInsert.map(async (envelope) => {
       const data = this.attributesMapper.mapToServiceObject("Contact", _.get(envelope, "message.user", {}));
       const reqId = uuid();
       const options: INutshellOperationOptions = {
         host: baseHostname,
         requestId: reqId
       };
-
       try {
         const response = await this.nutshellClient.createContact(data, options);
-        this.handleNutshellResponse("Contact", envelope, response);
+        return await this.handleNutshellResponse("Contact", envelope, response);
       } catch (err) {
-        console.log(">>> ERROR", err);
-        this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to create a new user", details: err });
+        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to create a new user", details: err });
       }
-    });
+    }));
 
     /*
      * --- Process: Contacts.toUpdate
      */
-    _.map(contactsFilterResult.toUpdate, async (envelope) => {
+    await Promise.all(contactsFilterResult.toUpdate.map(async (envelope) => {
       let reqId = uuid();
       const options: INutshellOperationOptions = {
         host: baseHostname,
@@ -374,25 +388,25 @@ class Agent {
         const currentObject = currentObjectResponse.result;
         const newObject = this.attributesMapper.mapToServiceObject("Contact", _.get(envelope, "message.user", {}));
         const patchResult = this.patchUtil.createPatchObject("Contact", newObject, currentObject);
+        console.log(">>> Patch Result", patchResult);
         if (patchResult.hasChanges) {
           reqId = uuid();
           _.set(options, "requestId", reqId);
           const response = await this.nutshellClient.editContact(_.get(newObject, "id"), _.get(newObject, "rev"), patchResult.patchObject, options);
-          this.handleNutshellResponse("Contact", envelope, response);
-        } else {
-          this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
+          return await this.handleNutshellResponse("Contact", envelope, response);
         }
+        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
       } catch (err) {
-        this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing contact", details: err });
+        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing contact", details: err });
       }
-    });
+    }));
 
     /*
      * --- Process: Contacts.toSkip
      */
-    _.map(contactsFilterResult.toSkip, async (envelope) => {
-      this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: envelope.skipReason });
-    });
+    await Promise.all(contactsFilterResult.toSkip.map(async (envelope) => {
+      return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: envelope.skipReason });
+    }));
 
     return Promise.resolve(messages);
   }
