@@ -4,16 +4,16 @@ import type { $Response } from "express";
 
 const _ = require("lodash");
 const cacheManager = require("cache-manager");
-const Agent = require("../lib/agent");
+const Agent = require("../lib/sync-agent");
 
 const Cache = cacheManager.caching({ store: "memory", max: 100, ttl: 60 });
 
 
 function fieldsContactAction(req: THullRequest, res: $Response): $Response {
-  const { client, ship, metric } = req.hull;
+  const { client, ship } = req.hull;
   const { secret } = client.configuration();
   const cacheKey = [ship.id, _.get(ship, "updated_at"), secret, "cf"].join("/");
-  const agent = new Agent(client, ship, metric);
+  const agent = new Agent(req.hull);
 
   if (!agent.isAuthenticationConfigured()) {
     return res.json({ ok: false, error: "The connector is not or not properly authenticated to Nutshell.", options: [] });

@@ -1,5 +1,5 @@
 /* @flow */
-import type { IPatchResult, IPatchUtil, TResourceType } from "../shared";
+import type { IPatchResult, IPatchUtil, TResourceType } from "../types";
 
 const _ = require("lodash");
 

@@ -1,5 +1,5 @@
 /* @flow */
-import type { IFilterResult, IUserUpdateEnvelope, IFilterUtil } from "../shared";
+import type { IFilterResult, IUserUpdateEnvelope, IFilterUtil } from "../types";
 
 const _ = require("lodash");
 

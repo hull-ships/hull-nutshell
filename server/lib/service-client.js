@@ -1,5 +1,5 @@
 // @flow
-import type { INutshellClientOptions, INutshellClientResponse, INutshellOperationOptions, IMetricsClient, TResourceType } from "./shared";
+import type { INutshellClientOptions, INutshellClientResponse, INutshellOperationOptions, IMetricsClient, TResourceType } from "./types";
 
 const rpc = require("jayson");
 const _ = require("lodash");

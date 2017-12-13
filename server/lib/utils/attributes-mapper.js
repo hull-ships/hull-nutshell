@@ -1,6 +1,6 @@
 /* @flow */
 import type { THullObject } from "hull";
-import type { TResourceType, IAttributesMapper } from "../shared";
+import type { TResourceType, IAttributesMapper } from "../types";
 
 const _ = require("lodash");
 const { URL } = require("url");

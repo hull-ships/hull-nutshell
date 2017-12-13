@@ -3,7 +3,7 @@ import type { THullUserUpdateMessage, THullReqContext } from "hull";
 
 const _ = require("lodash");
 
-const Agent = require("../lib/agent");
+const Agent = require("../lib/sync-agent");
 
 function userUpdateHandlerFactory(options: Object = {}): Function {
   const {
@@ -14,7 +14,7 @@ function userUpdateHandlerFactory(options: Object = {}): Function {
     if (ctx.smartNotifierResponse && flowControl) {
       ctx.smartNotifierResponse.setFlowControl(flowControl);
     }
-    const agent = new Agent(ctx.client, ctx.ship, ctx.metric);
+    const agent = new Agent(ctx);
     const enrichedMessages = messages
       .map((m) => {
         if (!_.has(m.user, "account")) {

@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 const _ = require("lodash");
 
-const NutshellClient = require("../../server/lib/nutshell-client");
+const NutshellClient = require("../../server/lib/service-client");
 const { MetricsClientMock } = require("../helper/metrics-client-mock");
 const nock = require("nock");
 

@@ -1,25 +1,16 @@
 /* @flow */
-import type { THullUserUpdateMessage, THullConnector } from "hull";
-import type { IMetricsClient, ILogger, IFilterUtil, IFilterResult, IAttributesMapper, IDropdownEntry, INutshellOperationOptions, INutshellClientOptions, INutshellClientResponse, IPatchUtil, IUserUpdateEnvelope, TResourceType } from "./shared";
+import type { THullUserUpdateMessage, THullConnector, THullReqContext } from "hull";
+import type { IMetricsClient, ILogger, IFilterUtil, IFilterResult, IAttributesMapper, IDropdownEntry, INutshellOperationOptions, INutshellClientOptions, INutshellClientResponse, IPatchUtil, IUserUpdateEnvelope, TResourceType } from "./types";
 
 const _ = require("lodash");
-const NutshellClient = require("./nutshell-client");
+const NutshellClient = require("./service-client");
 const uuid = require("uuid/v4");
 const cacheManager = require("cache-manager");
 const AttributesMapper = require("./utils/attributes-mapper");
 const PatchUtil = require("./utils/patch-util");
 const FilterUtil = require("./utils/filter-util");
 
-function composeNutshellClientOptions(settings: Object, metricsClient: IMetricsClient): INutshellClientOptions {
-  const result: INutshellClientOptions = {
-    userId: _.get(settings, "api_username", ""),
-    apiKey: _.get(settings, "api_key", ""),
-    metricsClient
-  };
-  return result;
-}
-
-class Agent {
+class SyncAgent {
   synchronizedSegments: string[];
 
   hullClient: Object;
@@ -40,17 +31,27 @@ class Agent {
 
   patchUtil: IPatchUtil;
 
-  constructor(hullClient: any, connector: THullConnector, metricsClient: IMetricsClient) {
+  constructor(ctx: THullReqContext) {
+    const { ship: connector, client: hullClient, metric: metricsClient } = ctx;
     this.connector = connector;
     this.synchronizedSegments = connector.private_settings.synchronized_segments;
     this.hullClient = hullClient;
     this.logger = hullClient.logger;
     this.metricsClient = metricsClient;
     this.cache = cacheManager.caching({ store: "memory", max: 100, ttl: 1800 });
-    this.nutshellClient = new NutshellClient(composeNutshellClientOptions(connector.private_settings, metricsClient));
+    this.nutshellClient = new NutshellClient(this.composeNutshellClientOptions(connector.private_settings, this.metricsClient));
     this.attributesMapper = new AttributesMapper(connector.private_settings);
     this.patchUtil = new PatchUtil(connector.private_settings);
     this.filterUtil = new FilterUtil(connector.private_settings);
+  }
+
+  composeNutshellClientOptions(settings: Object, metricsClient: IMetricsClient): INutshellClientOptions {
+    const result: INutshellClientOptions = {
+      userId: _.get(settings, "api_username", ""),
+      apiKey: _.get(settings, "api_key", ""),
+      metricsClient
+    };
+    return result;
   }
 
   /**
@@ -502,4 +503,4 @@ class Agent {
   }
 }
 
-module.exports = Agent;
+module.exports = SyncAgent;

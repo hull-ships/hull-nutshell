@@ -2,7 +2,7 @@
 const _ = require("lodash");
 const nock = require("nock");
 
-const Agent = require("../../server/lib/agent");
+const Agent = require("../../server/lib/sync-agent");
 const contactChangedPayload = require("../fixtures/webhook-contactchanged.json");
 const contactNewPayload = require("../fixtures/api_contact_new.json");
 const contactUpdatePayload = require("../fixtures/api_contact_edit.json");
@@ -55,7 +55,7 @@ describe("Agent", () => {
     const metrics = new MetricsClientMock();
     const connector = new ConnectorMock("1234", {}, PRIVATE_SETTINGS);
 
-    const agent = new Agent(client, connector, metrics);
+    const agent = new Agent({ client, ship: connector, metric: metrics });
 
     expect(agent.connector).toEqual(connector);
     expect(agent.synchronizedSegments).toEqual(PRIVATE_SETTINGS.synchronized_segments);
@@ -74,7 +74,7 @@ describe("Agent", () => {
     const metrics = new MetricsClientMock();
     const connector = new ConnectorMock("1234", {}, PRIVATE_SETTINGS);
 
-    const agent = new Agent(client, connector, metrics);
+    const agent = new Agent({ client, ship: connector, metric: metrics });
 
     const payload = _.first(_.get(contactChangedPayload, "payloads", []));
     const actual = agent.extractIdentifierFromPayload(payload);
@@ -92,7 +92,7 @@ describe("Agent", () => {
     const metrics = new MetricsClientMock();
     const connector = new ConnectorMock("1234", {}, pSettings);
 
-    const agent = new Agent(client, connector, metrics);
+    const agent = new Agent({ client, ship: connector, metric: metrics });
     const actual = agent.isAuthenticationConfigured();
     expect(actual).toBeTruthy();
   });
@@ -107,7 +107,7 @@ describe("Agent", () => {
     const metrics = new MetricsClientMock();
     const connector = new ConnectorMock("1234", {}, pSettings);
 
-    const agent = new Agent(client, connector, metrics);
+    const agent = new Agent({ client, ship: connector, metric: metrics });
     const actual = agent.isAuthenticationConfigured();
     expect(actual).toBeFalsy();
   });
@@ -122,7 +122,7 @@ describe("Agent", () => {
     const metrics = new MetricsClientMock();
     const connector = new ConnectorMock("1234", {}, pSettings);
 
-    const agent = new Agent(client, connector, metrics);
+    const agent = new Agent({ client, ship: connector, metric: metrics });
     const actual = agent.isAuthenticationConfigured();
     expect(actual).toBeFalsy();
   });
@@ -131,7 +131,7 @@ describe("Agent", () => {
     const client = new HullClientMock();
     const connector = new ConnectorMock("1234", {}, PRIVATE_SETTINGS);
 
-    const agent = new Agent(client, connector, null);
+    const agent = new Agent({ client, ship: connector });
 
     expect(() => agent.incrementOutgoingCount("Account", 1)).not.toThrow();
   });
@@ -150,7 +150,7 @@ describe("Agent", () => {
     metricsMock.increment = incrementMock.bind(metricsMock);
     metricsMock.value = valueMock.bind(metricsMock);
 
-    const agent = new Agent(client, connector, metricsMock);
+    const agent = new Agent({ client, ship: connector, metric: metricsMock });
 
     agent.incrementOutgoingCount("Account");
     expect(incrementMock.mock.calls[0][0]).toEqual("ship.outgoing.accounts");
@@ -167,7 +167,7 @@ describe("Agent", () => {
     const metricsMock = {};
     metricsMock.increment = incrementMock.bind(metricsMock);
 
-    const agent = new Agent(client, connector, metricsMock);
+    const agent = new Agent({ client, ship: connector, metric: metricsMock });
 
     agent.incrementOutgoingCount("Contacts");
     expect(incrementMock.mock.calls[0][0]).toEqual("ship.outgoing.users");
@@ -201,7 +201,7 @@ describe("Agent", () => {
     metricsMock.increment = incrementMock.bind(metricsMock);
 
 
-    const agent = new Agent(clientMock, connector, metricsMock);
+    const agent = new Agent({ client: clientMock, ship: connector, metric: metricsMock });
 
     const envelope = {
       message: {
@@ -266,7 +266,7 @@ describe("Agent", () => {
     metricsMock.increment = incrementMock.bind(metricsMock);
 
 
-    const agent = new Agent(clientMock, connector, metricsMock);
+    const agent = new Agent({ client: clientMock, ship: connector, metric: metricsMock });
 
     const envelope = {
       message: {
@@ -312,7 +312,7 @@ describe("Agent", () => {
     metricsMock.increment = incrementMock.bind(metricsMock);
 
 
-    const agent = new Agent(clientMock, connector, metricsMock);
+    const agent = new Agent({ client: clientMock, ship: connector, metric: metricsMock });
 
     const envelope = {
       message: {
@@ -384,7 +384,7 @@ describe("Agent", () => {
     metricsMock.increment = incrementMock.bind(metricsMock);
 
 
-    const agent = new Agent(clientMock, connector, metricsMock);
+    const agent = new Agent({ client: clientMock, ship: connector, metric: metricsMock });
 
     const envelope = {
       message: {
@@ -462,7 +462,7 @@ describe("Agent", () => {
     metricsMock.increment = incrementMock.bind(metricsMock);
     metricsMock.value = valueMock.bind(metricsMock);
 
-    const agent = new Agent(clientMock, connector, metricsMock);
+    const agent = new Agent({ client: clientMock, ship: connector, metric: metricsMock });
 
     const sObject = contactNewPayload.result;
     const expectedTraitsObject = {
@@ -560,7 +560,7 @@ describe("Agent", () => {
     metricsMock.increment = incrementMock.bind(metricsMock);
     metricsMock.value = valueMock.bind(metricsMock);
 
-    const agent = new Agent(clientMock, connector, metricsMock);
+    const agent = new Agent({ client: clientMock, ship: connector, metric: metricsMock });
 
     const sObject = contactUpdatePayload.result;
     const expectedTraitsObject = {
@@ -655,7 +655,7 @@ describe("Agent", () => {
     const metricsMock = {};
     metricsMock.increment = incrementMock.bind(metricsMock);
 
-    const agent = new Agent(clientMock, connector, metricsMock);
+    const agent = new Agent({ client: clientMock, ship: connector, metric: metricsMock });
 
     agent.sendUserUpdateMessages(messagesToSkip).then(() => {
       expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.skip");
