@@ -1,23 +1,45 @@
 {
   "name" : "Nutshell",
-  "tags": ["outgoing","batch", "oneColumn"],
+  "tags": ["outgoing","batch", "oneColumn", "smart-notifier"],
   "description" : "Send Users as Leads or Contacts to Nutshell with custom mappings",
-  "version" : "0.2.0",
+  "version" : "0.3.0",
   "picture": "picture.png",
   "ui": false,
   "readme" : "readme.md",
-  "settings" : [],
+  "settings" : [ ],
   "private_settings" : [
+    {
+      "name": "authentication_title",
+      "title": "Authentication",
+      "format": "title",
+      "type": "string"
+    },
+    {
+      "name": "api_username",
+      "title": "Nutshell Username",
+      "type": "string"
+    },
+    {
+      "name": "api_key",
+      "title": "Nutshell API Key",
+      "type": "string"
+    },
     {
       "name": "form_api_url",
       "title" : "Nutshell Form API url",
       "type": "string",
-      "required" : true
+      "format" : "hidden"
     },
     {
-      "name": "synchronized_segments",
-      "title": "Filter users",
-      "description": "Only send users who match these segments to Segment.com. Keep empty to send everyone.",
+      "name": "configuration_title",
+      "title": "Configuration",
+      "format": "title",
+      "type": "string"
+    },
+    {
+      "name": "lead_synchronized_segments",
+      "title": "Filter users to be treated as leads",
+      "description": "Only send users who match these segments to Nutshell.",
       "type": "array",
       "format": "segment",
       "items": {
@@ -26,38 +48,112 @@
       "default": []
     },
     {
-      "name" : "mapping",
-      "title" : "Fields Mapping",
-      "type" : "array",
-      "default" : [
-        { "hull" : "name", "nutshell" : "contact.name", "is_required" : true },
-        { "hull" : "email", "nutshell" : "contact.email", "is_required" : true }
+      "name": "synchronized_segments",
+      "title": "Filter users and accounts to be treated as contacts and accounts",
+      "description": "Only send users who match these segments to Nutshell.",
+      "type": "array",
+      "format": "segment",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    {
+      "name": "accountsync_title",
+      "title": "Accounts Data Mapping",
+      "format": "title",
+      "type": "string"
+    },
+    {
+      "name": "account_sync_enabled",
+      "title": "Account synchronization",
+      "type": "boolean",
+      "description": "Enable synchronization of Hull accounts with Nutshell"
+    },
+    {
+      "name": "account_attributes_outbound",
+      "title": "Send Account Attributes to Nutshell",
+      "description": "Specify all fields to send",
+      "type": "array",
+      "format": "table",
+      "default": [
+        { "hull_field_name": "account.name", "nutshell_field_name": "name" }
       ],
-      "items" : {
-        "type" : "object",
-        "properties" : {
-          "hull" : {
+      "items": {
+        "type": "object",
+        "properties": {
+          "hull_field_name" : {
             "type" : "string",
-            "format" : "template",
-            "title" : "Hull Field"
+            "format" : "accountTrait",
+            "title" : "Hull Attribute"
           },
-          "nutshell" : {
+          "nutshell_field_name" : {
             "type" : "string",
-            "title" : "Nutshell Field"
+            "title" : "Nutshell Field",
+            "format" : "select",
+            "options" : {
+              "loadOptions" : "/fields-account"
+            }
           },
-          "is_required" : {
-            "title" : "Is required",
-            "description" : "Skip sync if this field is not defined",
-            "type" : "boolean"
+          "overwrite" : {
+            "type" : "boolean",
+            "title" : "overwrite",
+            "default" : false
           }
         },
         "required" : [
-          "hull",
-          "nutshell",
-          "is_required"
+          "hull_field_name",
+          "nutshell_field_name"
         ]
-      }
+      } 
+    },
+    {
+      "name": "contactsync_title",
+      "title": "Contacts Data Mapping",
+      "format": "title",
+      "type": "string"
+    },
+    {
+      "name": "contact_attributes_outbound",
+      "title": "Send Contact Attributes to Nutshell",
+      "description": "Specify all fields to send",
+      "type": "array",
+      "format": "table",
+      "default": [
+        { "hull_field_name": "name", "nutshell_field_name": "name" },
+        { "hull_field_name": "email", "nutshell_field_name": "email"}
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "hull_field_name" : {
+            "type" : "string",
+            "format" : "trait",
+            "title" : "Hull Attribute"
+          },
+          "nutshell_field_name" : {
+            "type" : "string",
+            "title" : "Nutshell Field",
+            "format" : "select",
+            "options" : {
+              "loadOptions" : "/fields-contact"
+            }
+          }
+        },
+        "required" : [
+          "hull_field_name",
+          "nutshell_field_name"
+        ]
+      } 
     }
   ],
-  "subscriptions" : [ { "url" : "/notify" } ]
+  "admin": "admin",
+  "schedules": [
+    {
+      "url": "/status",
+      "type": "cron",
+      "value": "*/30 * * * *"
+    }
+  ],
+  "subscriptions" : [ { "url" : "/smart-notifier" } ]
 }
