@@ -1,5 +1,6 @@
 /* @flow */
-import type { $Request, $Response } from "express";
+import type { THullRequest } from "hull";
+import type { $Response } from "express";
 
 const _ = require("lodash");
 const cacheManager = require("cache-manager");
@@ -8,10 +9,10 @@ const Agent = require("../lib/agent");
 const Cache = cacheManager.caching({ store: "memory", max: 100, ttl: 60 });
 
 
-function fieldsAccountAction(req: $Request, res: $Response): $Response {
-  const { client, ship, metric } = (req: any).hull;
+function fieldsAccountAction(req: THullRequest, res: $Response): $Response {
+  const { client, ship, metric } = req.hull;
   const { secret } = client.configuration();
-  const cacheKey = [ship.id, ship.updated_at, secret, "af"].join("/");
+  const cacheKey = [ship.id, _.get(ship, "updated_at"), secret, "af"].join("/");
   const agent = new Agent(client, ship, metric);
 
   if (!agent.isAuthenticationConfigured()) {

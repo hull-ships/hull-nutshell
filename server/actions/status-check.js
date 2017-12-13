@@ -1,13 +1,13 @@
 /* @flow */
-
-import type { $Request, $Response } from "express";
+import type { THullRequest } from "hull";
+import type { $Response } from "express";
 
 const _ = require("lodash");
 const Agent = require("../lib/agent");
 
-function statusCheckAction(req: $Request, res: $Response): void {
+function statusCheckAction(req: THullRequest, res: $Response): void {
   if (_.has(req, "hull.ship.private_settings")) {
-    const { client, ship, metric } = (req: any).hull;
+    const { client, ship, metric } = req.hull;
     const messages: Array<string> = [];
     let status: string = "ok";
     const agent = new Agent(client, ship, (metric: any));

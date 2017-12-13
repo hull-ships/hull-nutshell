@@ -38,7 +38,7 @@ class PatchUtil implements IPatchUtil {
    * @throws Will throw an error if the `id` or `rev` of the newObject and currentObject are different to
    *         prevent incorrect patches.
    */
-  createPatchObject(resource: TResourceType, newObject: any, currentObject: any): IPatchResult {
+  createPatchObject(resource: TResourceType, newObject: Object, currentObject: Object): IPatchResult {
     const mappings = _.get(this.mappingsOutbound, resource);
     const result: IPatchResult = {
       hasChanges: false,

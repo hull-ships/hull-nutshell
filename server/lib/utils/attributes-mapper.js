@@ -1,4 +1,5 @@
 /* @flow */
+import type { THullObject } from "hull";
 import type { TResourceType, IAttributesMapper } from "../shared";
 
 const _ = require("lodash");
@@ -36,7 +37,7 @@ class AttributesMapper implements IAttributesMapper {
    * @returns {*} The mapped Nutshell Object.
    * @memberof AttributesMapper
    */
-  mapToServiceObject(resource: TResourceType, hullObject: any): any {
+  mapToServiceObject(resource: TResourceType, hullObject: THullObject): Object {
     const sObject = { };
     if (resource === "Contact" || resource === "Lead") {
       if (_.has(hullObject, "traits_nutshell/id")) {
@@ -78,7 +79,7 @@ class AttributesMapper implements IAttributesMapper {
    * @returns {*} The object containing the information about the traits to set.
    * @memberof AttributesMapper
    */
-  mapToHullAttributeObject(resource: TResourceType, sObject: any): any {
+  mapToHullAttributeObject(resource: TResourceType, sObject: Object): Object {
     // TODO: Implement for webhooks
     const hObject = {};
     _.set(hObject, "nutshell/id", { value: sObject.id });
@@ -228,7 +229,7 @@ class AttributesMapper implements IAttributesMapper {
    * @returns {*} An object that can be passed to `hullClient.asUser` or `hullClient.asAccount`.
    * @memberof AttributesMapper
    */
-  mapToHullIdentObject(resource: TResourceType, sObject: any): any {
+  mapToHullIdentObject(resource: TResourceType, sObject: Object): Object {
     const ident = { };
     if (resource === "Contact") {
       // We cannot say for sure which email address is the proper one,

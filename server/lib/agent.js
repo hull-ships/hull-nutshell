@@ -1,4 +1,5 @@
 /* @flow */
+import type { THullUserUpdateMessage, THullConnector } from "hull";
 import type { IMetricsClient, ILogger, IFilterUtil, IFilterResult, IAttributesMapper, IDropdownEntry, INutshellOperationOptions, INutshellClientOptions, INutshellClientResponse, IPatchUtil, IUserUpdateEnvelope, TResourceType } from "./shared";
 
 const _ = require("lodash");
@@ -27,7 +28,7 @@ class Agent {
 
   nutshellClient: NutshellClient;
 
-  connector: any;
+  connector: THullConnector;
 
   logger: ILogger;
 
@@ -39,7 +40,7 @@ class Agent {
 
   patchUtil: IPatchUtil;
 
-  constructor(hullClient: any, connector: any, metricsClient: IMetricsClient) {
+  constructor(hullClient: any, connector: THullConnector, metricsClient: IMetricsClient) {
     this.connector = connector;
     this.synchronizedSegments = connector.private_settings.synchronized_segments;
     this.hullClient = hullClient;
@@ -167,7 +168,7 @@ class Agent {
    */
   async getApiBaseHostName(): Promise<string> {
     const { secret } = this.hullClient.configuration();
-    const cacheKey = [this.connector.id, this.connector.updated_at, secret, "cf"].join("/");
+    const cacheKey = [this.connector.id, _.get(this.connector, "updated_at"), secret, "cf"].join("/");
 
     return this.cache.wrap(cacheKey, () => {
       return this.nutshellClient.discoverEndpoint();
@@ -206,12 +207,12 @@ class Agent {
   /**
    * Sends the messages to the third party service.
    *
-   * @param {any[]} messages The messages from the platform.
+   * @param {THullUserUpdateMessage[]} messages The messages from the platform.
    * @param {boolean} [isBatch=false] True for batch mode to skip filter; otherwise false.
    * @returns {Promise<any>} The result of the send operation.
    * @memberof Agent
    */
-  async sendUserMessages(messages: any[], isBatch: boolean = false): Promise<any> {
+  async sendUserMessages(messages: THullUserUpdateMessage[], isBatch: boolean = false): Promise<*> {
     /* Control Flow - High-level overview
      * ---------------------------------------
      * 1) Check whether we need to filter or if we do batch and simply pass everything along (handled in FilterUtil)
@@ -411,7 +412,10 @@ class Agent {
     return Promise.resolve(messages);
   }
 
-  async handleWebhookPayload(body: Object): Promise<boolean> {
+  async handleWebhookPayload(body: any): Promise<boolean> {
+    if (!_.isObject(body)) {
+      return Promise.resolve(false);
+    }
     _.forEach(_.get(body, "payloads"), (p) => {
       const payloadType = _.get(p, "type", "n/a");
       if (payloadType === "activities") {
@@ -436,7 +440,7 @@ class Agent {
     return _.replace(_.get(payload, "id", ""), `-${payload.type}`, "");
   }
 
-  handleNutshellResponse(resource: TResourceType, envelope: IUserUpdateEnvelope, response: INutshellClientResponse): Promise<any> {
+  handleNutshellResponse(resource: TResourceType, envelope: IUserUpdateEnvelope, response: INutshellClientResponse): Promise<*> {
     if (!_.isNil(response.error)) {
       if (resource === "Account") {
         this.hullClient.asAccount(_.get(envelope, "message.user.account", {})).logger.error("outgoing.account.error", { reason: "Failed to execute an operation for an account", details: response });

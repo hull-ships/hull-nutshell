@@ -35,7 +35,7 @@ function server(app: $Application): $Application {
   app.get("/fields-account", cors(), actions.fieldsAccount);
   app.get("/fields-account", cors(), actions.fieldsLead);
 
-  app.all("/webhook", (express: any).json(), actions.webhook);
+  app.all("/webhook", express.json(), actions.webhook);
 
   app.all("/status", actions.statusCheck);
 

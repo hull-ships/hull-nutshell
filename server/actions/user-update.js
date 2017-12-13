@@ -1,4 +1,6 @@
 /* @flow */
+import type { THullUserUpdateMessage, THullReqContext } from "hull";
+
 const _ = require("lodash");
 
 const Agent = require("../lib/agent");
@@ -8,7 +10,7 @@ function userUpdateHandlerFactory(options: Object = {}): Function {
     flowControl = null,
     isBatch = false
   } = options;
-  return function userUpdateHandler(ctx: Object, messages: Array<Object>): Promise<any> {
+  return function userUpdateHandler(ctx: THullReqContext, messages: Array<THullUserUpdateMessage>): Promise<any> {
     if (ctx.smartNotifierResponse && flowControl) {
       ctx.smartNotifierResponse.setFlowControl(flowControl);
     }
