@@ -42,6 +42,11 @@ class FilterUtil implements IFilterUtil {
     const results: IFilterResult = new FilterResult();
 
     envelopes.forEach((envelope) => {
+      if (!_.has(envelope, "message.user.account.id")) {
+        envelope.skipReason = "User doesn't have any account information";
+        return results.toSkip.push(envelope);
+      }
+
       if (skipSegmentCheck === true || (this.matchesWhitelistedSegments(envelope) && skipSegmentCheck === false)) {
         if (_.has(envelope.message, "account.nutshell/id")) {
           return results.toUpdate.push(envelope);
@@ -64,7 +69,7 @@ class FilterUtil implements IFilterUtil {
    * @returns {IFilterResult} A filter result that determines which users to insert, update or skip.
    * @memberof FilterUtil
    */
-  filterUsers(envelopes: Array<IUserUpdateEnvelope>, skipSegmentCheck: boolean = false): IFilterResult {
+  filterContacts(envelopes: Array<IUserUpdateEnvelope>, skipSegmentCheck: boolean = false): IFilterResult {
     const results: IFilterResult = new FilterResult();
 
     if (skipSegmentCheck === true) {

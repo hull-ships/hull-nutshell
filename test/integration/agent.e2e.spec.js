@@ -472,7 +472,7 @@ describe("Agent", () => {
       "nutshell/contacted_count": { value: sObject.contactedCount }
     };
 
-    agent.sendUserMessages(messagesToInsert, false).then(() => {
+    agent.sendUserUpdateMessages(messagesToInsert, false).then(() => {
       expect(traitsMock.mock.calls[0][0]).toEqual(expectedTraitsObject);
       expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.success");
       expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject });
@@ -567,7 +567,7 @@ describe("Agent", () => {
       "nutshell/description": { value: sObject.description }
     };
 
-    agent.sendUserMessages(messagesToUpdate, false).then(() => {
+    agent.sendUserUpdateMessages(messagesToUpdate, false).then(() => {
       expect(traitsMock.mock.calls[0][0]).toEqual(expectedTraitsObject);
       expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.success");
       expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject });
@@ -645,7 +645,7 @@ describe("Agent", () => {
 
     const agent = new Agent(clientMock, connector, metricsMock);
 
-    agent.sendUserMessages(messagesToSkip).then(() => {
+    agent.sendUserUpdateMessages(messagesToSkip).then(() => {
       expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.skip");
       expect(infoMock.mock.calls[0][1]).toEqual({ reason: "User doesn't belong to synchronized lead segments or is part of both lead and contact segments." });
       expect(asUserMock.mock.calls[0][0]).toEqual(_.first(messagesToSkip).user);

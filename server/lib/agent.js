@@ -22,7 +22,7 @@ function composeNutshellClientOptions(settings: Object, metricsClient: IMetricsC
 class Agent {
   synchronizedSegments: string[];
 
-  hullClient: any;
+  hullClient: Object;
 
   metricsClient: IMetricsClient;
 
@@ -212,7 +212,7 @@ class Agent {
    * @returns {Promise<any>} The result of the send operation.
    * @memberof Agent
    */
-  async sendUserMessages(messages: THullUserUpdateMessage[], isBatch: boolean = false): Promise<*> {
+  async sendUserUpdateMessages(messages: THullUserUpdateMessage[], isBatch: boolean = false): Promise<*> {
     /* Control Flow - High-level overview
      * ---------------------------------------
      * 1) Check whether we need to filter or if we do batch and simply pass everything along (handled in FilterUtil)
@@ -315,7 +315,7 @@ class Agent {
       /*
        * --- Process: Accounts.toSkip
        */
-      _.map(accountsFilterResult.toSkip, async (envelope) => {
+      _.map(accountsFilterResult.toSkip, (envelope) => {
         this.hullClient.asAccount(_.get(envelope, "message.user.account", {})).logger.info("outgoing.account.skip", { reason: envelope.skipReason });
       });
     }
@@ -323,7 +323,7 @@ class Agent {
     /*
      * --- Verify: Contacts.toInsert
      */
-    let contactsFilterResult: IFilterResult = this.filterUtil.filterUsers(envelopes, isBatch);
+    let contactsFilterResult: IFilterResult = this.filterUtil.filterContacts(envelopes, isBatch);
 
     // Attempt to retrieve contacts for all that are marked as `toInsert`
     // to check if we simply haven't retrieved them before
@@ -352,7 +352,7 @@ class Agent {
     }));
 
     // Re-run the filter to ensure that we handle inserts and updates appropriately
-    contactsFilterResult = this.filterUtil.filterUsers(_.concat(contactsFilterResult.toInsert, contactsFilterResult.toUpdate, contactsFilterResult.toSkip), isBatch);
+    contactsFilterResult = this.filterUtil.filterContacts(_.concat(contactsFilterResult.toInsert, contactsFilterResult.toUpdate, contactsFilterResult.toSkip), isBatch);
 
     if (isBatch === false) {
       console.log("Contacts Filter Result", contactsFilterResult);
@@ -405,9 +405,9 @@ class Agent {
     /*
      * --- Process: Contacts.toSkip
      */
-    await Promise.all(contactsFilterResult.toSkip.map(async (envelope) => {
+    contactsFilterResult.toSkip.map((envelope) => {
       return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: envelope.skipReason });
-    }));
+    });
 
     return Promise.resolve(messages);
   }

@@ -1,4 +1,6 @@
-// @flow
+/* @flow */
+import type { THullUserUpdateMessage } from "hull";
+
 export type TResourceType = "Account" | "Contact" | "Activity" | "Lead";
 
 export interface ILogger {
@@ -10,8 +12,8 @@ export interface ILogger {
 }
 
 export interface IMetricsClient {
-  value(name: string, value: number): void;
-  increment(name: string, value: number): void;
+  value(name: string, value: number, additionalTags?: Array<string>): void;
+  increment(name: string, value: number, additionalTags?: Array<string>): void;
 }
 
 export interface IDropdownEntry {
@@ -20,7 +22,7 @@ export interface IDropdownEntry {
 }
 
 export interface IUserUpdateEnvelope {
-  message: Object,
+  message: THullUserUpdateMessage,
   currentNutshellAccount?: Object;
   currentNutshellContact?: Object;
   skipReason?: string;
@@ -52,7 +54,8 @@ export interface INutshellOperationOptions {
 
 export interface IFilterUtil {
   filterAccounts(envelopes: Array<IUserUpdateEnvelope>, skipSegmentCheck: boolean): IFilterResult;
-  filterUsers(envelopes: Array<IUserUpdateEnvelope>, skipSegmentCheck: boolean): IFilterResult;
+  filterContacts(envelopes: Array<IUserUpdateEnvelope>, skipSegmentCheck: boolean): IFilterResult;
+  filterLeads(envelopes: Array<IUserUpdateEnvelope>, skipSegmentCheck: boolean): IFilterResult;
 }
 
 export interface IAttributesMapper {

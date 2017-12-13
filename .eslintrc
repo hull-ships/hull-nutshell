@@ -46,6 +46,9 @@
     "arrow-parens": [
       0
     ],
+    "prefer-destructuring": [
+      0
+    ],
     "flowtype-errors/show-errors": 2
   },
   "extends": [

@@ -5,18 +5,6 @@ const rpc = require("jayson");
 const _ = require("lodash");
 const shared = require("./shared");
 
-function _initHttpsClient(options: Object): Object {
-  const auth = Buffer.from(`${options.userId}:${options.apiKey}`).toString("base64");
-  const client = rpc.client.https({
-    hostname: options.host,
-    path: "/api/v1/json",
-    headers: {
-      authorization: `Basic ${auth}`
-    }
-  });
-  return client;
-}
-
 class NutshellClient {
   /**
    * Gets or sets the user name or identifier.
@@ -50,6 +38,40 @@ class NutshellClient {
     }
   }
 
+  _initHttpsClient(options: Object): Object {
+    let start;
+    const auth = Buffer.from(`${options.userId}:${options.apiKey}`).toString("base64");
+    const client = rpc.client.https({
+      hostname: options.host,
+      path: "/api/v1/json",
+      headers: {
+        authorization: `Basic ${auth}`
+      }
+    });
+    client.on("request", () => {
+      start = process.hrtime();
+    });
+    client.on("response", (req) => {
+      const hrTime = process.hrtime(start);
+      const elapsed = (hrTime[0] * 1000) + (hrTime[1] / 1000000);
+      if (this.metricsClient) {
+        const method = req.method;
+        // TODO: migrate to connector.service_api.call
+        this.metricsClient.increment("ship.service_api.call", 1, [`method:${method}`]);
+        this.metricsClient.value("connector.service_api.response_time", elapsed, [
+          `method:${method}`
+        ]);
+      }
+    });
+    return client;
+  }
+
+  _handleError(method: string, err: Object) {
+    if (err) {
+      this.metricsClient.increment("connector.service_api.error", 1, [`method:${method}`]);
+    }
+  }
+
   /**
    * Discovers the endpoint that should be used to communicate.
    * Response shall be cached between 10-90 minutes.
@@ -80,8 +102,7 @@ class NutshellClient {
    */
   createContact(data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
-      const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
-      this.incrementApiCalls(1);
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("newContact", { contact: data }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -101,8 +122,7 @@ class NutshellClient {
    */
   createAccount(data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
-      const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
-      this.incrementApiCalls(1);
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("newAccount", { account: data }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -122,8 +142,7 @@ class NutshellClient {
    */
   createLead(data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
-      const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
-      this.incrementApiCalls(1);
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("newLead", { account: data }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -152,8 +171,7 @@ class NutshellClient {
    */
   editContact(id: string, rev: string, data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
-      const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
-      this.incrementApiCalls(1);
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("editContact", { contactId: id, rev, contact: data }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -182,8 +200,7 @@ class NutshellClient {
    */
   editAccount(id: string, rev: string, data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
-      const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
-      this.incrementApiCalls(1);
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("editAccount", { accountId: id, rev, account: data }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -212,8 +229,7 @@ class NutshellClient {
    */
   editLead(id: string, rev: string, data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
-      const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
-      this.incrementApiCalls(1);
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("editLead", { leadId: id, rev, lead: data }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -241,8 +257,7 @@ class NutshellClient {
    */
   findCustomFields(options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
-      const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
-      this.incrementApiCalls(1);
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("findCustomFields", [], options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -266,8 +281,7 @@ class NutshellClient {
    */
   searchAccounts(query: string, limit: number, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
-      const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
-      this.incrementApiCalls(1);
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("searchAccounts", { string: query, limit }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -296,8 +310,7 @@ class NutshellClient {
    */
   searchByEmail(emailAddress: string, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
-      const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
-      this.incrementApiCalls(1);
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("searchByEmail", { emailAddressString: emailAddress }, options.requestId, (err, result) => {
         if (err) {
           return reject(err);
@@ -324,28 +337,15 @@ class NutshellClient {
       _.set(params, "rev", rev);
     }
     return new Promise((resolve, reject) => {
-      const client = _initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
-      this.incrementApiCalls(1);
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request(`get${resource}`, params, options.requestId, (err, result) => {
+        this._handleError(`get${resource}`, err);
         if (err) {
           return reject(err);
         }
         return resolve(result);
       });
     });
-  }
-
-  /**
-   * Increments the number of API calls via the metrics client,
-   * if one is configured.
-   *
-   * @param {number} [value=1] The amount by which API calls will increase; default to one.
-   * @memberof CloseIoClient
-   */
-  incrementApiCalls(value: number = 1): void {
-    if (this.metricsClient) {
-      this.metricsClient.increment("ship.service_api.call", value);
-    }
   }
 }
 

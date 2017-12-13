@@ -24,7 +24,7 @@ function userUpdateHandlerFactory(options: Object = {}): Function {
       });
 
     if (enrichedMessages.length > 0) {
-      return agent.sendUserMessages(enrichedMessages, isBatch);
+      return agent.sendUserUpdateMessages(enrichedMessages, isBatch);
     }
     return Promise.resolve();
   };

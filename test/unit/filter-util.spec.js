@@ -123,7 +123,7 @@ describe("FiterUtil", () => {
     };
     const segments = ["Nutshell - Leads", "Leads"];
     const util = new FilterUtil({ synchronized_segments: segments });
-    const filterResult = util.filterUsers([envelope]);
+    const filterResult = util.filterContacts([envelope]);
 
     expect(filterResult.toInsert).toEqual([envelope]);
     expect(filterResult.toSkip).toHaveLength(0);
@@ -153,7 +153,7 @@ describe("FiterUtil", () => {
     };
     const segments = ["Nutshell - Leads", "Leads"];
     const util = new FilterUtil({ synchronized_segments: segments });
-    const filterResult = util.filterUsers([envelope]);
+    const filterResult = util.filterContacts([envelope]);
 
     expect(filterResult.toUpdate).toEqual([envelope]);
     expect(filterResult.toSkip).toHaveLength(0);
@@ -183,7 +183,7 @@ describe("FiterUtil", () => {
     };
     const segments = ["Nutshell - Leads", "Leads"];
     const util = new FilterUtil({ synchronized_segments: segments });
-    const filterResult = util.filterUsers([envelope]);
+    const filterResult = util.filterContacts([envelope]);
 
     const envResult = _.cloneDeep(envelope);
     envResult.skipReason = "User doesn't belong to synchronized lead segments or is part of both lead and contact segments.";
