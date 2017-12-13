@@ -385,7 +385,8 @@ class Agent {
         requestId: reqId
       };
       try {
-        const currentObjectResponse = await this.nutshellClient.getResourceById("Contact", _.get(envelope, "currentNutshellContact.id"), null, options);
+        const currentContactId = _.get(envelope, "currentNutshellContact.id", _.get(envelope, "message.user.traits_nutshell/id"));
+        const currentObjectResponse = await this.nutshellClient.getResourceById("Contact", currentContactId, null, options);
         const currentObject = currentObjectResponse.result;
         const newObject = this.attributesMapper.mapToServiceObject("Contact", _.get(envelope, "message.user", {}));
         const patchResult = this.patchUtil.createPatchObject("Contact", newObject, currentObject);
@@ -416,7 +417,8 @@ class Agent {
     if (!_.isObject(body)) {
       return Promise.resolve(false);
     }
-    _.forEach(_.get(body, "payloads"), (p) => {
+    const baseHostname = await this.getApiBaseHostName();
+    _.forEach(_.get(body, "payloads"), async (p) => {
       const payloadType = _.get(p, "type", "n/a");
       if (payloadType === "activities") {
         // We don't have a real object in this case, but we can query the API
@@ -430,7 +432,18 @@ class Agent {
         // so we need to fetch the entire object from the API
         // TODO: Add async function to the agent which takes the id and handles the rest
         const id = this.extractIdentifierFromPayload(p);
-        console.log(id);
+        const reqId = uuid();
+        const options: INutshellOperationOptions = {
+          host: baseHostname,
+          requestId: reqId
+        };
+        const currentObjectResponse = await this.nutshellClient.getResourceById("Contact", id, null, options);
+        const hullAttributes = this.attributesMapper.mapToHullAttributeObject("Contact", currentObjectResponse.result);
+        const hullIdent = this.attributesMapper.mapToHullIdentObject("Contact", currentObjectResponse.result);
+        const asUser = this.hullClient.asUser(hullIdent);
+        asUser.traits(hullAttributes)
+          .then(() => asUser.logger.info("incoming.user.success", hullAttributes))
+          .catch((error) => asUser.logger.info("incoming.user.error", { error }));
       }
     });
     return Promise.resolve(_.isObject(body));

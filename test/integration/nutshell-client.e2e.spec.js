@@ -40,7 +40,7 @@ describe("NutshellClient", () => {
     expect(client.metricsClient).toEqual(mclnt);
   });
 
-  test("should increment the api calls by one by default if metricsClient is specified", () => {
+  test.skip("should increment the api calls by one by default if metricsClient is specified", () => {
     const incrementMock = jest.fn().mockImplementation(() => {
       console.log("mocked function called");
     });
@@ -53,7 +53,7 @@ describe("NutshellClient", () => {
     expect(incrementMock.mock.calls[0][1]).toEqual(1);
   });
 
-  test("should increment the api calls if metricsClient is specified", () => {
+  test.skip("should increment the api calls if metricsClient is specified", () => {
     const incrementMock = jest.fn().mockImplementation(() => {
       console.log("mocked function called");
     });

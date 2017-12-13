@@ -143,8 +143,12 @@ describe("Agent", () => {
     const incrementMock = jest.fn().mockImplementation(() => {
       return Promise.resolve();
     });
+    const valueMock = jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    });
     const metricsMock = {};
     metricsMock.increment = incrementMock.bind(metricsMock);
+    metricsMock.value = valueMock.bind(metricsMock);
 
     const agent = new Agent(client, connector, metricsMock);
 
@@ -451,8 +455,12 @@ describe("Agent", () => {
     const incrementMock = jest.fn().mockImplementation(() => {
       return Promise.resolve();
     });
+    const valueMock = jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    });
     const metricsMock = {};
     metricsMock.increment = incrementMock.bind(metricsMock);
+    metricsMock.value = valueMock.bind(metricsMock);
 
     const agent = new Agent(clientMock, connector, metricsMock);
 
@@ -545,8 +553,12 @@ describe("Agent", () => {
     const incrementMock = jest.fn().mockImplementation(() => {
       return Promise.resolve();
     });
+    const valueMock = jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    });
     const metricsMock = {};
     metricsMock.increment = incrementMock.bind(metricsMock);
+    metricsMock.value = valueMock.bind(metricsMock);
 
     const agent = new Agent(clientMock, connector, metricsMock);
 

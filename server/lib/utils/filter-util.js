@@ -42,10 +42,11 @@ class FilterUtil implements IFilterUtil {
     const results: IFilterResult = new FilterResult();
 
     envelopes.forEach((envelope) => {
-      if (!_.has(envelope, "message.user.account.id")) {
-        envelope.skipReason = "User doesn't have any account information";
-        return results.toSkip.push(envelope);
-      }
+      // TODO: I think we need this check here
+      // if (!_.has(envelope, "message.user.account.id")) {
+      //   envelope.skipReason = "User doesn't have any account information";
+      //   return results.toSkip.push(envelope);
+      // }
 
       if (skipSegmentCheck === true || (this.matchesWhitelistedSegments(envelope) && skipSegmentCheck === false)) {
         if (_.has(envelope.message, "account.nutshell/id")) {

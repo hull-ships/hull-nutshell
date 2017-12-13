@@ -61,9 +61,9 @@ class PatchUtil implements IPatchUtil {
 
     _.forEach(mappings, (m) => {
       const attribName = m.nutshell_field_name;
-
       if (_.has(newObject, attribName) && !_.isNil(_.get(newObject, attribName, null))) {
-        if (!_.has(currentObject, attribName) || _.isNil(_.get(currentObject, attribName))) {
+        // FIXME: in newObject I have name: string, but in currentObject we have name: Object with givenName, displayName etc.
+        if (!_.has(currentObject, attribName) || _.isNil(_.get(currentObject, attribName)) || _.get(currentObject, attribName) === "") {
           _.set(result.patchObject, attribName, _.get(newObject, attribName));
           result.hasChanges = true;
         } else if (_.get(currentObject, attribName) !== _.get(newObject, attribName) && m.overwrite === true) {
@@ -76,7 +76,8 @@ class PatchUtil implements IPatchUtil {
     // Apply the identifier and rev if we have changes detected,
     // but drop it if the actual nutshell object has none
     if (result.hasChanges === true) {
-      _.set(result.patchObject, "id", _.get(currentObject, "id"));
+      // TODO: if this is set API rejects contact edits
+      // _.set(result.patchObject, "id", _.get(currentObject, "id"));
       _.set(result.patchObject, "rev", _.get(currentObject, "rev"));
     }
 

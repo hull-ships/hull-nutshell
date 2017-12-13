@@ -137,7 +137,8 @@ describe("PatchUtil", () => {
     const expected = {
       hasChanges: true,
       patchObject: {
-        id: 7,
+        // TODO: I needed to remove it from patch util to let nutshell accept edit operation
+        // id: 7,
         rev: "0",
         name: "Test Account Hull 1 - Modified",
         MRR: 650

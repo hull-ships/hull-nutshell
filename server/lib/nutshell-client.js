@@ -66,8 +66,15 @@ class NutshellClient {
     return client;
   }
 
+  /**
+   * Since jayson library doesn't offer an "error" event to easily hook up
+   * to situation when we get errors, we need that helper function to handle them
+   * @param  {string} method
+   * @param  {Object} err
+   * @return {void}
+   */
   _handleError(method: string, err: Object) {
-    if (err) {
+    if (err && this.metricsClient) {
       this.metricsClient.increment("connector.service_api.error", 1, [`method:${method}`]);
     }
   }
@@ -84,6 +91,7 @@ class NutshellClient {
       const client = rpc.client.http(shared.DISCOVERY_ENDPOINT);
 
       client.request("getApiForUsername", { username: this.userId }, "apeye", (err, result) => {
+        this._handleError("editContact", err);
         if (err) {
           return reject(err);
         }
@@ -104,6 +112,7 @@ class NutshellClient {
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("newContact", { contact: data }, options.requestId, (err, result) => {
+        this._handleError("editContact", err);
         if (err) {
           return reject(err);
         }
@@ -124,6 +133,7 @@ class NutshellClient {
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("newAccount", { account: data }, options.requestId, (err, result) => {
+        this._handleError("editContact", err);
         if (err) {
           return reject(err);
         }
@@ -144,6 +154,7 @@ class NutshellClient {
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("newLead", { account: data }, options.requestId, (err, result) => {
+        this._handleError("editContact", err);
         if (err) {
           return reject(err);
         }
@@ -173,6 +184,7 @@ class NutshellClient {
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("editContact", { contactId: id, rev, contact: data }, options.requestId, (err, result) => {
+        this._handleError("editContact", err);
         if (err) {
           return reject(err);
         }
