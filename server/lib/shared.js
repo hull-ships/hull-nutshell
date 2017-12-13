@@ -73,6 +73,39 @@ export interface IPatchUtil {
   createPatchObject(resource: TResourceType, newObject: any, currentObject: any): IPatchResult;
 }
 
+/**
+ * This is a contact object Nutshell API returns
+ */
+export type TNutshellContact = {
+  id: string,
+  name: {
+    givenName: string,
+    familyName: string,
+    salutation: string | null,
+    displayName: string
+  },
+  phone: {
+    [string]: {
+      countryCode: string,
+      number: string,
+      extension: string | null
+    }
+  },
+  [string]: string | Array<string> | Object
+};
+
+/**
+ * This is the object we send to create endpoint of the API to create a contact
+ */
+export type TNutshellContactAttributes = {
+  id: string,
+  name: string,
+  phone: {
+    [string]: string
+  },
+  [string]: string | Array<string> | Object;
+};
+
 const DISCOVERY_ENDPOINT = "http://api.nutshell.com/v1/json";
 
 const SUPPORTED_RESOURCETYPES: Array<TResourceType> = ["Account", "Contact", "Lead"];
