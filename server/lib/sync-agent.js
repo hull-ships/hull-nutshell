@@ -445,17 +445,11 @@ class SyncAgent {
         const currentObjectResponse = await this.nutshellClient.getResourceById("Activity", activityId, null, options);
 
         const hullIdent = this.attributesMapper.mapToHullIdentObject(linkedObject.type, currentLinkedObjectResponse.result);
-        // TODO: do we want to save incoming.user?
-        // const hullAttributes = this.attributesMapper.mapToHullAttributeObject(linkedObject.type, currentLinkedObjectResponse.result);
         const hullTrack = this.webhookUtil.getHullTrack(currentObjectResponse.result);
         const asUser = this.hullClient.asUser(hullIdent);
         await asUser.track(hullTrack.name, hullTrack.params, hullTrack.context)
           .then(() => asUser.logger.info("incoming.event.success", hullTrack))
           .catch((error) => asUser.logger.info("incoming.event.error", { error }));
-
-        // asUser.traits(hullAttributes)
-        //   .then(() => asUser.logger.info("incoming.user.success", hullAttributes))
-        //   .catch((error) => asUser.logger.info("incoming.user.error", { error }));
       } else if (this.webhookUtil.isObjectUpdate(p)) {
         const objectType = this.webhookUtil.getObjectType(p);
         // We potentially have the correct data but
@@ -491,11 +485,13 @@ class SyncAgent {
           };
           const currentAccountResponse = await this.nutshellClient.getResourceById("Account", accountId, null, options);
           const hullAccountIdent = this.attributesMapper.mapToHullIdentObject("Account", currentAccountResponse.result);
-          const hullAccountAttributes = this.attributesMapper.mapToHullAttributeObject("Account", currentAccountResponse.result);
-          await asUser.account(hullAccountIdent)
-            .traits(hullAccountAttributes)
-            .then(() => asUser.logger.info("incoming.account.success", hullAccountAttributes))
-            .catch((error) => asUser.logger.info("incoming.account.error", { error }));
+          if (hullAccountIdent.domain !== undefined) {
+            const asAccount = asUser.account(hullAccountIdent);
+            await asAccount
+              .traits({})
+              .then(() => asAccount.logger.info("incoming.account-link.success"))
+              .catch((error) => asAccount.logger.info("incoming.account-link.error", { error }));
+          }
         }
       }
     });

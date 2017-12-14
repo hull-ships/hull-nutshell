@@ -122,15 +122,15 @@ describe("AttributesMapper", () => {
       "traits_salesforce_lead/id": "abcdf",
       "traits_salesforce_contact/id": "1234foo",
       "traits_salesforce/id": "56789baz",
-      "traits_nutshell/id": "7",
-      "traits_nutshell/rev": "1"
+      "traits_nutshell_contact/id": "7",
+      "traits_nutshell_contact/rev": "1"
     };
 
     const expectedNutshellObject = {
       name: hullUser.name,
       email: hullUser.email,
-      id: hullUser["traits_nutshell/id"],
-      rev: hullUser["traits_nutshell/rev"]
+      id: hullUser["traits_nutshell_contact/id"],
+      rev: hullUser["traits_nutshell_contact/rev"]
     };
 
     const mapper = new AttributesMapper(CONNECTOR_SETTINGS);
@@ -167,8 +167,8 @@ describe("AttributesMapper", () => {
       "traits_salesforce_lead/id": "abcdf",
       "traits_salesforce_contact/id": "1234foo",
       "traits_salesforce/id": "56789baz",
-      "traits_nutshell/id": "7",
-      "traits_nutshell/rev": "1"
+      "traits_nutshell_lead/id": "7",
+      "traits_nutshell_lead/rev": "1"
     };
 
     const expectedNutshellObject = {
@@ -181,8 +181,8 @@ describe("AttributesMapper", () => {
         name: hullUser.account.name,
         url: hullUser.account.domain
       },
-      id: hullUser["traits_nutshell/id"],
-      rev: hullUser["traits_nutshell/rev"]
+      id: hullUser["traits_nutshell_lead/id"],
+      rev: hullUser["traits_nutshell_lead/rev"]
     };
 
     const mapper = new AttributesMapper(CONNECTOR_SETTINGS);
@@ -269,6 +269,7 @@ describe("AttributesMapper", () => {
     };
 
     const expectedIdentObject = {
+      anonymous_id: "nutshell-account:7",
       domain: "hull-test1.io"
     };
 
@@ -307,7 +308,7 @@ describe("AttributesMapper", () => {
 
     const expectedIdentObject = {
       email: "test1@hull.io",
-      anonymous_id: `nutshell:${sObject.id}`
+      anonymous_id: `nutshell-contact:${sObject.id}`
     };
 
     const mapper = new AttributesMapper(CONNECTOR_SETTINGS);
@@ -344,21 +345,21 @@ describe("AttributesMapper", () => {
     };
 
     const expectedTraitsObject = {
-      "nutshell/id": { value: sObject.id },
-      "nutshell/rev": { value: sObject.rev },
-      "nutshell/first_name": { value: sObject.name.givenName },
-      "nutshell/last_name": { value: sObject.name.familyName },
-      "nutshell/created_at": { value: sObject.createdTime, operation: "setIfNull" },
-      "nutshell/updated_at": { value: sObject.modifiedTime },
+      "nutshell_contact/id": { value: sObject.id },
+      "nutshell_contact/rev": { value: sObject.rev },
+      "nutshell_contact/first_name": { value: sObject.name.givenName },
+      "nutshell_contact/last_name": { value: sObject.name.familyName },
+      "nutshell_contact/created_at": { value: sObject.createdTime, operation: "setIfNull" },
+      "nutshell_contact/updated_at": { value: sObject.modifiedTime },
       email: { value: sObject.email["--primary"], operation: "setIfNull" },
       first_name: { value: sObject.name.givenName, operation: "setIfNull" },
       last_name: { value: sObject.name.familyName, operation: "setIfNull" },
-      "nutshell/link": { value: sObject.htmlUrl },
-      "nutshell/email1": { value: sObject.email[1] },
-      "nutshell/contacted_count": { value: sObject.contactedCount },
-      "nutshell/last_contacted_at": { value: sObject.lastContactedDate },
-      "nutshell/tags": { value: sObject.tags },
-      "nutshell/description": { value: sObject.description }
+      "nutshell_contact/link": { value: sObject.htmlUrl },
+      "nutshell_contact/email1": { value: sObject.email[1] },
+      "nutshell_contact/contacted_count": { value: sObject.contactedCount },
+      "nutshell_contact/last_contacted_at": { value: sObject.lastContactedDate },
+      "nutshell_contact/tags": { value: sObject.tags },
+      "nutshell_contact/description": { value: sObject.description }
     };
 
     const mapper = new AttributesMapper(CONNECTOR_SETTINGS);
@@ -371,7 +372,7 @@ describe("AttributesMapper", () => {
     const sObject = leadDataResponse.result;
 
     const expectedIdentObject = {
-      anonymous_id: `nutshell:${sObject.id}`
+      anonymous_id: `nutshell-lead:${sObject.id}`
     };
 
     const mapper = new AttributesMapper(CONNECTOR_SETTINGS);
@@ -384,29 +385,29 @@ describe("AttributesMapper", () => {
     const sObject = leadDataResponse.result;
     const expectedTraitsObject = {
       name: { value: sObject.name, operation: "setIfNull" },
-      "nutshell/id": { value: sObject.id },
-      "nutshell/rev": { value: sObject.rev },
-      "nutshell/closed_at": { value: sObject.closedTime },
-      "nutshell/completion": { value: sObject.completion },
-      "nutshell/confidence": { value: sObject.confidence },
-      "nutshell/created_at": { value: sObject.createdTime, operation: "setIfNull" },
-      "nutshell/updated_at": { value: sObject.modifiedTime },
-      "nutshell/description": { value: sObject.description },
-      "nutshell/due_at": { value: sObject.dueTime },
-      "nutshell/estimated_value_amount": { value: sObject.estimatedValue.amount },
-      "nutshell/estimated_value_currency": { value: sObject.estimatedValue.currency },
-      "nutshell/is_overdue": { value: sObject.isOverdue },
-      "nutshell/last_contacted_at": { value: sObject.lastContactedDate },
-      "nutshell/link": { value: sObject.htmlUrl },
-      "nutshell/market_id": { value: sObject.market.id },
-      "nutshell/market_name": { value: sObject.market.name },
-      "nutshell/milestone_id": { value: sObject.milestone.id },
-      "nutshell/milestone_name": { value: sObject.milestone.name },
-      "nutshell/name": { value: sObject.name },
-      "nutshell/status": { value: sObject.status },
-      "nutshell/urgency": { value: sObject.urgency },
-      "nutshell/value_amount": { value: sObject.value.amount },
-      "nutshell/value_currency": { value: sObject.value.currency }
+      "nutshell_lead/id": { value: sObject.id },
+      "nutshell_lead/rev": { value: sObject.rev },
+      "nutshell_lead/closed_at": { value: sObject.closedTime },
+      "nutshell_lead/completion": { value: sObject.completion },
+      "nutshell_lead/confidence": { value: sObject.confidence },
+      "nutshell_lead/created_at": { value: sObject.createdTime, operation: "setIfNull" },
+      "nutshell_lead/updated_at": { value: sObject.modifiedTime },
+      "nutshell_lead/description": { value: sObject.description },
+      "nutshell_lead/due_at": { value: sObject.dueTime },
+      "nutshell_lead/estimated_value_amount": { value: sObject.estimatedValue.amount },
+      "nutshell_lead/estimated_value_currency": { value: sObject.estimatedValue.currency },
+      "nutshell_lead/is_overdue": { value: sObject.isOverdue },
+      "nutshell_lead/last_contacted_at": { value: sObject.lastContactedDate },
+      "nutshell_lead/link": { value: sObject.htmlUrl },
+      "nutshell_lead/market_id": { value: sObject.market.id },
+      "nutshell_lead/market_name": { value: sObject.market.name },
+      "nutshell_lead/milestone_id": { value: sObject.milestone.id },
+      "nutshell_lead/milestone_name": { value: sObject.milestone.name },
+      "nutshell_lead/name": { value: sObject.name },
+      "nutshell_lead/status": { value: sObject.status },
+      "nutshell_lead/urgency": { value: sObject.urgency },
+      "nutshell_lead/value_amount": { value: sObject.value.amount },
+      "nutshell_lead/value_currency": { value: sObject.value.currency }
     };
 
     const mapper = new AttributesMapper(CONNECTOR_SETTINGS);

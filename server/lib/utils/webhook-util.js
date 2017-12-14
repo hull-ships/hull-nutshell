@@ -5,7 +5,6 @@ const moment = require("moment");
 const { SUPPORTED_RESOURCETYPES } = require("../shared");
 
 class WebhookUtil {
-
   getPluralObjectType(resourceType: string): string {
     return `${_.toLower(resourceType)}s`;
   }

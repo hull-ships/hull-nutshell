@@ -202,18 +202,18 @@ describe("Agent", () => {
 
     const sObject = contactNewPayload.result;
     const expectedTraitsObject = {
-      "nutshell/id": { value: sObject.id },
-      "nutshell/rev": { value: sObject.rev },
-      "nutshell/first_name": { value: sObject.name.givenName },
-      "nutshell/last_name": { value: sObject.name.familyName },
-      "nutshell/created_at": { value: sObject.createdTime, operation: "setIfNull" },
-      "nutshell/updated_at": { value: sObject.modifiedTime },
+      "nutshell_contact/id": { value: sObject.id },
+      "nutshell_contact/rev": { value: sObject.rev },
+      "nutshell_contact/first_name": { value: sObject.name.givenName },
+      "nutshell_contact/last_name": { value: sObject.name.familyName },
+      "nutshell_contact/created_at": { value: sObject.createdTime, operation: "setIfNull" },
+      "nutshell_contact/updated_at": { value: sObject.modifiedTime },
       email: { value: sObject.email["--primary"], operation: "setIfNull" },
       first_name: { value: sObject.name.givenName, operation: "setIfNull" },
       last_name: { value: sObject.name.familyName, operation: "setIfNull" },
-      "nutshell/link": { value: sObject.htmlUrl },
-      "nutshell/email1": { value: sObject.email[1] },
-      "nutshell/contacted_count": { value: sObject.contactedCount }
+      "nutshell_contact/link": { value: sObject.htmlUrl },
+      "nutshell_contact/email1": { value: sObject.email[1] },
+      "nutshell_contact/contacted_count": { value: sObject.contactedCount }
     };
 
     agent.handleNutshellResponse("Contact", envelope, contactNewPayload).then(() => {
@@ -454,18 +454,18 @@ describe("Agent", () => {
 
     const sObject = contactNewPayload.result;
     const expectedTraitsObject = {
-      "nutshell/id": { value: sObject.id },
-      "nutshell/rev": { value: sObject.rev },
-      "nutshell/first_name": { value: sObject.name.givenName },
-      "nutshell/last_name": { value: sObject.name.familyName },
-      "nutshell/created_at": { value: sObject.createdTime, operation: "setIfNull" },
-      "nutshell/updated_at": { value: sObject.modifiedTime },
+      "nutshell_contact/id": { value: sObject.id },
+      "nutshell_contact/rev": { value: sObject.rev },
+      "nutshell_contact/first_name": { value: sObject.name.givenName },
+      "nutshell_contact/last_name": { value: sObject.name.familyName },
+      "nutshell_contact/created_at": { value: sObject.createdTime, operation: "setIfNull" },
+      "nutshell_contact/updated_at": { value: sObject.modifiedTime },
       email: { value: sObject.email["--primary"], operation: "setIfNull" },
       first_name: { value: sObject.name.givenName, operation: "setIfNull" },
       last_name: { value: sObject.name.familyName, operation: "setIfNull" },
-      "nutshell/link": { value: sObject.htmlUrl },
-      "nutshell/email1": { value: sObject.email[1] },
-      "nutshell/contacted_count": { value: sObject.contactedCount }
+      "nutshell_contact/link": { value: sObject.htmlUrl },
+      "nutshell_contact/email1": { value: sObject.email[1] },
+      "nutshell_contact/contacted_count": { value: sObject.contactedCount }
     };
 
     agent.sendUserUpdateMessages(messagesToInsert, false).then(() => {
@@ -552,19 +552,19 @@ describe("Agent", () => {
 
     const sObject = contactUpdatePayload.result;
     const expectedTraitsObject = {
-      "nutshell/id": { value: sObject.id },
-      "nutshell/rev": { value: sObject.rev },
-      "nutshell/first_name": { value: sObject.name.givenName },
-      "nutshell/last_name": { value: sObject.name.familyName },
-      "nutshell/created_at": { value: sObject.createdTime, operation: "setIfNull" },
-      "nutshell/updated_at": { value: sObject.modifiedTime },
+      "nutshell_contact/id": { value: sObject.id },
+      "nutshell_contact/rev": { value: sObject.rev },
+      "nutshell_contact/first_name": { value: sObject.name.givenName },
+      "nutshell_contact/last_name": { value: sObject.name.familyName },
+      "nutshell_contact/created_at": { value: sObject.createdTime, operation: "setIfNull" },
+      "nutshell_contact/updated_at": { value: sObject.modifiedTime },
       email: { value: sObject.email["--primary"], operation: "setIfNull" },
       first_name: { value: sObject.name.givenName, operation: "setIfNull" },
       last_name: { value: sObject.name.familyName, operation: "setIfNull" },
-      "nutshell/link": { value: sObject.htmlUrl },
-      "nutshell/email1": { value: sObject.email[1] },
-      "nutshell/contacted_count": { value: sObject.contactedCount },
-      "nutshell/description": { value: sObject.description }
+      "nutshell_contact/link": { value: sObject.htmlUrl },
+      "nutshell_contact/email1": { value: sObject.email[1] },
+      "nutshell_contact/contacted_count": { value: sObject.contactedCount },
+      "nutshell_contact/description": { value: sObject.description }
     };
 
     agent.sendUserUpdateMessages(messagesToUpdate, false).then(() => {
