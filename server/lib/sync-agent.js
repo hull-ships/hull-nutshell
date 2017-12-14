@@ -426,6 +426,9 @@ class SyncAgent {
     _.forEach(_.get(body, "payloads"), async (p) => {
       const payloadType = _.get(p, "type", "n/a");
       if (payloadType === "activities") {
+        if (this.webhookUtil.skipActivity(body, p)) {
+          return;
+        }
         // We don't have a real object in this case, but we can query the API
         // and process the response
         // TODO: Add async function to the agent which takes the id and handles the rest

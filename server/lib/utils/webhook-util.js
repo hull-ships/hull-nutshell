@@ -7,29 +7,33 @@ class WebhookUtil {
     return _.replace(_.get(payload, "id", ""), `-${payload.type}`, "");
   }
 
+  skipActivity(body: Object, payload: Object): boolean {
+    const payloadId = _.get(payload, "id");
+    const events = _.get(body, "events");
+    const createEvent = _.find(events, (event) => {
+      return event.action === "create" && _.includes(event.links.payloads, payloadId);
+    });
+    return createEvent === undefined;
+  }
+
   getLinkedObject(payload: Object): Object {
     const response = {
       type: "",
       id: ""
     };
-
     const links = _.get(payload, "links", {});
-
     if (_.has(links, "accounts[0]")) {
       response.type = "Account";
       response.id = _.replace(_.get(links, "accounts[0]", ""), "-accounts", "");
     }
-
     if (_.has(links, "contacts[0]")) {
       response.type = "Contact";
       response.id = _.replace(_.get(links, "contacts[0]", ""), "-contacts", "");
     }
-
     if (_.has(links, "leads[0]")) {
       response.type = "Lead";
       response.id = _.replace(_.get(links, "leads[0]", ""), "-leads", "");
     }
-
     return response;
   }
 
@@ -42,7 +46,10 @@ class WebhookUtil {
 
     result.name = _.get(payload, "activityType.name", "");
     result.params = {
+      description: _.get(payload, "description", ""),
       note: _.get(payload, "logNote.note", ""),
+      note_markup: _.get(payload, "logNote.noteMarkup", ""),
+      note_html: _.get(payload, "logNote.noteHtml", ""),
       is_all_day: _.get(payload, "isAllDay", ""),
       is_cancelled: _.get(payload, "isCancelled", ""),
       start_time: _.get(payload, "startTime", ""),
