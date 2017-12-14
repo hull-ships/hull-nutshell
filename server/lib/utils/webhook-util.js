@@ -2,9 +2,25 @@
 const _ = require("lodash");
 const moment = require("moment");
 
+const { SUPPORTED_RESOURCETYPES } = require("../shared");
+
 class WebhookUtil {
+
+  getPluralObjectType(resourceType: string): string {
+    return `${_.toLower(resourceType)}s`;
+  }
+
   extractIdentifierFromPayload(payload: Object): string {
     return _.replace(_.get(payload, "id", ""), `-${payload.type}`, "");
+  }
+
+  isActivity(payload: Object): boolean {
+    return _.get(payload, "type") === "activity";
+  }
+
+  isObjectUpdate(payload: Object): boolean {
+    const supportedPluralTypes = SUPPORTED_RESOURCETYPES.map(this.getPluralObjectType);
+    return _.includes(supportedPluralTypes, _.get(payload, "type"));
   }
 
   skipActivity(body: Object, payload: Object): boolean {
@@ -16,24 +32,36 @@ class WebhookUtil {
     return createEvent === undefined;
   }
 
+  getObjectType(payload: Object): string {
+    const type = _.find(SUPPORTED_RESOURCETYPES, (t) => {
+      return this.getPluralObjectType(t) === _.get(payload, "type");
+    });
+    return _.toString(type);
+  }
+
+  getLinkedAccountId(payload: Object): string {
+    return _.replace(_.get(payload, "links.accounts[0]", ""), "-accounts", "");
+  }
+
   getLinkedObject(payload: Object): Object {
     const response = {
       type: "",
       id: ""
     };
     const links = _.get(payload, "links", {});
-    if (_.has(links, "accounts[0]")) {
-      response.type = "Account";
-      response.id = _.replace(_.get(links, "accounts[0]", ""), "-accounts", "");
-    }
-    if (_.has(links, "contacts[0]")) {
-      response.type = "Contact";
-      response.id = _.replace(_.get(links, "contacts[0]", ""), "-contacts", "");
-    }
-    if (_.has(links, "leads[0]")) {
-      response.type = "Lead";
-      response.id = _.replace(_.get(links, "leads[0]", ""), "-leads", "");
-    }
+    const supportedTypes: Array<Object> = SUPPORTED_RESOURCETYPES.map((type) => {
+      return {
+        type,
+        pluralType: this.getPluralObjectType(type)
+      };
+    });
+
+    supportedTypes.forEach((type) => {
+      if (_.has(links, `${type.pluralType}[0]`)) {
+        response.type = type.type;
+        response.id = _.replace(_.get(links, `${type.pluralType}[0]`, ""), `-${type.pluralType}`, "");
+      }
+    });
     return response;
   }
 

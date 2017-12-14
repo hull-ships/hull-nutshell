@@ -424,8 +424,7 @@ class SyncAgent {
     }
     const baseHostname = await this.getApiBaseHostName();
     _.forEach(_.get(body, "payloads"), async (p) => {
-      const payloadType = _.get(p, "type", "n/a");
-      if (payloadType === "activities") {
+      if (this.webhookUtil.isActivity(p)) {
         if (this.webhookUtil.skipActivity(body, p)) {
           return;
         }
@@ -450,30 +449,54 @@ class SyncAgent {
         // const hullAttributes = this.attributesMapper.mapToHullAttributeObject(linkedObject.type, currentLinkedObjectResponse.result);
         const hullTrack = this.webhookUtil.getHullTrack(currentObjectResponse.result);
         const asUser = this.hullClient.asUser(hullIdent);
-        asUser.track(hullTrack.name, hullTrack.params, hullTrack.context)
+        await asUser.track(hullTrack.name, hullTrack.params, hullTrack.context)
           .then(() => asUser.logger.info("incoming.event.success", hullTrack))
           .catch((error) => asUser.logger.info("incoming.event.error", { error }));
 
         // asUser.traits(hullAttributes)
         //   .then(() => asUser.logger.info("incoming.user.success", hullAttributes))
         //   .catch((error) => asUser.logger.info("incoming.user.error", { error }));
-      } else if (payloadType === "contacts") {
+      } else if (this.webhookUtil.isObjectUpdate(p)) {
+        const objectType = this.webhookUtil.getObjectType(p);
         // We potentially have the correct data but
         // the payload is lacking the revision number,
         // so we need to fetch the entire object from the API
         // TODO: Add async function to the agent which takes the id and handles the rest
         const id = this.webhookUtil.extractIdentifierFromPayload(p);
-        const options: INutshellOperationOptions = {
+        let options: INutshellOperationOptions = {
           host: baseHostname,
           requestId: uuid()
         };
-        const currentObjectResponse = await this.nutshellClient.getResourceById("Contact", id, null, options);
-        const hullAttributes = this.attributesMapper.mapToHullAttributeObject("Contact", currentObjectResponse.result);
-        const hullIdent = this.attributesMapper.mapToHullIdentObject("Contact", currentObjectResponse.result);
-        const asUser = this.hullClient.asUser(hullIdent);
-        asUser.traits(hullAttributes)
-          .then(() => asUser.logger.info("incoming.user.success", hullAttributes))
-          .catch((error) => asUser.logger.info("incoming.user.error", { error }));
+        const currentObjectResponse = await this.nutshellClient.getResourceById(objectType, id, null, options);
+        const hullAttributes = this.attributesMapper.mapToHullAttributeObject(objectType, currentObjectResponse.result);
+        const hullIdent = this.attributesMapper.mapToHullIdentObject(objectType, currentObjectResponse.result);
+        let asUser;
+        let logKey;
+        if (objectType === "Account") {
+          asUser = this.hullClient.asAccount(hullIdent);
+          logKey = "account";
+        } else {
+          asUser = this.hullClient.asUser(hullIdent);
+          logKey = "user";
+        }
+        await asUser.traits(hullAttributes)
+          .then(() => asUser.logger.info(`incoming.${logKey}.success`, hullAttributes))
+          .catch((error) => asUser.logger.info(`incoming.${logKey}.error`, { error }));
+
+        const accountId = this.webhookUtil.getLinkedAccountId(p);
+        if (accountId) {
+          options = {
+            host: baseHostname,
+            requestId: uuid()
+          };
+          const currentAccountResponse = await this.nutshellClient.getResourceById("Account", accountId, null, options);
+          const hullAccountIdent = this.attributesMapper.mapToHullIdentObject("Account", currentAccountResponse.result);
+          const hullAccountAttributes = this.attributesMapper.mapToHullAttributeObject("Account", currentAccountResponse.result);
+          await asUser.account(hullAccountIdent)
+            .traits(hullAccountAttributes)
+            .then(() => asUser.logger.info("incoming.account.success", hullAccountAttributes))
+            .catch((error) => asUser.logger.info("incoming.account.error", { error }));
+        }
       }
     });
     return Promise.resolve(_.isObject(body));
