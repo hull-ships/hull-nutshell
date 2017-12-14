@@ -3,7 +3,7 @@ import type { IPatchResult, IPatchUtil, TResourceType } from "../types";
 
 const _ = require("lodash");
 
-const { SUPPORTED_RESOURCETYPES } = require("../shared");
+const { SUPPORTED_RESOURCETYPES, COMPLEX_FIELDS_MAP } = require("../shared");
 
 class PatchUtil implements IPatchUtil {
   /**
@@ -13,6 +13,8 @@ class PatchUtil implements IPatchUtil {
    * @memberof PatchUtil
    */
   mappingsOutbound: Object;
+
+  complexFieldsMap: Object;
 
   /**
    * Creates an instance of PatchUtil.
@@ -24,6 +26,7 @@ class PatchUtil implements IPatchUtil {
     _.forEach(SUPPORTED_RESOURCETYPES, (r) => {
       _.set(this.mappingsOutbound, r, _.get(settings, `${r.toLowerCase()}_attributes_outbound`, {}));
     });
+    this.complexFieldsMap = COMPLEX_FIELDS_MAP;
   }
 
   /**
@@ -60,14 +63,14 @@ class PatchUtil implements IPatchUtil {
     }
 
     _.forEach(mappings, (m) => {
-      const attribName = m.nutshell_field_name;
-      if (_.has(newObject, attribName) && !_.isNil(_.get(newObject, attribName, null))) {
-        // FIXME: in newObject I have name: string, but in currentObject we have name: Object with givenName, displayName etc.
-        if (!_.has(currentObject, attribName) || _.isNil(_.get(currentObject, attribName)) || _.get(currentObject, attribName) === "") {
-          _.set(result.patchObject, attribName, _.get(newObject, attribName));
+      const newObjectAttrName = m.nutshell_field_name;
+      const currentObjectAttrName = _.get(this.complexFieldsMap, `${resource}.${m.nutshell_field_name}`, m.nutshell_field_name);
+      if (_.has(newObject, newObjectAttrName) && !_.isNil(_.get(newObject, newObjectAttrName, null))) {
+        if (!_.has(currentObject, currentObjectAttrName) || _.isNil(_.get(currentObject, currentObjectAttrName)) || _.get(currentObject, currentObjectAttrName) === "") {
+          _.set(result.patchObject, newObjectAttrName, _.get(newObject, newObjectAttrName));
           result.hasChanges = true;
-        } else if (_.get(currentObject, attribName) !== _.get(newObject, attribName) && m.overwrite === true) {
-          _.set(result.patchObject, attribName, _.get(newObject, attribName));
+        } else if (_.get(currentObject, currentObjectAttrName) !== _.get(newObject, newObjectAttrName) && m.overwrite === true) {
+          _.set(result.patchObject, newObjectAttrName, _.get(newObject, newObjectAttrName));
           result.hasChanges = true;
         }
       }
