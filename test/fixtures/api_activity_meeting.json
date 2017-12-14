@@ -1,0 +1,92 @@
+{
+  "id": 11,
+  "entityType": "Activities",
+  "rev": "1",
+  "modifiedTime": "2017-12-14T13:19:23+0000",
+  "createdTime": "2017-12-14T13:19:23+0000",
+  "name": "Meeting",
+  "description": "",
+  "activityType": {
+    "stub": true,
+    "id": 2,
+    "rev": "0",
+    "entityType": "Activity_Types",
+    "name": "Meeting"
+  },
+  "lead": null,
+  "leads": [],
+  "startTime": "2017-12-14T13:04:23+0000",
+  "endTime": "2017-12-14T13:19:23+0000",
+  "isAllDay": false,
+  "isTimed": true,
+  "isFlagged": false,
+  "status": 1,
+  "loggedBy": {
+    "stub": true,
+    "id": 1,
+    "rev": "1",
+    "entityType": "Users",
+    "modifiedTime": "2017-12-14T13:00:21+0000",
+    "createdTime": "2017-12-14T13:00:18+0000",
+    "name": "Michal",
+    "emails": [
+      "michal@hull.io"
+    ],
+    "isEnabled": true,
+    "isAdministrator": true
+  },
+  "participants": [
+    {
+      "stub": true,
+      "id": 1,
+      "rev": "1",
+      "entityType": "Users",
+      "modifiedTime": "2017-12-14T13:00:21+0000",
+      "createdTime": "2017-12-14T13:00:18+0000",
+      "name": "Michal",
+      "emails": [
+        null
+      ],
+      "isEnabled": true,
+      "isAdministrator": true,
+      "status": 0
+    },
+    {
+      "stub": true,
+      "id": 7,
+      "rev": "2",
+      "entityType": "Contacts",
+      "modifiedTime": "2017-12-14T13:02:46+0000",
+      "createdTime": "2017-12-14T13:02:46+0000",
+      "name": "Testing User",
+      "jobTitle": "",
+      "status": 0
+    }
+  ],
+  "logNote": {
+    "id": 15,
+    "rev": "0",
+    "entityType": "Notes",
+    "createdTime": "2017-12-14T13:19:23+0000",
+    "note": "A meeting notes goes here:\\n1\\n1\\n1\\n1",
+    "noteMarkup": "A meeting notes goes here:\\n1\\n1\\n1\\n1",
+    "noteHtml": "A meeting notes goes here:<br />\\n1<br />\\n1<br />\\n1<br />\\n1",
+    "user": {
+      "stub": true,
+      "id": 1,
+      "rev": "1",
+      "entityType": "Users",
+      "modifiedTime": "2017-12-14T13:00:21+0000",
+      "createdTime": "2017-12-14T13:00:18+0000",
+      "name": "Michal",
+      "emails": [
+        null
+      ],
+      "isEnabled": true,
+      "isAdministrator": true
+    },
+    "originId": 1,
+    "date": "2017-12-14T13:19:23+0000"
+  },
+  "logDescription": "A meeting notes goes here:\\n1\\n1\\n1\\n1"
+}

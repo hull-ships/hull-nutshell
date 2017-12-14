@@ -9,6 +9,7 @@ const cacheManager = require("cache-manager");
 const AttributesMapper = require("./utils/attributes-mapper");
 const PatchUtil = require("./utils/patch-util");
 const FilterUtil = require("./utils/filter-util");
+const WebhookUtil = require("./utils/webhook-util");
 
 class SyncAgent {
   synchronizedSegments: string[];
@@ -31,6 +32,8 @@ class SyncAgent {
 
   patchUtil: IPatchUtil;
 
+  webhookUtil: Object;
+
   constructor(ctx: THullReqContext) {
     const { ship: connector, client: hullClient, metric: metricsClient } = ctx;
     this.connector = connector;
@@ -43,6 +46,7 @@ class SyncAgent {
     this.attributesMapper = new AttributesMapper(connector.private_settings);
     this.patchUtil = new PatchUtil(connector.private_settings);
     this.filterUtil = new FilterUtil(connector.private_settings);
+    this.webhookUtil = new WebhookUtil();
   }
 
   composeNutshellClientOptions(settings: Object, metricsClient: IMetricsClient): INutshellClientOptions {
@@ -425,18 +429,40 @@ class SyncAgent {
         // We don't have a real object in this case, but we can query the API
         // and process the response
         // TODO: Add async function to the agent which takes the id and handles the rest
-        const id = this.extractIdentifierFromPayload(p);
-        console.log(id);
+        const activityId = this.webhookUtil.extractIdentifierFromPayload(p);
+        const linkedObject = this.webhookUtil.getLinkedObject(p);
+        let options: INutshellOperationOptions = {
+          host: baseHostname,
+          requestId: uuid()
+        };
+        const currentLinkedObjectResponse = await this.nutshellClient.getResourceById(linkedObject.type, linkedObject.id, null, options);
+        options = {
+          host: baseHostname,
+          requestId: uuid()
+        };
+        const currentObjectResponse = await this.nutshellClient.getResourceById("Activity", activityId, null, options);
+
+        const hullIdent = this.attributesMapper.mapToHullIdentObject(linkedObject.type, currentLinkedObjectResponse.result);
+        // TODO: do we want to save incoming.user?
+        // const hullAttributes = this.attributesMapper.mapToHullAttributeObject(linkedObject.type, currentLinkedObjectResponse.result);
+        const hullTrack = this.webhookUtil.getHullTrack(currentObjectResponse.result);
+        const asUser = this.hullClient.asUser(hullIdent);
+        asUser.track(hullTrack.name, hullTrack.params, hullTrack.context)
+          .then(() => asUser.logger.info("incoming.event.success", hullTrack))
+          .catch((error) => asUser.logger.info("incoming.event.error", { error }));
+
+        // asUser.traits(hullAttributes)
+        //   .then(() => asUser.logger.info("incoming.user.success", hullAttributes))
+        //   .catch((error) => asUser.logger.info("incoming.user.error", { error }));
       } else if (payloadType === "contacts") {
         // We potentially have the correct data but
         // the payload is lacking the revision number,
         // so we need to fetch the entire object from the API
         // TODO: Add async function to the agent which takes the id and handles the rest
-        const id = this.extractIdentifierFromPayload(p);
-        const reqId = uuid();
+        const id = this.webhookUtil.extractIdentifierFromPayload(p);
         const options: INutshellOperationOptions = {
           host: baseHostname,
-          requestId: reqId
+          requestId: uuid()
         };
         const currentObjectResponse = await this.nutshellClient.getResourceById("Contact", id, null, options);
         const hullAttributes = this.attributesMapper.mapToHullAttributeObject("Contact", currentObjectResponse.result);
@@ -448,10 +474,6 @@ class SyncAgent {
       }
     });
     return Promise.resolve(_.isObject(body));
-  }
-
-  extractIdentifierFromPayload(payload: Object): string {
-    return _.replace(_.get(payload, "id", ""), `-${payload.type}`, "");
   }
 
   handleNutshellResponse(resource: TResourceType, envelope: IUserUpdateEnvelope, response: INutshellClientResponse): Promise<*> {

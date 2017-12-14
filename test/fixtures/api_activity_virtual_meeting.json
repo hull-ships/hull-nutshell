@@ -1,0 +1,108 @@
+{
+  "id": 15,
+  "entityType": "Activities",
+  "rev": "1",
+  "modifiedTime": "2017-12-14T13:21:04+0000",
+  "createdTime": "2017-12-14T13:21:04+0000",
+  "name": "Virtual Meeting",
+  "description": "",
+  "activityType": {
+    "stub": true,
+    "id": 3,
+    "rev": "0",
+    "entityType": "Activity_Types",
+    "name": "Virtual Meeting"
+  },
+  "lead": null,
+  "leads": [],
+  "startTime": "2017-12-14T05:00:00+0000",
+  "endTime": "2017-12-15T04:59:59+0000",
+  "isAllDay": true,
+  "isTimed": true,
+  "isFlagged": false,
+  "status": 1,
+  "loggedBy": {
+    "stub": true,
+    "id": 1,
+    "rev": "1",
+    "entityType": "Users",
+    "modifiedTime": "2017-12-14T13:00:21+0000",
+    "createdTime": "2017-12-14T13:00:18+0000",
+    "name": "Michal",
+    "emails": [
+      "michal@hull.io"
+    ],
+    "isEnabled": true,
+    "isAdministrator": true
+  },
+  "participants": [
+    {
+      "stub": true,
+      "id": 1,
+      "rev": "1",
+      "entityType": "Users",
+      "modifiedTime": "2017-12-14T13:00:21+0000",
+      "createdTime": "2017-12-14T13:00:18+0000",
+      "name": "Michal",
+      "emails": [
+        null
+      ],
+      "isEnabled": true,
+      "isAdministrator": true,
+      "status": 0
+    },
+    {
+      "stub": true,
+      "id": 7,
+      "rev": "2",
+      "entityType": "Contacts",
+      "modifiedTime": "2017-12-14T13:02:46+0000",
+      "createdTime": "2017-12-14T13:02:46+0000",
+      "name": "Testing User",
+      "jobTitle": "",
+      "status": 0
+    }
+  ],
+  "logNote": {
+    "id": 19,
+    "rev": "0",
+    "entityType": "Notes",
+    "createdTime": "2017-12-14T13:21:04+0000",
+    "note": "virtual meeting",
+    "noteMarkup": "virtual meeting",
+    "noteHtml": "virtual meeting",
+    "user": {
+      "stub": true,
+      "id": 1,
+      "rev": "1",
+      "entityType": "Users",
+      "modifiedTime": "2017-12-14T13:00:21+0000",
+      "createdTime": "2017-12-14T13:00:18+0000",
+      "name": "Michal",
+      "emails": [
+        null
+      ],
+      "isEnabled": true,
+      "isAdministrator": true
+    },
+    "originId": 1,
+    "date": "2017-12-14T13:21:04+0000"
+  },
+  "logDescription": "virtual meeting",
+  "location": {
+    "name": "",
+    "location": {
+      "longitude": -100.4458824,
+      "latitude": 39.7837304
+    },
+    "locationAccuracy": "1",
+    "address_1": "",
+    "address_2": "",
+    "address_3": "",
+    "city": "",
+    "state": "",
+    "postalCode": "",
+    "country": "US",
+    "timezone": "America/Chicago"
+  }
+}

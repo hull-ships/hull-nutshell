@@ -1,0 +1,163 @@
+{
+    "meta": {},
+    "links": {
+        "events.comments": {
+            "href": "https://app.nutshell.com/rest/comments?parent_id={events.id}",
+            "type": "comments"
+        },
+        "events.actor": {
+            "href": "https://app.nutshell.com/rest/{events.actorType}/{events.actor}",
+            "type": "actors"
+        },
+        "events.payloads": {
+            "href": "https://app.nutshell.com/rest/{events.payloadType}/{events.payloads}",
+            "type": "payloads"
+        },
+        "actors.teams": {
+            "href": "https://app.nutshell.com/rest/teams/{actors.teams}",
+            "type": "teams"
+        },
+        "payloads.comments": {
+            "href": "https://app.nutshell.com/rest/comments?parent_id={activities.id}",
+            "type": "comments"
+        },
+        "payloads.accounts": {
+            "href": "https://app.nutshell.com/rest/accounts/{payloads.accounts}",
+            "type": "accounts"
+        },
+        "payloads.activityType": {
+            "href": "https://app.nutshell.com/rest/activityTypes/{payloads.activityType}",
+            "type": "activityTypes"
+        },
+        "payloads.contacts": {
+            "href": "https://app.nutshell.com/rest/contacts/{payloads.contacts}",
+            "type": "contacts"
+        },
+        "payloads.creator": {
+            "href": "https://app.nutshell.com/rest/users/{payloads.creator}",
+            "type": "users"
+        },
+        "payloads.leads": {
+            "href": "https://app.nutshell.com/rest/leads/{payloads.leads}",
+            "type": "leads"
+        },
+        "payloads.logger": {
+            "href": "https://app.nutshell.com/rest/users/{payloads.logger}",
+            "type": "users"
+        },
+        "payloads.logNote": {
+            "href": "https://app.nutshell.com/rest/notes/{payloads.logNote}",
+            "type": "notes"
+        },
+        "payloads.users": {
+            "href": "https://app.nutshell.com/rest/users/{payloads.users}",
+            "type": "users"
+        },
+        "users.teams": {
+            "href": "https://app.nutshell.com/rest/teams/{users.teams}",
+            "type": "teams"
+        }
+    },
+    "events": [
+        {
+            "id": "59-events",
+            "type": "events",
+            "createdTime": 1513256598,
+            "actorType": "users",
+            "payloadType": "activities",
+            "action": "create",
+            "changes": [],
+            "links": {
+                "comments": [],
+                "actor": "1-users",
+                "payloads": [
+                    "7-activities"
+                ]
+            }
+        }
+    ],
+    "actors": [
+        {
+            "id": "1-users",
+            "type": "users",
+            "name": "Michal",
+            "firstName": "Michal",
+            "modifiedTime": 1513256421,
+            "isEnabled": true,
+            "isAdministrator": true,
+            "isViewingRestricted": false,
+            "emails": [
+                "michal@hull.io"
+            ],
+            "sendForUser": [],
+            "emailSignature": "",
+            "phonecallerType": "",
+            "avatarUrl": "https://app.nutshell.com/avatar/users/1/274427/fe139ea2c4e31a4b998577e65541583c6d930a1df4dc958e08fd1796503c9bb3/1513256421",
+            "initials": "M",
+            "links": {
+                "teams": []
+            }
+        }
+    ],
+    "payloads": [
+        {
+            "id": "7-activities",
+            "type": "activities",
+            "agenda": "",
+            "createdTime": 1513256598,
+            "endTime": 1513256598,
+            "deletedTime": null,
+            "href": "https://app.nutshell.com/rest/activities/7-activities",
+            "isAllDay": false,
+            "isEditable": true,
+            "isCancelled": false,
+            "isFlagged": false,
+            "isLogged": true,
+            "isOverdue": false,
+            "loggedTime": 1513256598,
+            "modifiedTime": 1513256598,
+            "name": "Phone Call",
+            "startTime": 1513255698,
+            "isMediaLogged": false,
+            "htmlUrl": "https://app.nutshell.com/activity/open-modal/7",
+            "links": {
+                "comments": [],
+                "accounts": [],
+                "activityType": "1-activityTypes",
+                "contacts": [
+                    "7-contacts"
+                ],
+                "creator": "1-users",
+                "leads": [],
+                "logger": "1-users",
+                "logNote": "11-notes",
+                "users": [
+                    "1-users"
+                ]
+            }
+        }
+    ],
+    "users": [
+        {
+            "id": "1-users",
+            "type": "users",
+            "name": "Michal",
+            "firstName": "Michal",
+            "modifiedTime": 1513256421,
+            "isEnabled": true,
+            "isAdministrator": true,
+            "isViewingRestricted": false,
+            "emails": [
+                "michal@hull.io"
+            ],
+            "sendForUser": [],
+            "emailSignature": "",
+            "phonecallerType": "",
+            "avatarUrl": "https://app.nutshell.com/avatar/users/1/274427/fe139ea2c4e31a4b998577e65541583c6d930a1df4dc958e08fd1796503c9bb3/1513256421",
+            "initials": "M",
+            "links": {
+                "teams": []
+            }
+        }
+    ]
+}

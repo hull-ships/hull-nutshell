@@ -69,18 +69,6 @@ describe("Agent", () => {
     expect(agent.filterUtil).toBeDefined();
   });
 
-  test("should extract the identifier from a single payload", () => {
-    const client = new HullClientMock();
-    const metrics = new MetricsClientMock();
-    const connector = new ConnectorMock("1234", {}, PRIVATE_SETTINGS);
-
-    const agent = new Agent({ client, ship: connector, metric: metrics });
-
-    const payload = _.first(_.get(contactChangedPayload, "payloads", []));
-    const actual = agent.extractIdentifierFromPayload(payload);
-    expect(actual).toEqual("7");
-  });
-
   test("should return true for auth check if `api_username` and `api_key` are present", () => {
     const pSettings = {
       synchronized_segments: PRIVATE_SETTINGS.synchronized_segments,
