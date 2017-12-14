@@ -1,0 +1,228 @@
+{
+    "meta": {},
+    "links": {
+        "events.comments": {
+            "href": "https://app.nutshell.com/rest/comments?parent_id={events.id}",
+            "type": "comments"
+        },
+        "events.actor": {
+            "href": "https://app.nutshell.com/rest/{events.actorType}/{events.actor}",
+            "type": "actors"
+        },
+        "events.payloads": {
+            "href": "https://app.nutshell.com/rest/{events.payloadType}/{events.payloads}",
+            "type": "payloads"
+        },
+        "actors.teams": {
+            "href": "https://app.nutshell.com/rest/teams/{actors.teams}",
+            "type": "teams"
+        },
+        "payloads.accounts": {
+            "href": "https://app.nutshell.com/rest/accounts/{payloads.accounts}",
+            "type": "accounts"
+        },
+        "payloads.contacts": {
+            "href": "https://app.nutshell.com/rest/contacts/{payloads.contacts}",
+            "type": "contacts"
+        },
+        "payloads.tags": {
+            "href": "https://app.nutshell.com/rest/tags/{payloads.tags}",
+            "type": "tags"
+        },
+        "payloads.sources": {
+            "href": "https://app.nutshell.com/rest/sources/{payloads.sources}",
+            "type": "sources"
+        },
+        "payloads.owner": {
+            "href": "https://app.nutshell.com/rest/{leads.ownerType}/{leads.owner}",
+            "type": "owners"
+        },
+        "payloads.files": {
+            "href": "https://app.nutshell.com/rest/leads/{leads.id}/files",
+            "type": "files"
+        },
+        "payloads.relatedFiles": {
+            "href": "https://app.nutshell.com/rest/leads/{leads.id}/relatedfiles",
+            "type": "files"
+        },
+        "payloads.territory": {
+            "href": "https://app.nutshell.com/rest/territories/{payloads.territory}",
+            "type": "territories"
+        },
+        "payloads.stage": {
+            "href": "https://app.nutshell.com/rest/stages/{payloads.stage}",
+            "type": "stages"
+        },
+        "payloads.stageset": {
+            "href": "https://app.nutshell.com/rest/leads/{leads.id}/stages",
+            "type": "stagesets"
+        },
+        "payloads.creator": {
+            "href": "https://app.nutshell.com/rest/creators/{payloads.creator}",
+            "type": "creators"
+        },
+        "payloads.products": {
+            "href": "https://app.nutshell.com/rest/products/{payloads.products}",
+            "type": "products"
+        },
+        "payloads.productMaps": {
+            "href": "https://app.nutshell.com/rest/productMaps/{payloads.productMaps}",
+            "type": "productMaps"
+        },
+        "payloads.competitors": {
+            "href": "https://app.nutshell.com/rest/competitors/{payloads.competitors}",
+            "type": "competitors"
+        },
+        "payloads.competitorMaps": {
+            "href": "https://app.nutshell.com/rest/competitorMaps/{payloads.competitorMaps}",
+            "type": "competitorMaps"
+        },
+        "payloads.outcome": {
+            "href": "https://app.nutshell.com/rest/outcomes/{payloads.outcome}",
+            "type": "outcomes"
+        },
+        "payloads.watchers": {
+            "href": "https://app.nutshell.com/rest/users/{payloads.watchers}",
+            "type": "users"
+        },
+        "owners.teams": {
+            "href": "https://app.nutshell.com/rest/teams/{owners.teams}",
+            "type": "teams"
+        }
+    },
+    "events": [
+        {
+            "id": "227-events",
+            "type": "events",
+            "createdTime": 1513247651,
+            "actorType": "users",
+            "payloadType": "leads",
+            "action": "update",
+            "changes": [
+                {
+                    "attribute": "milestone_id",
+                    "oldValue": "7",
+                    "newValue": "11"
+                }
+            ],
+            "links": {
+                "comments": [],
+                "actor": "1-users",
+                "payloads": [
+                    "1003-leads"
+                ]
+            }
+        }
+    ],
+    "actors": [
+        {
+            "id": "1-users",
+            "type": "users",
+            "name": "Sven",
+            "firstName": "Sven",
+            "modifiedTime": 1513054295,
+            "isEnabled": true,
+            "isAdministrator": true,
+            "isViewingRestricted": false,
+            "emails": [
+                "sven+dev@hull.io"
+            ],
+            "sendForUser": [],
+            "emailSignature": "",
+            "phonecallerType": "",
+            "avatarUrl": "https://app.nutshell.com/avatar/users/1/273679/71c94dfa06532c969b508f6ce17cd31a1afd816da4a6ff580a4cc8c2e07c2af6/1513054295",
+            "initials": "S",
+            "links": {
+                "teams": []
+            }
+        }
+    ],
+    "payloads": [
+        {
+            "id": "1003-leads",
+            "type": "leads",
+            "isCurrentUserWatching": false,
+            "deletedTime": null,
+            "name": "Test lead",
+            "value": {
+                "amount": 0,
+                "currency": "USD",
+                "formatted": ""
+            },
+            "number": "1000",
+            "description": "Test lead",
+            "createdTime": {
+                "absoluteLocalizedString": "December 13, 2017",
+                "timestamp": 1513172280,
+                "value": "Yesterday"
+            },
+            "closedTime": null,
+            "dueTime": {
+                "absoluteLocalizedString": "December 31, 2017",
+                "timestamp": 1514727420,
+                "value": "December 31, 2017"
+            },
+            "anticipatedClosedTime": {
+                "absoluteLocalizedString": "December 31, 2017",
+                "timestamp": 1514727420,
+                "value": "December 31, 2017"
+            },
+            "ownerType": "users",
+            "status": "open",
+            "lastContactedTime": null,
+            "pieState": "08",
+            "isOverdue": false,
+            "href": "https://app.nutshell.com/rest/leads/1003-leads",
+            "confidence": 10,
+            "htmlUrl": "https://app.nutshell.com/lead/1000",
+            "avatarUrl": "https://app.nutshell.com/include/images/lead-pies/108.png",
+            "initials": null,
+            "links": {
+                "accounts": [],
+                "contacts": [
+                    "11-contacts"
+                ],
+                "tags": [
+                    "7-tags"
+                ],
+                "sources": [],
+                "owner": "1-users",
+                "files": [],
+                "relatedFiles": [],
+                "territory": null,
+                "stage": "11-stages",
+                "stageset": "1-stagesets",
+                "creator": "1-users",
+                "products": [],
+                "productMaps": [],
+                "competitors": [],
+                "competitorMaps": [],
+                "outcome": null,
+                "watchers": []
+            }
+        }
+    ],
+    "owners": [
+        {
+            "id": "1-users",
+            "type": "users",
+            "name": "Sven",
+            "firstName": "Sven",
+            "modifiedTime": 1513054295,
+            "isEnabled": true,
+            "isAdministrator": true,
+            "isViewingRestricted": false,
+            "emails": [
+                "sven+dev@hull.io"
+            ],
+            "sendForUser": [],
+            "emailSignature": "",
+            "phonecallerType": "",
+            "avatarUrl": "https://app.nutshell.com/avatar/users/1/273679/71c94dfa06532c969b508f6ce17cd31a1afd816da4a6ff580a4cc8c2e07c2af6/1513054295",
+            "initials": "S",
+            "links": {
+                "teams": []
+            }
+        }
+    ]
+}
