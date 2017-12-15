@@ -116,7 +116,7 @@ class FilterUtil implements IFilterUtil {
     }
 
     envelopes.forEach((envelope) => {
-      if (this.matchesLeadWhitelistedSegments(envelope) && !this.matchesWhitelistedSegments(envelope) === false) {
+      if (this.matchesLeadWhitelistedSegments(envelope) && !this.matchesWhitelistedSegments(envelope)) {
         if (_.has(envelope.message, "user.traits_nutshell/id")) {
           return results.toUpdate.push(envelope);
         }
