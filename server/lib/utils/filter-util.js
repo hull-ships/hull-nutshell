@@ -83,7 +83,7 @@ class FilterUtil implements IFilterUtil {
 
     envelopes.forEach((envelope) => {
       if (this.matchesWhitelistedSegments(envelope) && this.matchesLeadWhitelistedSegments(envelope) === false) {
-        if (_.has(envelope.message, "user.traits_nutshell/id")) {
+        if (_.has(envelope.message, "user.traits_nutshell_contact/id")) {
           return results.toUpdate.push(envelope);
         }
         return results.toInsert.push(envelope);
@@ -117,7 +117,7 @@ class FilterUtil implements IFilterUtil {
 
     envelopes.forEach((envelope) => {
       if (this.matchesLeadWhitelistedSegments(envelope) && !this.matchesWhitelistedSegments(envelope)) {
-        if (_.has(envelope.message, "user.traits_nutshell/id")) {
+        if (_.has(envelope.message, "user.traits_nutshell_lead/id")) {
           return results.toUpdate.push(envelope);
         }
         return results.toInsert.push(envelope);
