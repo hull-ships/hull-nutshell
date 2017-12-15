@@ -372,7 +372,7 @@ describe("AttributesMapper", () => {
     const sObject = leadDataResponse.result;
 
     const expectedIdentObject = {
-      anonymous_id: `nutshell-lead:${sObject.id}`
+      anonymous_id: `nutshell-contact:${sObject.contacts[0].id}`
     };
 
     const mapper = new AttributesMapper(CONNECTOR_SETTINGS);

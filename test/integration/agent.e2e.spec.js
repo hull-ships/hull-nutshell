@@ -647,7 +647,7 @@ describe("Agent", () => {
 
     agent.sendUserUpdateMessages(messagesToSkip).then(() => {
       expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.skip");
-      expect(infoMock.mock.calls[0][1]).toEqual({ reason: "User doesn't belong to synchronized lead segments or is part of both lead and contact segments." });
+      expect(infoMock.mock.calls[0][1]).toEqual({ reason: "User doesn't belong to synchronized segments." });
       expect(asUserMock.mock.calls[0][0]).toEqual(_.first(messagesToSkip).user);
       nockScope.persist(false);
       done();

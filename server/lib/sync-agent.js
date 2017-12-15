@@ -141,19 +141,10 @@ class SyncAgent {
         };
 
         const defaultFields = [
-          { value: "name", label: "Name" },
           { value: "description", label: "Description" },
           { value: "confidence", label: "Confidence" },
           { value: "note", label: "Note" },
-          { value: "contact.email", label: "Contact > Email" },
-          { value: "contact.name", label: "Contact > Name" },
-          { value: "contact.phone", label: "Contact > Phone" },
-          { value: "contact.title", label: "Contact > Title" },
-          { value: "contact.url", label: "Contact > Url" },
-          { value: "source.name", label: "Source (Name)" },
-          { value: "account.name", label: "Account > Name" },
-          { value: "account.url", label: "Account > Url" },
-          { value: "account.phone", label: "Account > Phone" }
+          { value: "source.name", label: "Source (Name)" }
         ];
         return this.nutshellClient.findCustomFields(options).then((opsResult) => {
           const customFields = _.map(opsResult.result.Leads, (field) => {
@@ -258,7 +249,7 @@ class SyncAgent {
             // Assume the first matching stub is the best match,
             // set the currentNutshellAccount object
             // and add the necessary id and rev fields for a patch
-            const currentAccountData = _.first(_.get(accountSearchClientResponse, "result"));
+            const currentAccountData = _.first(_.get(accountSearchClientResponse, "result.accounts"));
             _.set(envelope, "currentNutshellAccount", currentAccountData);
             _.set(envelope, "message.user.account.nutshell/id", _.get(currentAccountData, "id", null));
             _.set(envelope, "message.user.account.nutshell/rev", _.get(currentAccountData, "rev", null));
@@ -285,6 +276,9 @@ class SyncAgent {
         try {
           const response = await this.nutshellClient.createAccount(data, options);
           await this.handleNutshellResponse("Account", envelope, response);
+          _.set(envelope, "currentNutshellAccount", response.result);
+          _.set(envelope, "message.user.account.nutshell/id", _.get(response.result, "id", null));
+          _.set(envelope, "message.user.account.nutshell/rev", _.get(response.result, "rev", null));
         } catch (err) {
           this.hullClient.asAccount(_.get(envelope, "message.user.account", {})).logger.error("outgoing.account.error", { reason: "Failed to create a new account", details: err });
         }
@@ -347,8 +341,8 @@ class SyncAgent {
           // and add the necessary id and rev fields for a patch
           const currentContactData = _.first(_.get(emailSearchClientResponse, "result.contacts"));
           _.set(envelope, "currentNutshellContact", currentContactData);
-          _.set(envelope, "message.user.traits_nutshell/id", _.get(currentContactData, "id", null));
-          _.set(envelope, "message.user.traits_nutshell/rev", _.get(currentContactData, "rev", null));
+          _.set(envelope, "message.user.traits_nutshell_contact/id", _.get(currentContactData, "id", null));
+          _.set(envelope, "message.user.traits_nutshell_contact/rev", _.get(currentContactData, "rev", null));
         }
         return Promise.resolve(true);
       } catch (err) {
@@ -373,7 +367,11 @@ class SyncAgent {
         requestId: reqId
       };
       try {
+        console.log(">>> New Contact", data);
         const response = await this.nutshellClient.createContact(data, options);
+        _.set(envelope, "currentNutshellContact", response.result);
+        _.set(envelope, "message.user.traits_nutshell_contact/id", _.get(response.result, "id", null));
+        _.set(envelope, "message.user.traits_nutshell_contact/rev", _.get(response.result, "rev", null));
         return await this.handleNutshellResponse("Contact", envelope, response);
       } catch (err) {
         return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to create a new user", details: err });
@@ -390,7 +388,7 @@ class SyncAgent {
         requestId: reqId
       };
       try {
-        const currentContactId = _.get(envelope, "currentNutshellContact.id", _.get(envelope, "message.user.traits_nutshell/id"));
+        const currentContactId = _.get(envelope, "currentNutshellContact.id", _.get(envelope, "message.user.traits_nutshell_contact/id"));
         const currentObjectResponse = await this.nutshellClient.getResourceById("Contact", currentContactId, null, options);
         const currentObject = currentObjectResponse.result;
         const newObject = this.attributesMapper.mapToServiceObject("Contact", _.get(envelope, "message.user", {}));
@@ -430,19 +428,19 @@ class SyncAgent {
       };
 
       try {
-        const emailSearchClientResponse = await this.nutshellClient.searchByEmail(_.get(envelope, "message.user.email", ""), options);
+        const emailSearchClientResponse = await this.nutshellClient.searchLeads(_.get(envelope, "message.user.name", ""), searchMax, options);
         if (!_.isEmpty(_.get(emailSearchClientResponse, "result.leads", []))) {
           // Assume the first matching stub is the best match,
           // set the currentNutshellAccount object
           // and add the necessary id and rev fields for a patch
           const currentLeadData = _.first(_.get(emailSearchClientResponse, "result.leads"));
-          _.set(envelope, "currentNutshellLEads", currentLeadData);
-          _.set(envelope, "message.user.traits_nutshell/id", _.get(currentLeadData, "id", null));
-          _.set(envelope, "message.user.traits_nutshell/rev", _.get(currentLeadData, "rev", null));
+          _.set(envelope, "currentNutshellLead", currentLeadData);
+          _.set(envelope, "message.user.traits_nutshell_lead/id", _.get(currentLeadData, "id", null));
+          _.set(envelope, "message.user.traits_nutshell_lead/rev", _.get(currentLeadData, "rev", null));
         }
         return Promise.resolve(true);
       } catch (err) {
-        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.query.error", { reason: "Failed to search for contacts by email", details: err });
+        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.query.error", { reason: "Failed to search leads by name", details: err });
       }
     }));
 
