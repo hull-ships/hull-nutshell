@@ -105,7 +105,7 @@
           "hull_field_name",
           "nutshell_field_name"
         ]
-      } 
+      }
     },
     {
       "name": "contactsync_title",
@@ -144,7 +144,40 @@
           "hull_field_name",
           "nutshell_field_name"
         ]
-      } 
+      }
+    },
+    {
+      "name": "lead_attributes_outbound",
+      "title": "Send Lead Attributes to Nutshell",
+      "description": "Specify all fields to send",
+      "type": "array",
+      "format": "table",
+      "default": [
+        { "hull_field_name": "name", "nutshell_field_name": "name" },
+        { "hull_field_name": "email", "nutshell_field_name": "contact.email" }
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "hull_field_name" : {
+            "type" : "string",
+            "format" : "trait",
+            "title" : "Hull Attribute"
+          },
+          "nutshell_field_name" : {
+            "type" : "string",
+            "title" : "Nutshell Field",
+            "format" : "select",
+            "options" : {
+              "loadOptions" : "/fields-lead"
+            }
+          }
+        },
+        "required" : [
+          "hull_field_name",
+          "nutshell_field_name"
+        ]
+      }
     }
   ],
   "admin": "admin",

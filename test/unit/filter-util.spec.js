@@ -138,7 +138,7 @@ describe("FiterUtil", () => {
           first_name: "John",
           last_name: "Doe",
           email: "johndoe@test.io",
-          "traits_nutshell/id": "cont_abc123"
+          "traits_nutshell_contact/id": "cont_abc123"
         },
         account: {
           id: "abc-123",

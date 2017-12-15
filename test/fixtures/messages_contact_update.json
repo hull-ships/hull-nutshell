@@ -27,8 +27,8 @@
           "traits_salesforce_lead/id": "abcdf",
           "traits_salesforce_contact/id": "1234foo",
           "traits_salesforce/id": "56789baz",
-          "traits_nutshell/id": 7,
-          "traits_nutshell/rev": "1"
+          "traits_nutshell_contact/id": 7,
+          "traits_nutshell_contact/rev": "1"
       },
       "segments": [
         {

@@ -33,7 +33,7 @@ function server(app: $Application): $Application {
 
   app.get("/fields-contact", cors(), actions.fieldsContact);
   app.get("/fields-account", cors(), actions.fieldsAccount);
-  app.get("/fields-account", cors(), actions.fieldsLead);
+  app.get("/fields-lead", cors(), actions.fieldsLead);
 
   app.all("/webhook", express.json(), actions.webhook);
 

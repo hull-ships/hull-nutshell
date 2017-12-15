@@ -75,6 +75,7 @@ class NutshellClient {
    */
   _handleError(method: string, err: Object) {
     if (err && this.metricsClient) {
+      console.error(err);
       this.metricsClient.increment("connector.service_api.error", 1, [`method:${method}`]);
     }
   }
@@ -91,7 +92,7 @@ class NutshellClient {
       const client = rpc.client.http(shared.DISCOVERY_ENDPOINT);
 
       client.request("getApiForUsername", { username: this.userId }, "apeye", (err, result) => {
-        this._handleError("editContact", err);
+        this._handleError("getApiForUsername", err);
         if (err) {
           return reject(err);
         }
@@ -112,7 +113,7 @@ class NutshellClient {
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("newContact", { contact: data }, options.requestId, (err, result) => {
-        this._handleError("editContact", err);
+        this._handleError("newContact", err);
         if (err) {
           return reject(err);
         }
@@ -133,7 +134,7 @@ class NutshellClient {
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("newAccount", { account: data }, options.requestId, (err, result) => {
-        this._handleError("editContact", err);
+        this._handleError("newAccount", err);
         if (err) {
           return reject(err);
         }
@@ -153,8 +154,8 @@ class NutshellClient {
   createLead(data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
-      client.request("newLead", { account: data }, options.requestId, (err, result) => {
-        this._handleError("editContact", err);
+      client.request("newLead", { lead: data }, options.requestId, (err, result) => {
+        this._handleError("newLead", err);
         if (err) {
           return reject(err);
         }
@@ -214,6 +215,7 @@ class NutshellClient {
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("editAccount", { accountId: id, rev, account: data }, options.requestId, (err, result) => {
+        this._handleError("editAccount", err);
         if (err) {
           return reject(err);
         }
@@ -243,6 +245,7 @@ class NutshellClient {
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("editLead", { leadId: id, rev, lead: data }, options.requestId, (err, result) => {
+        this._handleError("editLead", err);
         if (err) {
           return reject(err);
         }
@@ -271,6 +274,7 @@ class NutshellClient {
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("findCustomFields", [], options.requestId, (err, result) => {
+        this._handleError("findCustomFields", err);
         if (err) {
           return reject(err);
         }
@@ -295,6 +299,7 @@ class NutshellClient {
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("searchAccounts", { string: query, limit }, options.requestId, (err, result) => {
+        this._handleError("searchAccounts", err);
         if (err) {
           return reject(err);
         }
@@ -324,6 +329,7 @@ class NutshellClient {
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("searchByEmail", { emailAddressString: emailAddress }, options.requestId, (err, result) => {
+        this._handleError("searchByEmail", err);
         if (err) {
           return reject(err);
         }
