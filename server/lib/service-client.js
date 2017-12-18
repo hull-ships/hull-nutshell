@@ -309,6 +309,31 @@ class NutshellClient {
   }
 
   /**
+   * Return a list of Leads stubs matching a given search string.
+   *
+   * @param {string} query The string to search for.
+   * @param {number} limit The maximum number of entities returned.
+   * @param {INutshellOperationOptions} options The options for the operation.
+   * @returns {Promise<INutshellClientResponse>} The result of the operation.
+   * @memberof NutshellClient
+   *
+   * @example
+   * The result property contains an array of matching account objects.
+   */
+  searchLeads(query: string, limit: number, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
+    return new Promise((resolve, reject) => {
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      client.request("searchLeads", { string: query, limit }, options.requestId, (err, result) => {
+        this._handleError("searchLeads", err);
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      });
+    });
+  }
+
+  /**
    * Searches accounts and contacts by email address and returns
    * up to 5 account or contact stubs with the specified email address.
    * Results are organized by entity type.

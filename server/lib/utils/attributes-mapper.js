@@ -66,6 +66,16 @@ class AttributesMapper implements IAttributesMapper {
       }
     });
 
+    if (resource === "Lead") {
+      if (_.has(hullObject, "account.nutshell/id")) {
+        sObject.accounts = [{ id: _.get(hullObject, "account.nutshell/id") }];
+      }
+
+      if (_.has(hullObject, "traits_nutshell_contact/id")) {
+        sObject.contacts = [{ id: _.get(hullObject, "traits_nutshell_contact/id") }];
+      }
+    }
+
     return sObject;
   }
 
@@ -253,7 +263,8 @@ class AttributesMapper implements IAttributesMapper {
     } else if (resource === "Lead") {
       // A lead is tied to Contacts and Accounts in Nutshell, however
       // in Hull it is a user, so map it via anonymous_id
-      _.set(ident, "anonymous_id", `nutshell-lead:${_.get(sObject, "id")}`);
+      // _.set(ident, "anonymous_id", `nutshell-lead:${_.get(sObject, "id")}`);
+      _.set(ident, "anonymous_id", `nutshell-contact:${_.get(sObject, "contacts[0].id")}`);
     }
 
     return ident;

@@ -42,11 +42,10 @@ class FilterUtil implements IFilterUtil {
     const results: IFilterResult = new FilterResult();
 
     envelopes.forEach((envelope) => {
-      // TODO: I think we need this check here
-      // if (!_.has(envelope, "message.user.account.id")) {
-      //   envelope.skipReason = "User doesn't have any account information";
-      //   return results.toSkip.push(envelope);
-      // }
+      if (!_.has(envelope, "message.user.account.id") && !_.has(envelope, "message.account.id")) {
+        envelope.skipReason = "User doesn't have any account information";
+        return results.toSkip.push(envelope);
+      }
 
       if (skipSegmentCheck === true || (this.matchesWhitelistedSegments(envelope) && skipSegmentCheck === false)) {
         if (_.has(envelope.message, "account.nutshell/id")) {
@@ -82,14 +81,14 @@ class FilterUtil implements IFilterUtil {
     }
 
     envelopes.forEach((envelope) => {
-      if (this.matchesWhitelistedSegments(envelope) && this.matchesLeadWhitelistedSegments(envelope) === false) {
+      if (this.matchesWhitelistedSegments(envelope)) {
         if (_.has(envelope.message, "user.traits_nutshell_contact/id")) {
           return results.toUpdate.push(envelope);
         }
         return results.toInsert.push(envelope);
       }
 
-      envelope.skipReason = "User doesn't belong to synchronized lead segments or is part of both lead and contact segments.";
+      envelope.skipReason = "User doesn't belong to synchronized segments.";
       return results.toSkip.push(envelope);
     });
 
@@ -116,14 +115,14 @@ class FilterUtil implements IFilterUtil {
     }
 
     envelopes.forEach((envelope) => {
-      if (this.matchesLeadWhitelistedSegments(envelope) && !this.matchesWhitelistedSegments(envelope)) {
+      if (this.matchesWhitelistedSegments(envelope) && _.has(envelope, "currentNutshellContact")) {
         if (_.has(envelope.message, "user.traits_nutshell_lead/id")) {
           return results.toUpdate.push(envelope);
         }
         return results.toInsert.push(envelope);
       }
 
-      envelope.skipReason = "User doesn't belong to synchronized lead segments or is part of both lead and contact segments.";
+      envelope.skipReason = "User doesn't belong to synchronized segments";
       return results.toSkip.push(envelope);
     });
 
@@ -141,22 +140,6 @@ class FilterUtil implements IFilterUtil {
   matchesWhitelistedSegments(envelope: IUserUpdateEnvelope): boolean {
     const messageSegmentIds = _.get(envelope, "message.segments", []).map(s => s.id);
     if (_.intersection(messageSegmentIds, this.synchronizedSegments).length > 0) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-  * Checks whether the user in the envelope's message
-  * is part of the whitelisted segments for leads.
-  *
-  * @param {IUserUpdateEnvelope} envelope The envelope to process.
-  * @returns {boolean} True if the user is in the whitelisted segments; otherwise false.
-  * @memberof FilterUtil
-  */
-  matchesLeadWhitelistedSegments(envelope: IUserUpdateEnvelope): boolean {
-    const messageSegmentIds = _.get(envelope, "message.segments", []).map(s => s.id);
-    if (_.intersection(messageSegmentIds, this.leadSynchronizedSegments).length > 0) {
       return true;
     }
     return false;

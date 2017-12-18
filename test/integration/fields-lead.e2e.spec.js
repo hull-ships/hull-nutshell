@@ -97,19 +97,10 @@ describe("fieldsLeadAction", () => {
     };
 
     const fields = [
-      { value: "name", label: "Name" },
       { value: "description", label: "Description" },
       { value: "confidence", label: "Confidence" },
       { value: "note", label: "Note" },
-      { value: "contact.email", label: "Contact > Email" },
-      { value: "contact.name", label: "Contact > Name" },
-      { value: "contact.phone", label: "Contact > Phone" },
-      { value: "contact.title", label: "Contact > Title" },
-      { value: "contact.url", label: "Contact > Url" },
-      { value: "source.name", label: "Source (Name)" },
-      { value: "account.name", label: "Account > Name" },
-      { value: "account.url", label: "Account > Url" },
-      { value: "account.phone", label: "Account > Phone" }
+      { value: "source.name", label: "Source (Name)" }
     ];
 
     const customFields = customFieldsData.result.Leads.map((cf) => {

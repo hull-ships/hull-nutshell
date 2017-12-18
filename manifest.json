@@ -37,17 +37,6 @@
       "type": "string"
     },
     {
-      "name": "lead_synchronized_segments",
-      "title": "Filter users to be treated as leads",
-      "description": "Only send users who match these segments to Nutshell.",
-      "type": "array",
-      "format": "segment",
-      "items": {
-        "type": "string"
-      },
-      "default": []
-    },
-    {
       "name": "synchronized_segments",
       "title": "Filter users and accounts to be treated as contacts and accounts",
       "description": "Only send users who match these segments to Nutshell.",
@@ -147,14 +136,19 @@
       }
     },
     {
+      "name": "leadsync_title",
+      "title": "Leads Data Mapping",
+      "format": "title",
+      "type": "string"
+    },
+    {
       "name": "lead_attributes_outbound",
       "title": "Send Lead Attributes to Nutshell",
       "description": "Specify all fields to send",
       "type": "array",
       "format": "table",
       "default": [
-        { "hull_field_name": "name", "nutshell_field_name": "name" },
-        { "hull_field_name": "email", "nutshell_field_name": "contact.email" }
+        { "hull_field_name": "name", "nutshell_field_name": "name" }
       ],
       "items": {
         "type": "object",
