@@ -154,7 +154,6 @@ class NutshellClient {
   createLead(data: Object, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
-      console.log("NEW LEAD", data);
       client.request("newLead", { lead: data }, options.requestId, (err, result) => {
         this._handleError("newLead", err);
         if (err) {
