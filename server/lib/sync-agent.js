@@ -429,11 +429,11 @@ class SyncAgent {
 
       try {
         const emailSearchClientResponse = await this.nutshellClient.searchLeads(_.get(envelope, "message.user.name", ""), searchMax, options);
-        if (!_.isEmpty(_.get(emailSearchClientResponse, "result.leads", []))) {
+        if (!_.isEmpty(_.get(emailSearchClientResponse, "result", []))) {
           // Assume the first matching stub is the best match,
           // set the currentNutshellAccount object
           // and add the necessary id and rev fields for a patch
-          const currentLeadData = _.first(_.get(emailSearchClientResponse, "result.leads"));
+          const currentLeadData = _.first(_.get(emailSearchClientResponse, "result", []));
           _.set(envelope, "currentNutshellLead", currentLeadData);
           _.set(envelope, "message.user.traits_nutshell_lead/id", _.get(currentLeadData, "id", null));
           _.set(envelope, "message.user.traits_nutshell_lead/rev", _.get(currentLeadData, "rev", null));

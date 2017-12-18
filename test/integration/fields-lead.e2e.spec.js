@@ -97,7 +97,6 @@ describe("fieldsLeadAction", () => {
     };
 
     const fields = [
-      { value: "name", label: "Name" },
       { value: "description", label: "Description" },
       { value: "confidence", label: "Confidence" },
       { value: "note", label: "Note" },

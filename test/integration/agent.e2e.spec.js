@@ -5,11 +5,13 @@ const nock = require("nock");
 const Agent = require("../../server/lib/sync-agent");
 const contactChangedPayload = require("../fixtures/webhook-contactchanged.json");
 const contactNewPayload = require("../fixtures/api_contact_new.json");
+const leadNewPayload = require("../fixtures/api_lead_new.json");
 const contactUpdatePayload = require("../fixtures/api_contact_edit.json");
 const accountNewPayload = require("../fixtures/api_account_new.json");
 const invalidRequestPayload = require("../fixtures/api_invalid_request.json");
 const discoveryPayload = require("../fixtures/api_discovery.json");
 const searchByEmailEmptyPayload = require("../fixtures/api_searchbyemail_empty.json");
+const searchLeadsEmptyPayload = require("../fixtures/api_searchleads_empty.json");
 const messagesToInsert = require("../fixtures/messages_contact_insert.json");
 const messagesToUpdate = require("../fixtures/messages_contact_update.json");
 const messagesToSkip = require("../fixtures/messages_contact_skip.json");
@@ -408,6 +410,13 @@ describe("Agent", () => {
           return contactNewPayload;
         } else if (body.method === "searchByEmail") {
           return searchByEmailEmptyPayload;
+        }
+        if (body.method === "searchLeads") {
+          return searchLeadsEmptyPayload;
+        }
+
+        if (body.method === "newLead") {
+          return leadNewPayload;
         }
         expect(true).toBeFalsy();
         return {};
