@@ -218,6 +218,13 @@ class AttributesMapper implements IAttributesMapper {
         _.set(hObject, "nutshell_lead/market_name", { value: _.get(sObject, "market.name") });
       }
 
+      if (_.has(sObject, "assignee.name") && !_.isNil(_.get(sObject, "assignee.name"))) {
+        _.set(hObject, "nutshell_lead/assignee_name", { value: _.get(sObject, "assignee.name") });
+      }
+
+      if (_.has(sObject, "assignee.emails") && !_.isNil(_.get(sObject, "assignee.emails"))) {
+        _.set(hObject, "nutshell_lead/assignee_emails", { value: _.get(sObject, "assignee.emails", []).join(", ") });
+      }
       const regularLeadMappings = [
         "description",
         "name",
@@ -238,6 +245,14 @@ class AttributesMapper implements IAttributesMapper {
         }
       });
     }
+
+    if (_.has(sObject, "notes")) {
+      _.get(sObject, "notes", []).forEach((note, index) => {
+        const num = index + 1;
+        _.set(hObject, `nutshell_lead/note_${num}`, { value: _.get(note, "note", "") });
+      });
+    }
+
     return hObject;
   }
 
