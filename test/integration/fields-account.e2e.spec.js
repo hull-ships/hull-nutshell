@@ -102,7 +102,8 @@ describe("fieldsAccountAction", () => {
       { value: "accountTypeId", label: "Account Type (ID)" },
       { value: "territoryId", label: "Territory (ID)" },
       { value: "url", label: "Url" },
-      { value: "phone", label: "Phone" }
+      { value: "phone", label: "Phone" },
+      { value: "note", label: "Note" }
     ];
 
     const res = fieldsAccountAction(req, responseMock);

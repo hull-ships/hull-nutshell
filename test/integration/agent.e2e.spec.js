@@ -12,6 +12,7 @@ const invalidRequestPayload = require("../fixtures/api_invalid_request.json");
 const discoveryPayload = require("../fixtures/api_discovery.json");
 const searchByEmailEmptyPayload = require("../fixtures/api_searchbyemail_empty.json");
 const searchLeadsEmptyPayload = require("../fixtures/api_searchleads_empty.json");
+const findtimelineEmptyPayload = require("../fixtures/api_findtimeline_empty.json");
 const messagesToInsert = require("../fixtures/messages_contact_insert.json");
 const messagesToUpdate = require("../fixtures/messages_contact_update.json");
 const messagesToSkip = require("../fixtures/messages_contact_skip.json");
@@ -410,12 +411,9 @@ describe("Agent", () => {
           return contactNewPayload;
         } else if (body.method === "searchByEmail") {
           return searchByEmailEmptyPayload;
-        }
-        if (body.method === "searchLeads") {
+        } else if (body.method === "searchLeads") {
           return searchLeadsEmptyPayload;
-        }
-
-        if (body.method === "newLead") {
+        } else if (body.method === "newLead") {
           return leadNewPayload;
         }
         expect(true).toBeFalsy();
@@ -515,6 +513,12 @@ describe("Agent", () => {
           return contactUpdatePayload;
         } else if (body.method === "searchByEmail") {
           return searchByEmailEmptyPayload;
+        } else if (body.method === "findTimeline") {
+          return findtimelineEmptyPayload;
+        } else if (body.method === "searchLeads") {
+          return searchLeadsEmptyPayload;
+        } else if (body.method === "newLead") {
+          return leadNewPayload;
         }
         expect(true).toBeFalsy();
         return {};

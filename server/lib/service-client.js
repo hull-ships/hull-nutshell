@@ -390,6 +390,28 @@ class NutshellClient {
       });
     });
   }
+
+  findTimeline(resource: TResourceType, id: string | number, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
+    const params = {
+      query: {
+        entityType: `${resource}s`,
+        id: parseInt(id, 10)
+      },
+      orderBy: "time",
+      orderDirection: "DESC",
+      stubResponses: false
+    };
+    return new Promise((resolve, reject) => {
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      client.request("findTimeline", params, options.requestId, (err, result) => {
+        this._handleError("findTimeline", err);
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      });
+    });
+  }
 }
 
 module.exports = NutshellClient;

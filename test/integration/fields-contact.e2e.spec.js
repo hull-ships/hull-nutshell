@@ -101,7 +101,8 @@ describe("fieldsContactAction", () => {
       { value: "territoryId", label: "Territory (ID)" },
       { value: "email", label: "Email" },
       { value: "phone", label: "Phone" },
-      { value: "url", label: "Url" }
+      { value: "url", label: "Url" },
+      { value: "note", label: "Note" }
     ];
 
     const res = fieldsContactAction(req, responseMock);

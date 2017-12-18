@@ -64,7 +64,7 @@ class WebhookUtil {
     return response;
   }
 
-  getHullTrack(payload: Object): Object {
+  getWebhookHullTrack(payload: Object): Object {
     const result = {
       name: "",
       params: {},
@@ -86,11 +86,53 @@ class WebhookUtil {
       logged_by_emails: _.get(payload, "loggedBy.emails", []).join(", ")
     };
     result.context = {
-      event_id: `nutshell-${_.get(payload, "id")}-${moment(_.get(payload, "createdTime", "id")).format("X")}`,
+      event_id: `nutshell-${_.get(payload, "id")}-${moment(_.get(payload, "createdTime")).format("X")}`,
+      created_at: _.get(payload, "createdTime"),
       ip: 0
     };
 
     return result;
+  }
+
+  getActivityHullTrack(payload: Object): Object {
+    const result = {
+      name: "",
+      params: {},
+      context: {}
+    };
+    if (payload.entityType === "Notes") {
+      result.name = "Note";
+      result.params = {
+        note: _.get(payload, "note", ""),
+        user_name: _.get(payload, "user.name", ""),
+        user_emails: _.get(payload, "user.emails", []).join(", ")
+      };
+    } else if (payload.entityType === "Emails") {
+      result.name = "Email";
+      result.params = {
+        subject: _.get(payload, "subject", ""),
+        body: _.get(payload, "body", "")
+      };
+
+      ["to", "from", "cc"].forEach((field) => {
+        _.get(payload, field, []).forEach((address, index) => {
+          const number = index + 1;
+          result.params[`${field}_${number}_address`] = address.address;
+          result.params[`${field}_${number}_display`] = address.display;
+        });
+      });
+    }
+    result.context = {
+      source: "nutshell",
+      event_id: `nutshell-${_.get(payload, "id")}-${moment(_.get(payload, "createdTime")).format("X")}`,
+      created_at: _.get(payload, "createdTime"),
+      ip: 0
+    };
+    return result;
+  }
+
+  isAdditionalActivity(payload: Object): boolean {
+    return (payload.entityType === "Notes" || payload.entityType === "Emails");
   }
 }
 

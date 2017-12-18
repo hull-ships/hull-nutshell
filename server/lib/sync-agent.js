@@ -80,7 +80,8 @@ class SyncAgent {
           { value: "accountTypeId", label: "Account Type (ID)" },
           { value: "territoryId", label: "Territory (ID)" },
           { value: "url", label: "Url" },
-          { value: "phone", label: "Phone" }
+          { value: "phone", label: "Phone" },
+          { value: "note", label: "Note" }
         ];
         return this.nutshellClient.findCustomFields(options).then((opsResult) => {
           const customFields = _.map(opsResult.result.Accounts, (field) => {
@@ -113,7 +114,8 @@ class SyncAgent {
           { value: "territoryId", label: "Territory (ID)" },
           { value: "email", label: "Email" },
           { value: "phone", label: "Phone" },
-          { value: "url", label: "Url" }
+          { value: "url", label: "Url" },
+          { value: "note", label: "Note" }
         ];
         return this.nutshellClient.findCustomFields(options).then((opsResult) => {
           const customFields = _.map(opsResult.result.Contacts, (field) => {
@@ -400,7 +402,8 @@ class SyncAgent {
           const response = await this.nutshellClient.editContact(_.get(newObject, "id"), _.get(newObject, "rev"), patchResult.patchObject, options);
           return await this.handleNutshellResponse("Contact", envelope, response);
         }
-        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
+        await this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
+        return this.fetchAdditionalActivites("Contact", currentObjectResponse.result);
       } catch (err) {
         return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing contact", details: err });
       }
@@ -490,7 +493,8 @@ class SyncAgent {
           const response = await this.nutshellClient.editLead(_.get(newObject, "id"), _.get(newObject, "rev"), patchResult.patchObject, options);
           return await this.handleNutshellResponse("Lead", envelope, response);
         }
-        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
+        await this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
+        return this.fetchAdditionalActivites("Lead", currentObjectResponse.result);
       } catch (err) {
         return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing contact", details: err });
       }
@@ -533,7 +537,7 @@ class SyncAgent {
         const currentObjectResponse = await this.nutshellClient.getResourceById("Activity", activityId, null, options);
 
         const hullIdent = this.attributesMapper.mapToHullIdentObject(linkedObject.type, currentLinkedObjectResponse.result);
-        const hullTrack = this.webhookUtil.getHullTrack(currentObjectResponse.result);
+        const hullTrack = this.webhookUtil.getWebhookHullTrack(currentObjectResponse.result);
         const asUser = this.hullClient.asUser(hullIdent);
         await asUser.track(hullTrack.name, hullTrack.params, hullTrack.context)
           .then(() => asUser.logger.info("incoming.event.success", hullTrack))
@@ -561,9 +565,12 @@ class SyncAgent {
           asUser = this.hullClient.asUser(hullIdent);
           logKey = "user";
         }
+
         await asUser.traits(hullAttributes)
           .then(() => asUser.logger.info(`incoming.${logKey}.success`, hullAttributes))
           .catch((error) => asUser.logger.info(`incoming.${logKey}.error`, { error }));
+
+        await this.fetchAdditionalActivites(objectType, currentObjectResponse.result);
 
         const accountId = this.webhookUtil.getLinkedAccountId(p);
         if (accountId) {
@@ -584,6 +591,25 @@ class SyncAgent {
       }
     });
     return Promise.resolve(_.isObject(body));
+  }
+
+  async fetchAdditionalActivites(objectType: TResourceType, nutshellObject: Object) {
+    const baseHostname = await this.getApiBaseHostName();
+    const options: INutshellOperationOptions = {
+      host: baseHostname,
+      requestId: uuid()
+    };
+    const response = await this.nutshellClient.findTimeline(objectType, nutshellObject.id, options);
+    const filteredActivities = _.get(response, "result", []).filter(p => this.webhookUtil.isAdditionalActivity(p));
+    const hullIdent = this.attributesMapper.mapToHullIdentObject(objectType, nutshellObject);
+
+    return Promise.all(filteredActivities.map((activity) => {
+      const hullTrack = this.webhookUtil.getActivityHullTrack(activity);
+      const asUser = this.hullClient.asUser(hullIdent);
+      return asUser.track(hullTrack.name, hullTrack.params, hullTrack.context)
+        .then(() => asUser.logger.info("incoming.event.success", hullTrack))
+        .catch((error) => asUser.logger.info("incoming.event.error", { error }));
+    }));
   }
 
   handleNutshellResponse(resource: TResourceType, envelope: IUserUpdateEnvelope, response: INutshellClientResponse): Promise<*> {

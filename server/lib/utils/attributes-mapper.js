@@ -246,13 +246,6 @@ class AttributesMapper implements IAttributesMapper {
       });
     }
 
-    if (_.has(sObject, "notes")) {
-      _.get(sObject, "notes", []).forEach((note, index) => {
-        const num = index + 1;
-        _.set(hObject, `nutshell_lead/note_${num}`, { value: _.get(note, "note", "") });
-      });
-    }
-
     return hObject;
   }
 

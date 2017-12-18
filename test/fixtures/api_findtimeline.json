@@ -1,0 +1,283 @@
+{
+   "result":[
+      {
+         "id":19,
+         "entityType":"Emails",
+         "createdTime":"2017-12-18T11:39:56+0000",
+         "sentTime":"2017-12-18T11:39:56+0000",
+         "to":[
+            {
+               "address":"bar@baz.com",
+               "display":"Michal Raczka",
+               "entity":{
+                  "entityType":"Contacts",
+                  "id":"11"
+               }
+            }],
+         "from":[
+            {
+               "address":"foo@bar.com",
+               "display":"Michal",
+               "entity":{
+                  "entityType":"Users",
+                  "id":"1"
+               }
+            }],
+         "cc":[
+         ],
+         "subject":"Second email test subject",
+         "body":"Second email test body",
+         "contacts":[
+            {
+               "stub":true,
+               "id":11,
+               "rev":"7",
+               "entityType":"Contacts",
+               "modifiedTime":"2017-12-18T11:22:11+0000",
+               "createdTime":"2017-12-14T15:16:48+0000",
+               "name":"Michal Raczka",
+               "jobTitle":"Testing Company"
+            },
+            {
+               "stub":true,
+               "id":71,
+               "rev":"7",
+               "entityType":"Contacts",
+               "modifiedTime":"2017-12-18T11:28:14+0000",
+               "createdTime":"2017-12-18T11:22:10+0000",
+               "name":"Michal Raczka",
+               "jobTitle":""
+            }],
+         "users":[
+            {
+               "stub":true,
+               "id":1,
+               "rev":"2",
+               "entityType":"Users",
+               "modifiedTime":"2017-12-15T12:32:32+0000",
+               "createdTime":"2017-12-14T13:00:18+0000",
+               "name":"Michal",
+               "emails":[
+                  "foo@bar.com"],
+               "isEnabled":true,
+               "isAdministrator":true
+            }],
+         "leads":[
+            {
+               "stub":true,
+               "id":1007,
+               "rev":"11",
+               "entityType":"Leads",
+               "modifiedTime":"2017-12-18T11:39:56+0000",
+               "createdTime":"2017-12-14T16:09:05+0000",
+               "name":"Lead\u20131001",
+               "description":"Test Lead",
+               "status":0,
+               "completion":25,
+               "value":null,
+               "primaryAccountName":"Testing Company",
+               "primaryContactName":"Michal Raczka",
+               "isOverdue":false,
+               "lastContactedDate":"2017-12-18T11:39:56+0000"
+            }]
+      },
+      {
+         "id":15,
+         "entityType":"Emails",
+         "createdTime":"2017-12-18T11:25:50+0000",
+         "sentTime":"2017-12-18T11:25:50+0000",
+         "to":[
+            {
+               "address":"bar@baz.com",
+               "display":"Michal Raczka",
+               "entity":{
+                  "entityType":"Contacts",
+                  "id":"11"
+               }
+            }],
+         "from":[
+            {
+               "address":"foo@bar.com",
+               "display":"Michal",
+               "entity":{
+                  "entityType":"Users",
+                  "id":"1"
+               }
+            }],
+         "cc":[
+         ],
+         "subject":"Sending an email from nutshell",
+         "body":"Testing email",
+         "contacts":[
+            {
+               "stub":true,
+               "id":11,
+               "rev":"7",
+               "entityType":"Contacts",
+               "modifiedTime":"2017-12-18T11:22:11+0000",
+               "createdTime":"2017-12-14T15:16:48+0000",
+               "name":"Michal Raczka",
+               "jobTitle":"Testing Company"
+            },
+            {
+               "stub":true,
+               "id":71,
+               "rev":"7",
+               "entityType":"Contacts",
+               "modifiedTime":"2017-12-18T11:28:14+0000",
+               "createdTime":"2017-12-18T11:22:10+0000",
+               "name":"Michal Raczka",
+               "jobTitle":""
+            }],
+         "users":[
+            {
+               "stub":true,
+               "id":1,
+               "rev":"2",
+               "entityType":"Users",
+               "modifiedTime":"2017-12-15T12:32:32+0000",
+               "createdTime":"2017-12-14T13:00:18+0000",
+               "name":"Michal",
+               "emails":[
+                  "foo@bar.com"],
+               "isEnabled":true,
+               "isAdministrator":true
+            }],
+         "leads":[
+            {
+               "stub":true,
+               "id":1007,
+               "rev":"11",
+               "entityType":"Leads",
+               "modifiedTime":"2017-12-18T11:39:56+0000",
+               "createdTime":"2017-12-14T16:09:05+0000",
+               "name":"Lead\u20131001",
+               "description":"Test Lead",
+               "status":0,
+               "completion":25,
+               "value":null,
+               "primaryAccountName":"Testing Company",
+               "primaryContactName":"Michal Raczka",
+               "isOverdue":false,
+               "lastContactedDate":"2017-12-18T11:39:56+0000"
+            }]
+      },
+      {
+         "id":11,
+         "entityType":"Emails",
+         "createdTime":"2017-12-18T11:24:06+0000",
+         "sentTime":"2017-12-18T11:23:37+0000",
+         "to":[
+            {
+               "address":"bar@baz.com",
+               "display":"bar@baz.com",
+               "entity":{
+                  "entityType":"Contacts",
+                  "id":"11"
+               }
+            }],
+         "from":[
+            {
+               "address":"foo@bar.com",
+               "display":"Micha\u0142 R\u0105czka",
+               "entity":{
+                  "entityType":"Users",
+                  "id":"1"
+               }
+            }],
+         "cc":[
+         ],
+         "subject":"Testing nuthsell BCC",
+         "body":"This is the email\n\n-- \nMicha\u0142 R\u0105czka\n\n*p.* +48 606 350 497 | *w**.* www.hull.io\n",
+         "contacts":[
+            {
+               "stub":true,
+               "id":11,
+               "rev":"7",
+               "entityType":"Contacts",
+               "modifiedTime":"2017-12-18T11:22:11+0000",
+               "createdTime":"2017-12-14T15:16:48+0000",
+               "name":"Michal Raczka",
+               "jobTitle":"Testing Company"
+            },
+            {
+               "stub":true,
+               "id":71,
+               "rev":"7",
+               "entityType":"Contacts",
+               "modifiedTime":"2017-12-18T11:28:14+0000",
+               "createdTime":"2017-12-18T11:22:10+0000",
+               "name":"Michal Raczka",
+               "jobTitle":""
+            }],
+         "users":[
+            {
+               "stub":true,
+               "id":1,
+               "rev":"2",
+               "entityType":"Users",
+               "modifiedTime":"2017-12-15T12:32:32+0000",
+               "createdTime":"2017-12-14T13:00:18+0000",
+               "name":"Michal",
+               "emails":[
+                  "foo@bar.com"],
+               "isEnabled":true,
+               "isAdministrator":true
+            }],
+         "leads":[
+            {
+               "stub":true,
+               "id":1007,
+               "rev":"11",
+               "entityType":"Leads",
+               "modifiedTime":"2017-12-18T11:39:56+0000",
+               "createdTime":"2017-12-14T16:09:05+0000",
+               "name":"Lead\u20131001",
+               "description":"Test Lead",
+               "status":0,
+               "completion":25,
+               "value":null,
+               "primaryAccountName":"Testing Company",
+               "primaryContactName":"Michal Raczka",
+               "isOverdue":false,
+               "lastContactedDate":"2017-12-18T11:39:56+0000"
+            }]
+      },
+      {
+         "id":59,
+         "rev":"0",
+         "entityType":"Notes",
+         "createdTime":"2017-12-18T11:23:08+0000",
+         "note":"Testing note on the user\n",
+         "noteMarkup":"Testing note on the user\n",
+         "noteHtml":"Testing note on the user<br \/>\n",
+         "user":{
+            "stub":true,
+            "id":1,
+            "rev":"2",
+            "entityType":"Users",
+            "modifiedTime":"2017-12-15T12:32:32+0000",
+            "createdTime":"2017-12-14T13:00:18+0000",
+            "name":"Michal",
+            "emails":[
+               "foo@bar.com"],
+            "isEnabled":true,
+            "isAdministrator":true
+         },
+         "originId":1,
+         "date":"2017-12-18T11:23:08+0000",
+         "contact":{
+            "stub":true,
+            "id":71,
+            "rev":"7",
+            "entityType":"Contacts",
+            "modifiedTime":"2017-12-18T11:28:14+0000",
+            "createdTime":"2017-12-18T11:22:10+0000",
+            "name":"Michal Raczka",
+            "jobTitle":""
+         }
+      }],
+   "id":"apeye",
+   "error":null,
+   "jsonrpc":"2.0"
+}
