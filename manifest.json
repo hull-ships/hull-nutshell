@@ -165,10 +165,19 @@
             "options" : {
               "loadOptions" : "/fields-lead"
             }
+          },
+          "hull_field_template": {
+            "type": "string",
+            "title": "Template",
+            "format": "liquid",
+            "options": {
+              "help": "Use this editor to set outgoing attribute value, this overwrites Hull Attribute actual value",
+              "edit_label": "Edit value template",
+              "type": "none"
+            }
           }
         },
         "required" : [
-          "hull_field_name",
           "nutshell_field_name"
         ]
       }

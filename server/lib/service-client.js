@@ -75,7 +75,7 @@ class NutshellClient {
    */
   _handleError(method: string, err: Object) {
     if (err && this.metricsClient) {
-      console.error(err);
+      console.log(err);
       this.metricsClient.increment("connector.service_api.error", 1, [`method:${method}`]);
     }
   }
@@ -405,6 +405,26 @@ class NutshellClient {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
       client.request("findTimeline", params, options.requestId, (err, result) => {
         this._handleError("findTimeline", err);
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      });
+    });
+  }
+
+  findLeads(contactId: string | number, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
+    const params = {
+      query: {
+        contactId: parseInt(contactId, 10)
+      },
+      limit: 1,
+      stubResponses: false
+    };
+    return new Promise((resolve, reject) => {
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      client.request("findLeads", params, options.requestId, (err, result) => {
+        this._handleError("findLeads", err);
         if (err) {
           return reject(err);
         }

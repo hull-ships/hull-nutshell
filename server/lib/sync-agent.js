@@ -251,7 +251,7 @@ class SyncAgent {
             // Assume the first matching stub is the best match,
             // set the currentNutshellAccount object
             // and add the necessary id and rev fields for a patch
-            const currentAccountData = _.first(_.get(accountSearchClientResponse, "result.accounts"));
+            const currentAccountData = _.first(_.get(accountSearchClientResponse, "result"));
             _.set(envelope, "currentNutshellAccount", currentAccountData);
             _.set(envelope, "message.user.account.nutshell/id", _.get(currentAccountData, "id", null));
             _.set(envelope, "message.user.account.nutshell/rev", _.get(currentAccountData, "rev", null));
@@ -296,7 +296,7 @@ class SyncAgent {
           requestId: reqId
         };
         try {
-          const currentObjectResponse = await this.nutshellClient.getResourceById("Account", _.get(envelope, "currentNutshellAccount.id"), null, options);
+          const currentObjectResponse = await this.nutshellClient.getResourceById("Account", _.get(envelope, "message.user.account.nutshell/id"), null, options);
           const currentObject = currentObjectResponse.result;
           const newObject = this.attributesMapper.mapToServiceObject("Account", _.get(envelope, "message.user", {}));
           const patchResult = this.patchUtil.createPatchObject("Account", newObject, currentObject);
@@ -405,6 +405,7 @@ class SyncAgent {
         await this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
         return this.fetchAdditionalActivites("Contact", currentObjectResponse.result);
       } catch (err) {
+        console.log(err);
         return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing contact", details: err });
       }
     }));
@@ -431,12 +432,12 @@ class SyncAgent {
       };
 
       try {
-        const emailSearchClientResponse = await this.nutshellClient.searchLeads(_.get(envelope, "message.user.name", ""), searchMax, options);
-        if (!_.isEmpty(_.get(emailSearchClientResponse, "result", []))) {
+        const leadsSearchResponse = await this.nutshellClient.findLeads(_.get(envelope, "message.user.traits_nutshell_contact/id", ""), options);
+        if (!_.isEmpty(_.get(leadsSearchResponse, "result", []))) {
           // Assume the first matching stub is the best match,
           // set the currentNutshellAccount object
           // and add the necessary id and rev fields for a patch
-          const currentLeadData = _.first(_.get(emailSearchClientResponse, "result", []));
+          const currentLeadData = _.first(_.get(leadsSearchResponse, "result", []));
           _.set(envelope, "currentNutshellLead", currentLeadData);
           _.set(envelope, "message.user.traits_nutshell_lead/id", _.get(currentLeadData, "id", null));
           _.set(envelope, "message.user.traits_nutshell_lead/rev", _.get(currentLeadData, "rev", null));
