@@ -393,6 +393,8 @@ class SyncAgent {
         const currentContactId = _.get(envelope, "currentNutshellContact.id", _.get(envelope, "message.user.traits_nutshell_contact/id"));
         const currentObjectResponse = await this.nutshellClient.getResourceById("Contact", currentContactId, null, options);
         const currentObject = currentObjectResponse.result;
+        // TODO: quick workaround
+        _.set(envelope, "message.user.traits_nutshell_contact/rev", _.get(currentObject, "rev", null));
         const newObject = this.attributesMapper.mapToServiceObject("Contact", _.get(envelope, "message.user", {}));
         const patchResult = this.patchUtil.createPatchObject("Contact", newObject, currentObject);
         console.log(">>> Patch Result", patchResult);
@@ -485,6 +487,8 @@ class SyncAgent {
         const currentLeadId = _.get(envelope, "currentNutshellLead.id", _.get(envelope, "message.user.traits_nutshell_lead/id"));
         const currentObjectResponse = await this.nutshellClient.getResourceById("Lead", currentLeadId, null, options);
         const currentObject = currentObjectResponse.result;
+        // TODO: quick workaround
+        _.set(envelope, "message.user.traits_nutshell_lead/rev", _.get(currentObject, "rev", null));
         const newObject = this.attributesMapper.mapToServiceObject("Lead", _.get(envelope, "message.user", {}));
         const patchResult = this.patchUtil.createPatchObject("Lead", newObject, currentObject);
         console.log(">>> Patch Result", patchResult);
