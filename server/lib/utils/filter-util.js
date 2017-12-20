@@ -164,7 +164,7 @@ class FilterUtil implements IFilterUtil {
     const otherChanges = _.filter(_.get(envelope, "message.changes.user", {}), (value: any, key: string) => {
       return (key !== "anonymous_ids" && key.match("traits_nutshell") === null);
     });
-    return _.size(otherChanges) === 0;
+    return _.size(_.get(envelope, "message.changes.user", {})) === 0 || _.size(otherChanges) === 0;
   }
 }
 
