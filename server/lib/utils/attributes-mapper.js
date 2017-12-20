@@ -59,14 +59,14 @@ class AttributesMapper implements IAttributesMapper {
 
     const mappings = _.cloneDeep(_.get(this.mappingsOutbound, resource));
     _.forEach(mappings, (m) => {
-      if (_.has(m, "hull_field_name")) {
+      if (_.get(m, "hull_field_name")) {
         const hullAttribValue = _.get(hullObject, m.hull_field_name);
         if (!_.isNil(hullAttribValue)) {
           const sAttribName = _.get(m, "nutshell_field_name");
           _.set(sObject, sAttribName, hullAttribValue);
         }
       }
-      if (_.has(m, "hull_field_template")) {
+      if (_.get(m, "hull_field_template")) {
         const hullAttribValue = this.renderTemplate(m.hull_field_template, hullObject);
         if (!_.isNil(hullAttribValue)) {
           const sAttribName = _.get(m, "nutshell_field_name");
@@ -289,13 +289,15 @@ class AttributesMapper implements IAttributesMapper {
 
   renderTemplate(value: string, hullObject: THullObject) {
     const liquidRegex = /{{\s*((?:\w*\.*_*\/*-*)*)\s*\|*\s*((?:\w*\.*@*_*\s*=*\/*-*)*\s*)}}/g;
-
+    const message = {
+      user: hullObject
+    };
     return value
       .replace(liquidRegex, (match, property, defaultValue) => {
         if (property === undefined) {
           return "";
         }
-        return _.get(hullObject, property, (defaultValue == null || defaultValue === "") ? "Unknown Value" : defaultValue.trim());
+        return _.get(message, property, (defaultValue == null || defaultValue === "") ? "Unknown Value" : defaultValue.trim());
       });
   }
 

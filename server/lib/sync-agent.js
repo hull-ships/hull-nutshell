@@ -482,7 +482,7 @@ class SyncAgent {
         requestId: reqId
       };
       try {
-        const currentLeadId = _.get(envelope, "currentNutshellLead.id", _.get(envelope, "message.user.traits_nutshell/id"));
+        const currentLeadId = _.get(envelope, "currentNutshellLead.id", _.get(envelope, "message.user.traits_nutshell_lead/id"));
         const currentObjectResponse = await this.nutshellClient.getResourceById("Lead", currentLeadId, null, options);
         const currentObject = currentObjectResponse.result;
         const newObject = this.attributesMapper.mapToServiceObject("Lead", _.get(envelope, "message.user", {}));
@@ -497,7 +497,7 @@ class SyncAgent {
         await this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
         return this.fetchAdditionalActivites("Lead", currentObjectResponse.result);
       } catch (err) {
-        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing contact", details: err });
+        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing lead", details: err });
       }
     }));
 
@@ -619,6 +619,8 @@ class SyncAgent {
         this.hullClient.asAccount(_.get(envelope, "message.user.account", {})).logger.error("outgoing.account.error", { reason: "Failed to execute an operation for an account", details: response });
       } else if (resource === "Contact") {
         this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to execute an operation for a contact", details: response });
+      } else if (resource === "Lead") {
+        this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to execute an operation for a lead", details: response });
       }
       return Promise.resolve();
     }
