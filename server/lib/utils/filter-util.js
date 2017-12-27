@@ -42,6 +42,11 @@ class FilterUtil implements IFilterUtil {
     const results: IFilterResult = new FilterResult();
 
     envelopes.forEach((envelope) => {
+      if (this.changedByNutshellConnectorOnly(envelope)) {
+        envelope.skipReason = "User was just updated by Nutshell Connector";
+        return results.toSkip.push(envelope);
+      }
+
       if (!_.has(envelope, "message.user.account.id") && !_.has(envelope, "message.account.id")) {
         envelope.skipReason = "User doesn't have any account information";
         return results.toSkip.push(envelope);
@@ -81,6 +86,11 @@ class FilterUtil implements IFilterUtil {
     }
 
     envelopes.forEach((envelope) => {
+      if (this.changedByNutshellConnectorOnly(envelope)) {
+        envelope.skipReason = "User was just updated by Nutshell Connector";
+        return results.toSkip.push(envelope);
+      }
+
       if (this.matchesWhitelistedSegments(envelope)) {
         if (_.has(envelope.message, "user.traits_nutshell_contact/id")) {
           return results.toUpdate.push(envelope);
@@ -115,6 +125,11 @@ class FilterUtil implements IFilterUtil {
     }
 
     envelopes.forEach((envelope) => {
+      if (this.changedByNutshellConnectorOnly(envelope)) {
+        envelope.skipReason = "User was just updated by Nutshell Connector";
+        return results.toSkip.push(envelope);
+      }
+
       if (this.matchesWhitelistedSegments(envelope) && _.has(envelope.message, "user.traits_nutshell_contact/id")) {
         if (_.has(envelope.message, "user.traits_nutshell_lead/id")) {
           return results.toUpdate.push(envelope);
@@ -143,6 +158,16 @@ class FilterUtil implements IFilterUtil {
       return true;
     }
     return false;
+  }
+
+  changedByNutshellConnectorOnly(envelope: IUserUpdateEnvelope): boolean {
+    const otherChanges = _.filter(_.get(envelope, "message.changes.user", {}), (value: any, key: string) => {
+      return (key !== "anonymous_ids" && key.match("traits_nutshell") === null);
+    });
+    if (_.size(_.get(envelope, "message.changes.user", {})) === 0) {
+      return false;
+    }
+    return _.size(otherChanges) === 0;
   }
 }
 
