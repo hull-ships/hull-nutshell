@@ -14,7 +14,7 @@ class WebhookUtil {
   }
 
   isActivity(payload: Object): boolean {
-    return _.get(payload, "type") === "activity";
+    return _.get(payload, "type") === "activities";
   }
 
   isObjectUpdate(payload: Object): boolean {
