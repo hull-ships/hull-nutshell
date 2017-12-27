@@ -49,7 +49,7 @@
     "cors": "^2.8.4",
     "express": "^4.16.2",
     "hogan.js": "^3.0.2",
-    "hull": "https://455-10318703-gh.circle-artifacts.com/0/hull-node.tgz",
+    "hull": "0.13.10",
     "jayson": "^2.0.4",
     "json-rpc2": "^1.0.2",
     "lodash": "^4.17.4",

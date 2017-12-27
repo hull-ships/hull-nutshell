@@ -2620,9 +2620,9 @@ hull-connector-tester@^0.0.1:
   dependencies:
     circle-github-bot "^0.4.0"
 
-"hull@https://455-10318703-gh.circle-artifacts.com/0/hull-node.tgz":
-  version "0.13.9"
-  resolved "https://455-10318703-gh.circle-artifacts.com/0/hull-node.tgz#aff7d1d9c7c1be20c5b249466d3b06f266b8fd2b"
+hull@0.13.10:
+  version "0.13.10"
+  resolved "https://registry.yarnpkg.com/hull/-/hull-0.13.10.tgz#7c9f55a7e3bca13be55eab5414973162444a1acd"
   dependencies:
     JSONStream "^1.1.2"
     aws-sdk "^2.81.0"
