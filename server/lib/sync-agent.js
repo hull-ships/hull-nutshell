@@ -146,7 +146,11 @@ class SyncAgent {
           { value: "description", label: "Description" },
           { value: "confidence", label: "Confidence" },
           { value: "note", label: "Note" },
-          { value: "source.name", label: "Source (Name)" }
+          { value: "market.id", label: "Market (Id)" },
+          { value: "assignee.id", label: "Assignee (Id)" },
+          { value: "sources", label: "Sources (Array of ids)" },
+          { value: "competitors", label: "Competitors (Array of ids)" },
+          { value: "products", label: "Products (Array of ids)" }
         ];
         return this.nutshellClient.findCustomFields(options).then((opsResult) => {
           const customFields = _.map(opsResult.result.Leads, (field) => {
@@ -467,10 +471,11 @@ class SyncAgent {
         requestId: reqId
       };
       try {
+        console.log(">>> New Lead", data);
         const response = await this.nutshellClient.createLead(data, options);
         return await this.handleNutshellResponse("Lead", envelope, response);
       } catch (err) {
-        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to create a new user", details: err });
+        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to create a new user", details: _.get(err, "message", "") });
       }
     }));
 

@@ -100,7 +100,11 @@ describe("fieldsLeadAction", () => {
       { value: "description", label: "Description" },
       { value: "confidence", label: "Confidence" },
       { value: "note", label: "Note" },
-      { value: "source.name", label: "Source (Name)" }
+      { value: "market.id", label: "Market (Id)" },
+      { value: "assignee.id", label: "Assignee (Id)" },
+      { value: "sources", label: "Sources (Array of ids)" },
+      { value: "competitors", label: "Competitors (Array of ids)" },
+      { value: "products", label: "Products (Array of ids)" }
     ];
 
     const customFields = customFieldsData.result.Leads.map((cf) => {

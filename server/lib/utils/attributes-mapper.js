@@ -5,7 +5,7 @@ import type { TResourceType, IAttributesMapper } from "../types";
 const _ = require("lodash");
 const { URL } = require("url");
 
-const { SUPPORTED_RESOURCETYPES } = require("../shared");
+const { SUPPORTED_RESOURCETYPES, COMPLEX_ARRAY_FIELDS_MAP } = require("../shared");
 
 class AttributesMapper implements IAttributesMapper {
   /**
@@ -15,6 +15,8 @@ class AttributesMapper implements IAttributesMapper {
    * @memberof AttributesMapper
    */
   mappingsOutbound: Object;
+
+  complexArrayFieldsMap: Object;
 
   /**
    * Creates an instance of AttributesMapper.
@@ -26,6 +28,7 @@ class AttributesMapper implements IAttributesMapper {
     _.forEach(SUPPORTED_RESOURCETYPES, (r) => {
       _.set(this.mappingsOutbound, r, _.get(settings, `${r.toLowerCase()}_attributes_outbound`, {}));
     });
+    this.complexArrayFieldsMap = COMPLEX_ARRAY_FIELDS_MAP;
   }
 
   /**
@@ -83,6 +86,24 @@ class AttributesMapper implements IAttributesMapper {
       if (_.has(hullObject, "traits_nutshell_contact/id")) {
         sObject.contacts = [{ id: _.get(hullObject, "traits_nutshell_contact/id") }];
       }
+    }
+
+    // For all this.complexArrayFieldsMap we take the input array trait
+    // and map it into an array of objects using the paramName from the complexArrayFieldsMap
+    _.forEach(sObject, (value, key) => {
+      if (_.has(this.complexArrayFieldsMap, `${resource}.${key}`)) {
+        const paramToSet = _.get(this.complexArrayFieldsMap, `${resource}.${key}`);
+        const mappedValue = value.map(paramValue => {
+          return {
+            [paramToSet]: paramValue
+          };
+        });
+        _.set(sObject, key, mappedValue);
+      }
+    });
+
+    if (_.has(sObject, "assignee.id")) {
+      _.set(sObject, "assignee.entityType", "Users");
     }
 
     return sObject;
@@ -278,10 +299,18 @@ class AttributesMapper implements IAttributesMapper {
       _.set(ident, "anonymous_id", `nutshell-account:${_.get(sObject, "id")}`);
       _.set(ident, "domain", this.normalizeUrl(_.get(sObject, "url.--primary")));
     } else if (resource === "Lead") {
+      const aliases = [
+        `nutshell-lead:${_.get(sObject, "id")}`
+      ];
       // A lead is tied to Contacts and Accounts in Nutshell, however
       // in Hull it is a user, so map it via anonymous_id
-      // _.set(ident, "anonymous_id", `nutshell-lead:${_.get(sObject, "id")}`);
-      _.set(ident, "anonymous_id", `nutshell-contact:${_.get(sObject, "contacts[0].id")}`);
+      if (_.get(sObject, "contacts[0].id")) {
+        _.set(ident, "anonymous_id", `nutshell-contact:${_.get(sObject, "contacts[0].id")}`);
+        aliases.push(`nutshell-contact:${_.get(sObject, "contacts[0].id")}`);
+      } else {
+        _.set(ident, "anonymous_id", `nutshell-lead:${_.get(sObject, "id")}`);
+      }
+      _.set(ident, "aliases", aliases);
     }
 
     return ident;

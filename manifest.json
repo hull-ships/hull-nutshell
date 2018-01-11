@@ -73,7 +73,7 @@
         "properties": {
           "hull_field_name" : {
             "type" : "string",
-            "format" : "accountTrait",
+            "format" : "trait",
             "title" : "Hull Attribute"
           },
           "nutshell_field_name" : {
@@ -146,6 +146,11 @@
               "edit_label": "Edit value template",
               "type": "none"
             }
+          },
+          "overwrite" : {
+            "type" : "boolean",
+            "title" : "overwrite",
+            "default" : false
           }
         },
         "required" : [
@@ -193,6 +198,11 @@
               "edit_label": "Edit value template",
               "type": "none"
             }
+          },
+          "overwrite" : {
+            "type" : "boolean",
+            "title" : "overwrite",
+            "default" : false
           }
         },
         "required" : [

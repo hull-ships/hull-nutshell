@@ -372,6 +372,10 @@ describe("AttributesMapper", () => {
     const sObject = leadDataResponse.result;
 
     const expectedIdentObject = {
+      aliases: [
+        `nutshell-lead:${sObject.id}`,
+        `nutshell-contact:${sObject.contacts[0].id}`
+      ],
       anonymous_id: `nutshell-contact:${sObject.contacts[0].id}`
     };
 
@@ -386,7 +390,7 @@ describe("AttributesMapper", () => {
     const expectedTraitsObject = {
       name: { value: sObject.name, operation: "setIfNull" },
       "nutshell_lead/assignee_emails": { "value": "charles.berry@arrowgrid.com, jim@demo.nutshell.com" },
-       "nutshell_lead/assignee_name": { "value": "Charles Berry" },
+      "nutshell_lead/assignee_name": { "value": "Charles Berry" },
       "nutshell_lead/id": { value: sObject.id },
       "nutshell_lead/rev": { value: sObject.rev },
       "nutshell_lead/closed_at": { value: sObject.closedTime },
