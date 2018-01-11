@@ -38,7 +38,7 @@ class FilterUtil implements IFilterUtil {
    * @returns {IFilterResult} A filter result that determines which accounts to insert, update or skip.
    * @memberof FilterUtil
    */
-  filterAccounts(envelopes: Array<IUserUpdateEnvelope>, skipSegmentCheck: boolean = false): IFilterResult {
+  filterAccounts(envelopes: Array<IUserUpdateEnvelope>): IFilterResult {
     const results: IFilterResult = new FilterResult();
 
     envelopes.forEach((envelope) => {
@@ -52,7 +52,7 @@ class FilterUtil implements IFilterUtil {
         return results.toSkip.push(envelope);
       }
 
-      if (skipSegmentCheck === true || (this.matchesWhitelistedSegments(envelope) && skipSegmentCheck === false)) {
+      if (this.matchesWhitelistedSegments(envelope)) {
         if (_.has(envelope.message, "account.nutshell/id")) {
           return results.toUpdate.push(envelope);
         }
@@ -74,16 +74,8 @@ class FilterUtil implements IFilterUtil {
    * @returns {IFilterResult} A filter result that determines which users to insert, update or skip.
    * @memberof FilterUtil
    */
-  filterContacts(envelopes: Array<IUserUpdateEnvelope>, skipSegmentCheck: boolean = false): IFilterResult {
+  filterContacts(envelopes: Array<IUserUpdateEnvelope>): IFilterResult {
     const results: IFilterResult = new FilterResult();
-
-    if (skipSegmentCheck === true) {
-      envelopes.forEach((envelope) => {
-        envelope.skipReason = "Batch mode not supported to sync users.";
-        return results.toSkip.push(envelope);
-      });
-      return results;
-    }
 
     envelopes.forEach((envelope) => {
       if (this.changedByNutshellConnectorOnly(envelope)) {
@@ -113,16 +105,8 @@ class FilterUtil implements IFilterUtil {
    * @returns {IFilterResult} A filter result that determines which users to insert, update or skip.
    * @memberof FilterUtil
    */
-  filterLeads(envelopes: Array<IUserUpdateEnvelope>, skipSegmentCheck: boolean = false): IFilterResult {
+  filterLeads(envelopes: Array<IUserUpdateEnvelope>): IFilterResult {
     const results: IFilterResult = new FilterResult();
-
-    if (skipSegmentCheck === true) {
-      envelopes.forEach((envelope) => {
-        envelope.skipReason = "Batch mode not supported to sync users as leads.";
-        return results.toSkip.push(envelope);
-      });
-      return results;
-    }
 
     envelopes.forEach((envelope) => {
       if (this.changedByNutshellConnectorOnly(envelope)) {
