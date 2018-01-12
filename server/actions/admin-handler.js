@@ -29,7 +29,6 @@ function adminHandler(req: THullRequest, res: $Response) { // eslint-disable-lin
     agent.findMarkets(50),
     agent.findSources(50)
   ]).spread((products, markets, sources) => {
-    console.log(">>> ", products, markets, sources);
     return res.render("admin.html", {
       conf,
       hostname: _.get(req, "hull.hostname"),

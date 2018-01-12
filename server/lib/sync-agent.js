@@ -359,9 +359,6 @@ class SyncAgent {
     // Re-run the filter to ensure that we handle inserts and updates appropriately
     contactsFilterResult = this.filterUtil.filterContacts(_.concat(contactsFilterResult.toInsert, contactsFilterResult.toUpdate, contactsFilterResult.toSkip), isBatch);
 
-    if (isBatch === false) {
-      console.log("Contacts Filter Result", contactsFilterResult);
-    }
     /*
      * --- Process: Contacts.toInsert
      */
@@ -373,7 +370,6 @@ class SyncAgent {
         requestId: reqId
       };
       try {
-        console.log(">>> New Contact", data);
         const response = await this.nutshellClient.createContact(data, options);
         _.set(envelope, "currentNutshellContact", response.result);
         _.set(envelope, "message.user.traits_nutshell_contact/id", _.get(response.result, "id", null));
@@ -401,7 +397,6 @@ class SyncAgent {
         _.set(envelope, "message.user.traits_nutshell_contact/rev", _.get(currentObject, "rev", null));
         const newObject = this.attributesMapper.mapToServiceObject("Contact", _.get(envelope, "message.user", {}));
         const patchResult = this.patchUtil.createPatchObject("Contact", newObject, currentObject);
-        console.log(">>> Patch Result", patchResult);
         if (patchResult.hasChanges) {
           reqId = uuid();
           _.set(options, "requestId", reqId);
@@ -411,7 +406,6 @@ class SyncAgent {
         await this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
         return this.fetchAdditionalActivites("Contact", currentObjectResponse.result);
       } catch (err) {
-        console.log(err);
         return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing contact", details: err });
       }
     }));
@@ -457,9 +451,6 @@ class SyncAgent {
     // Re-run the filter to ensure that we handle inserts and updates appropriately
     leadsFilterResult = this.filterUtil.filterLeads(_.concat(leadsFilterResult.toInsert, leadsFilterResult.toUpdate, leadsFilterResult.toSkip), isBatch);
 
-    if (isBatch === false) {
-      console.log("Leads Filter Result", leadsFilterResult);
-    }
     /*
      * --- Process: Contacts.toInsert
      */
@@ -471,7 +462,6 @@ class SyncAgent {
         requestId: reqId
       };
       try {
-        console.log(">>> New Lead", data);
         const response = await this.nutshellClient.createLead(data, options);
         return await this.handleNutshellResponse("Lead", envelope, response);
       } catch (err) {
@@ -496,7 +486,6 @@ class SyncAgent {
         _.set(envelope, "message.user.traits_nutshell_lead/rev", _.get(currentObject, "rev", null));
         const newObject = this.attributesMapper.mapToServiceObject("Lead", _.get(envelope, "message.user", {}));
         const patchResult = this.patchUtil.createPatchObject("Lead", newObject, currentObject);
-        console.log(">>> Patch Result", patchResult);
         if (patchResult.hasChanges) {
           reqId = uuid();
           _.set(options, "requestId", reqId);
@@ -639,7 +628,6 @@ class SyncAgent {
         };
 
         return this.nutshellClient.findProducts(limit, options).then((opsResult) => {
-          console.log(">>> Products", opsResult);
           return _.get(opsResult, "result", []);
         });
       });
@@ -662,7 +650,6 @@ class SyncAgent {
         };
 
         return this.nutshellClient.findMarkets(limit, options).then((opsResult) => {
-          console.log(">>> Markets", opsResult);
           return _.get(opsResult, "result", []);
         });
       });
@@ -685,7 +672,6 @@ class SyncAgent {
         };
 
         return this.nutshellClient.findSources(limit, options).then((opsResult) => {
-          console.log(">>> Sources", opsResult);
           return _.get(opsResult, "result", []);
         });
       });
