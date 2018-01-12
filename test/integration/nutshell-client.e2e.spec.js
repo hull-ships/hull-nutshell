@@ -5,6 +5,10 @@ const NutshellClient = require("../../server/lib/service-client");
 const { MetricsClientMock } = require("../helper/metrics-client-mock");
 const nock = require("nock");
 
+const apiResponseFindProducts = require("../fixtures/api_findproducts.json");
+const apiResponseFindMarkets = require("../fixtures/api_findmarkets.json");
+const apiResponseFindSources = require("../fixtures/api_findsources.json");
+
 describe("NutshellClient", () => {
   const options = {
     userId: "sven+dev@hull.io",
@@ -788,6 +792,166 @@ describe("NutshellClient", () => {
       .reply(500);
 
     client.getResourceById("Account", 7, null, reqOpts).then(() => {
+      expect(false).toEqual(true);
+      done();
+    }, (err) => {
+      expect(err).toBeDefined();
+      done();
+    });
+  });
+
+  test("should get all active products", (done) => {
+    const client = new NutshellClient(options);
+
+    const reqOpts = {
+      host: "app.nutshell.com",
+      requestId: "apeye"
+    };
+
+    const expected = _.cloneDeep(apiResponseFindProducts);
+
+    nock("https://app.nutshell.com")
+      .post("/api/v1/json")
+      .reply(200, (uri, body) => {
+        expect(JSON.parse(body)).toEqual({
+          method: "findProducts",
+          jsonrpc: "2.0",
+          params: {
+            orderBy: "name",
+            orderDirection: "ASC",
+            limit: 100,
+            stubResponses: true
+          },
+          id: "apeye"
+        });
+        return apiResponseFindProducts;
+      });
+
+    client.findProducts(100, reqOpts).then((result) => {
+      expect(result).toEqual(expected);
+      done();
+    });
+  });
+
+  test("should reject the promise to get all active products when an error occurs", (done) => {
+    const client = new NutshellClient(options);
+
+    const reqOpts = {
+      host: "app.nutshell.com",
+      requestId: "apeye"
+    };
+
+    nock("https://app.nutshell.com")
+      .post("/api/v1/json")
+      .reply(500);
+
+    client.findProducts(100, reqOpts).then(() => {
+      expect(false).toEqual(true);
+      done();
+    }, (err) => {
+      expect(err).toBeDefined();
+      done();
+    });
+  });
+
+  test("should get all active markets", (done) => {
+    const client = new NutshellClient(options);
+
+    const reqOpts = {
+      host: "app.nutshell.com",
+      requestId: "apeye"
+    };
+
+    const expected = _.cloneDeep(apiResponseFindMarkets);
+
+    nock("https://app.nutshell.com")
+      .post("/api/v1/json")
+      .reply(200, (uri, body) => {
+        expect(JSON.parse(body)).toEqual({
+          method: "findMarkets",
+          jsonrpc: "2.0",
+          params: {
+            orderBy: "name",
+            orderDirection: "ASC",
+            limit: 100
+          },
+          id: "apeye"
+        });
+        return apiResponseFindMarkets;
+      });
+
+    client.findMarkets(100, reqOpts).then((result) => {
+      expect(result).toEqual(expected);
+      done();
+    });
+  });
+
+  test("should reject the promise to get all active markets when an error occurs", (done) => {
+    const client = new NutshellClient(options);
+
+    const reqOpts = {
+      host: "app.nutshell.com",
+      requestId: "apeye"
+    };
+
+    nock("https://app.nutshell.com")
+      .post("/api/v1/json")
+      .reply(500);
+
+    client.findMarkets(100, reqOpts).then(() => {
+      expect(false).toEqual(true);
+      done();
+    }, (err) => {
+      expect(err).toBeDefined();
+      done();
+    });
+  });
+
+  test("should get all active sources", (done) => {
+    const client = new NutshellClient(options);
+
+    const reqOpts = {
+      host: "app.nutshell.com",
+      requestId: "apeye"
+    };
+
+    const expected = _.cloneDeep(apiResponseFindSources);
+
+    nock("https://app.nutshell.com")
+      .post("/api/v1/json")
+      .reply(200, (uri, body) => {
+        expect(JSON.parse(body)).toEqual({
+          method: "findSources",
+          jsonrpc: "2.0",
+          params: {
+            orderBy: "name",
+            orderDirection: "ASC",
+            limit: 100
+          },
+          id: "apeye"
+        });
+        return apiResponseFindSources;
+      });
+
+    client.findSources(100, reqOpts).then((result) => {
+      expect(result).toEqual(expected);
+      done();
+    });
+  });
+
+  test("should reject the promise to get all active sources when an error occurs", (done) => {
+    const client = new NutshellClient(options);
+
+    const reqOpts = {
+      host: "app.nutshell.com",
+      requestId: "apeye"
+    };
+
+    nock("https://app.nutshell.com")
+      .post("/api/v1/json")
+      .reply(500);
+
+    client.findSources(100, reqOpts).then(() => {
       expect(false).toEqual(true);
       done();
     }, (err) => {

@@ -622,6 +622,75 @@ class SyncAgent {
     }));
   }
 
+  /**
+   * Gets all active products.
+   *
+   * @param {number} [limit=50] The maximum number of results to retrieve.
+   * @returns {Promise<Array<*>>} A list of products.
+   * @memberof SyncAgent
+   */
+  async findProducts(limit: number = 50): Promise<Array<*>> {
+    return this.getApiBaseHostName()
+      .then((baseHostname: string) => {
+        const reqId = uuid();
+        const options: INutshellOperationOptions = {
+          host: baseHostname,
+          requestId: reqId
+        };
+
+        return this.nutshellClient.findProducts(limit, options).then((opsResult) => {
+          console.log(">>> Products", opsResult);
+          return _.get(opsResult, "result", []);
+        });
+      });
+  }
+
+  /**
+   * Gets all active markets.
+   *
+   * @param {number} [limit=50] The maximum number of results to retrieve.
+   * @returns {Promise<Array<*>>} A list of markets.
+   * @memberof SyncAgent
+   */
+  async findMarkets(limit: number = 50): Promise<Array<*>> {
+    return this.getApiBaseHostName()
+      .then((baseHostname: string) => {
+        const reqId = uuid();
+        const options: INutshellOperationOptions = {
+          host: baseHostname,
+          requestId: reqId
+        };
+
+        return this.nutshellClient.findMarkets(limit, options).then((opsResult) => {
+          console.log(">>> Markets", opsResult);
+          return _.get(opsResult, "result", []);
+        });
+      });
+  }
+
+  /**
+   * Gets all active sources.
+   *
+   * @param {number} [limit=50] The maximum number of results to retrieve.
+   * @returns {Promise<Array<*>>} A list of sources.
+   * @memberof SyncAgent
+   */
+  async findSources(limit: number = 50): Promise<Array<*>> {
+    return this.getApiBaseHostName()
+      .then((baseHostname: string) => {
+        const reqId = uuid();
+        const options: INutshellOperationOptions = {
+          host: baseHostname,
+          requestId: reqId
+        };
+
+        return this.nutshellClient.findSources(limit, options).then((opsResult) => {
+          console.log(">>> Sources", opsResult);
+          return _.get(opsResult, "result", []);
+        });
+      });
+  }
+
   handleNutshellResponse(resource: TResourceType, envelope: IUserUpdateEnvelope, response: INutshellClientResponse): Promise<*> {
     if (!_.isNil(response.error)) {
       if (resource === "Account") {

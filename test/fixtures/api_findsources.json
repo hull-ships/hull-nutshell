@@ -1,0 +1,46 @@
+{
+  "result":[
+     {
+        "stub":true,
+        "id":9,
+        "rev":"1",
+        "entityType":"Sources",
+        "modifiedTime":"2018-01-11T15:45:25+0000",
+        "name":"Cold Call"
+     },
+     {
+        "stub":true,
+        "id":10,
+        "rev":"1",
+        "entityType":"Sources",
+        "modifiedTime":"2018-01-11T15:45:25+0000",
+        "name":"Referral Return Data"
+     },
+     {
+        "stub":true,
+        "id":6,
+        "rev":"1",
+        "entityType":"Sources",
+        "modifiedTime":"2018-01-11T15:45:25+0000",
+        "name":"SOLARCON"
+     },
+     {
+        "stub":true,
+        "id":8,
+        "rev":"1",
+        "entityType":"Sources",
+        "modifiedTime":"2018-01-11T15:45:25+0000",
+        "name":"Web contact form"
+     },
+     {
+        "stub":true,
+        "id":7,
+        "rev":"1",
+        "entityType":"Sources",
+        "modifiedTime":"2018-01-11T15:45:25+0000",
+        "name":"Word of mouth"
+     }],
+  "id":"apeye",
+  "error":null,
+  "jsonrpc":"2.0"
+}

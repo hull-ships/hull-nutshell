@@ -432,6 +432,61 @@ class NutshellClient {
       });
     });
   }
+
+  findProducts(limit: number, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
+    const params = {
+      orderBy: "name",
+      orderDirection: "ASC",
+      limit,
+      stubResponses: true
+    };
+    return new Promise((resolve, reject) => {
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      client.request("findProducts", params, options.requestId, (err, result) => {
+        this._handleError("findProducts", err);
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      });
+    });
+  }
+
+  findMarkets(limit: number, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
+    const params = {
+      orderBy: "name",
+      orderDirection: "ASC",
+      limit
+    };
+    return new Promise((resolve, reject) => {
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      client.request("findMarkets", params, options.requestId, (err, result) => {
+        this._handleError("findMarkets", err);
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      });
+    });
+  }
+
+  findSources(limit: number, options: INutshellOperationOptions): Promise<INutshellClientResponse> {
+    const params = {
+      orderBy: "name",
+      orderDirection: "ASC",
+      limit
+    };
+    return new Promise((resolve, reject) => {
+      const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
+      client.request("findSources", params, options.requestId, (err, result) => {
+        this._handleError("findSources", err);
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      });
+    });
+  }
 }
 
 module.exports = NutshellClient;
