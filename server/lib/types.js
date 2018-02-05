@@ -1,5 +1,5 @@
 /* @flow */
-import type { THullUserUpdateMessage } from "hull";
+import type { THullUserUpdateMessage, THullObjectIdent } from "hull";
 
 export type TResourceType = "Account" | "Contact" | "Activity" | "Lead";
 
@@ -61,7 +61,7 @@ export interface IFilterUtil {
 export interface IAttributesMapper {
   mapToServiceObject(resource: TResourceType, hullObject: any):any;
   mapToHullAttributeObject(resource: TResourceType, sObject: any): any;
-  mapToHullIdentObject(resource: TResourceType, sObject: any): any;
+  mapToHullIdentObject(resource: TResourceType, sObject: Object, leadContactsIndex?: number): THullObjectIdent;
 }
 
 export interface IPatchResult {

@@ -1,5 +1,5 @@
 /* @flow */
-import type { THullObject } from "hull";
+import type { THullObject, THullObjectIdent } from "hull";
 import type { TResourceType, IAttributesMapper } from "../types";
 
 const _ = require("lodash");
@@ -288,8 +288,8 @@ class AttributesMapper implements IAttributesMapper {
    * @returns {*} An object that can be passed to `hullClient.asUser` or `hullClient.asAccount`.
    * @memberof AttributesMapper
    */
-  mapToHullIdentObject(resource: TResourceType, sObject: Object): Object {
-    const ident = { };
+  mapToHullIdentObject(resource: TResourceType, sObject: Object, leadContactsIndex?: number = 0): THullObjectIdent {
+    const ident: THullObjectIdent = {};
     if (resource === "Contact") {
       // We cannot say for sure which email address is the proper one,
       // so stick to anonymous_id
@@ -304,9 +304,10 @@ class AttributesMapper implements IAttributesMapper {
       ];
       // A lead is tied to Contacts and Accounts in Nutshell, however
       // in Hull it is a user, so map it via anonymous_id
-      if (_.get(sObject, "contacts[0].id")) {
-        _.set(ident, "anonymous_id", `nutshell-contact:${_.get(sObject, "contacts[0].id")}`);
-        aliases.push(`nutshell-contact:${_.get(sObject, "contacts[0].id")}`);
+      if (_.get(sObject, `contacts[${leadContactsIndex}].id`)) {
+        const contactId = _.get(sObject, `contacts[${leadContactsIndex}].id`);
+        _.set(ident, "anonymous_id", `nutshell-contact:${contactId}`);
+        aliases.push(`nutshell-contact:${contactId}`);
       } else {
         _.set(ident, "anonymous_id", `nutshell-lead:${_.get(sObject, "id")}`);
       }

@@ -554,20 +554,28 @@ class SyncAgent {
         };
         const currentObjectResponse = await this.nutshellClient.getResourceById(objectType, id, null, options);
         const hullAttributes = this.attributesMapper.mapToHullAttributeObject(objectType, currentObjectResponse.result);
-        const hullIdent = this.attributesMapper.mapToHullIdentObject(objectType, currentObjectResponse.result);
-        let asUser;
-        let logKey;
-        if (objectType === "Account") {
-          asUser = this.hullClient.asAccount(hullIdent);
-          logKey = "account";
-        } else {
-          asUser = this.hullClient.asUser(hullIdent);
-          logKey = "user";
+        const relatedIdents = _.size(_.get(currentObjectResponse.result, "contacts", [])) > 1
+          ? _.size(_.get(currentObjectResponse.result, "contacts", []))
+          : 1;
+        const promises = [];
+        for (let i = 0; i < relatedIdents; i += 1) {
+          const hullIdent = this.attributesMapper.mapToHullIdentObject(objectType, currentObjectResponse.result, i);
+          let asUser;
+          let logKey;
+          if (objectType === "Account") {
+            asUser = this.hullClient.asAccount(hullIdent);
+            logKey = "account";
+          } else {
+            asUser = this.hullClient.asUser(hullIdent);
+            logKey = "user";
+          }
+
+          promises.push(asUser.traits(hullAttributes)
+            .then(() => asUser.logger.info(`incoming.${logKey}.success`, hullAttributes))
+            .catch((error) => asUser.logger.info(`incoming.${logKey}.error`, { error })));
         }
 
-        await asUser.traits(hullAttributes)
-          .then(() => asUser.logger.info(`incoming.${logKey}.success`, hullAttributes))
-          .catch((error) => asUser.logger.info(`incoming.${logKey}.error`, { error }));
+        await Promise.all(promises);
 
         await this.fetchAdditionalActivites(objectType, currentObjectResponse.result);
 
@@ -580,11 +588,16 @@ class SyncAgent {
           const currentAccountResponse = await this.nutshellClient.getResourceById("Account", accountId, null, options);
           const hullAccountIdent = this.attributesMapper.mapToHullIdentObject("Account", currentAccountResponse.result);
           if (hullAccountIdent.domain !== undefined) {
-            const asAccount = asUser.account(hullAccountIdent);
-            await asAccount
-              .traits({})
-              .then(() => asAccount.logger.info("incoming.account-link.success"))
-              .catch((error) => asAccount.logger.info("incoming.account-link.error", { error }));
+            const promises2 = [];
+            for (let i = relatedIdents - 1; i >= 0; i -= 1) {
+              const hullIdent = this.attributesMapper.mapToHullIdentObject(objectType, currentObjectResponse.result, i);
+              const asAccount = this.hullClient.asUser(hullIdent).account(hullAccountIdent);
+              promises2.push(asAccount
+                .traits({})
+                .then(() => asAccount.logger.info("incoming.account-link.success"))
+                .catch((error) => asAccount.logger.info("incoming.account-link.error", { error })));
+            }
+            await Promise.all(promises2);
           }
         }
       }
