@@ -554,7 +554,7 @@ class SyncAgent {
         };
         const currentObjectResponse = await this.nutshellClient.getResourceById(objectType, id, null, options);
         const hullAttributes = this.attributesMapper.mapToHullAttributeObject(objectType, currentObjectResponse.result);
-        const relatedIdents = _.size(_.get(currentObjectResponse.result, "contacts", [])) > 1
+        const relatedIdents = objectType === "Lead" && _.size(_.get(currentObjectResponse.result, "contacts", [])) > 1
           ? _.size(_.get(currentObjectResponse.result, "contacts", []))
           : 1;
         const promises = [];
