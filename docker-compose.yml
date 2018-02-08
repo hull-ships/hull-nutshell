@@ -1,0 +1,13 @@
+version: '2'
+services:
+    npm:
+        image: node:8.9
+        entrypoint: npm
+        command: run start:dev
+        environment:
+          - LOG_LEVEL=debug
+        ports:
+            - "8091:8091"
+        working_dir: /app
+        volumes:
+            - .:/app

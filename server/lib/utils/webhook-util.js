@@ -42,11 +42,8 @@ class WebhookUtil {
     return _.replace(_.get(payload, "links.accounts[0]", ""), "-accounts", "");
   }
 
-  getLinkedObject(payload: Object): Object {
-    const response = {
-      type: "",
-      id: ""
-    };
+  getLinkedObjects(payload: Object): Array<Object> {
+    const response = [];
     const links = _.get(payload, "links", {});
     const supportedTypes: Array<Object> = SUPPORTED_RESOURCETYPES.map((type) => {
       return {
@@ -57,8 +54,10 @@ class WebhookUtil {
 
     supportedTypes.forEach((type) => {
       if (_.has(links, `${type.pluralType}[0]`)) {
-        response.type = type.type;
-        response.id = _.replace(_.get(links, `${type.pluralType}[0]`, ""), `-${type.pluralType}`, "");
+        response.push({
+          type: type.type,
+          id: _.replace(_.get(links, `${type.pluralType}[0]`, ""), `-${type.pluralType}`, "")
+        });
       }
     });
     return response;

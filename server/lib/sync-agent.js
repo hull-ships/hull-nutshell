@@ -523,24 +523,42 @@ class SyncAgent {
         // and process the response
         // TODO: Add async function to the agent which takes the id and handles the rest
         const activityId = this.webhookUtil.extractIdentifierFromPayload(p);
-        const linkedObject = this.webhookUtil.getLinkedObject(p);
-        let options: INutshellOperationOptions = {
-          host: baseHostname,
-          requestId: uuid()
-        };
-        const currentLinkedObjectResponse = await this.nutshellClient.getResourceById(linkedObject.type, linkedObject.id, null, options);
-        options = {
-          host: baseHostname,
-          requestId: uuid()
-        };
-        const currentObjectResponse = await this.nutshellClient.getResourceById("Activity", activityId, null, options);
+        const linkedObjects = this.webhookUtil.getLinkedObjects(p);
+        const promises = [];
+        for (let i = 0; i < linkedObjects.length; i += 1) {
+          const linkedObject = linkedObjects[i];
+          if (linkedObject.type === "Account") {
+            // TODO: since we don't support Account events for now we skip such activity
+            continue; // eslint-disable-line no-continue
+          }
+          let options: INutshellOperationOptions = {
+            host: baseHostname,
+            requestId: uuid()
+          };
+          const currentLinkedObjectResponse = await this.nutshellClient.getResourceById(linkedObject.type, linkedObject.id, null, options); // eslint-disable-line no-await-in-loop
+          const relatedIdents: number = linkedObject.type === "Lead" && _.size(_.get(currentLinkedObjectResponse.result, "contacts", [])) > 1
+            ? _.size(_.get(currentLinkedObjectResponse.result, "contacts", []))
+            : 1;
+          options = {
+            host: baseHostname,
+            requestId: uuid()
+          };
+          const currentObjectResponse = await this.nutshellClient.getResourceById("Activity", activityId, null, options); // eslint-disable-line no-await-in-loop
 
-        const hullIdent = this.attributesMapper.mapToHullIdentObject(linkedObject.type, currentLinkedObjectResponse.result);
-        const hullTrack = this.webhookUtil.getWebhookHullTrack(currentObjectResponse.result);
-        const asUser = this.hullClient.asUser(hullIdent);
-        await asUser.track(hullTrack.name, hullTrack.params, hullTrack.context)
-          .then(() => asUser.logger.info("incoming.event.success", hullTrack))
-          .catch((error) => asUser.logger.info("incoming.event.error", { error }));
+          for (let j = 0; j < relatedIdents; j += 1) {
+            const hullIdent = this.attributesMapper.mapToHullIdentObject(linkedObject.type, currentLinkedObjectResponse.result, j);
+            const hullTrack = this.webhookUtil.getWebhookHullTrack(currentObjectResponse.result);
+            const hullAttributes = this.attributesMapper.mapToHullAttributeObject(linkedObject.type, currentLinkedObjectResponse.result);
+            const asUser = this.hullClient.asUser(hullIdent);
+            promises.push(asUser.track(hullTrack.name, hullTrack.params, hullTrack.context)
+              .then(() => asUser.logger.info("incoming.event.success", hullTrack))
+              .catch((error) => asUser.logger.info("incoming.event.error", { error })));
+            promises.push(asUser.traits(hullAttributes)
+              .then(() => asUser.logger.info("incoming.user.success", hullAttributes))
+              .catch((error) => asUser.logger.info("incoming.user.error", { error })));
+          }
+        }
+        await Promise.all(promises);
       } else if (this.webhookUtil.isObjectUpdate(p)) {
         const objectType = this.webhookUtil.getObjectType(p);
         // We potentially have the correct data but
@@ -554,7 +572,7 @@ class SyncAgent {
         };
         const currentObjectResponse = await this.nutshellClient.getResourceById(objectType, id, null, options);
         const hullAttributes = this.attributesMapper.mapToHullAttributeObject(objectType, currentObjectResponse.result);
-        const relatedIdents = objectType === "Lead" && _.size(_.get(currentObjectResponse.result, "contacts", [])) > 1
+        const relatedIdents: number = objectType === "Lead" && _.size(_.get(currentObjectResponse.result, "contacts", [])) > 1
           ? _.size(_.get(currentObjectResponse.result, "contacts", []))
           : 1;
         const promises = [];
