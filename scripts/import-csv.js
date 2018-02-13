@@ -2,17 +2,22 @@
   USAGE:
 
   Leads:
-  loadAndParse(fileName).map(transformLeadsRecords).consume(mapLeadsRecords).on("data", console.log)
+  loadAndParse(fileName).map(transformLeadsRecords).consume(mapLeadsRecords).map(findContactIdent).filter(filterLeads).map(prepareUserImport).on("data", console.log).pipe(fs.createWriteStream(fileName))
 
   Contacts
-  loadAndParse(fileName).map(transformContactsRecords).map(mapRecords("Contact")).on("data", console.log)
+  loadAndParse(fileName).map(transformContactsRecords).map(mapRecords("Contact")).map(prepareUserImport).on("data", console.log).pipe(fs.createWriteStream(fileName))
 
   Accounts
   loadAndParse(fileName).map(transformAccountsRecords).map(mapRecords("Account")).on("data", console.log)
+
+  Prepare index:
+  cat lengow-import-contacts.json | jq '.traits["nutshell_contact/id"] + " " + .traits.email' > filename
+  contactIds = fs.readFileSync(filename)
+  indexedContactIds = contactIds.split("\n").map(r => lo.trim(r, '"').split(" ")).filter(r => r[1] !== '').reduce((acc, item) => { acc[item[0]] = item[1]; return acc; }, {})
  */
 module.exports = function script() {
   const {
-    lo, highland, fs, parse, syncAgent
+    lo, highland, fs, parse, syncAgent, indexedContactIds
   } = this;
 
   this.loadAndParse = (file) => {
@@ -24,6 +29,7 @@ module.exports = function script() {
   };
 
   this.transformLeadsRecords = (r) => {
+    r.id = r.id.replace("-leads", "");
     r.contacts = lo.filter(r.contacts.split(",")).map(id => ({ id: id.replace("-contacts", "") }));
     r.modifiedTime = r.last_modified;
     r.createdTime = r.date_created;
@@ -49,12 +55,31 @@ module.exports = function script() {
     }
   };
 
+  this.findContactIdent = (r) => {
+    const contactAnonymousId = r.ident.anonymous_id;
+    const id = contactAnonymousId.replace("nutshell-contact:", "");
+    try {
+      r.ident.email = indexedContactIds[id];
+    } catch (e) {}
+
+    return r;
+  };
+
+  this.filterLeads = (r) => {
+    return r.ident.email !== "";
+  };
+
   this.mapRecords = (type) => {
     return r => ({ traits: syncAgent.attributesMapper.mapToHullAttributeObject(type, r), ident: syncAgent.attributesMapper.mapToHullIdentObject(type, r) });
   };
 
   this.transformContactsRecords = (r) => {
     r.id = r.id.replace("-contacts", "");
+    const splitName = r.name.split(" ");
+    r.name = {
+      givenName: splitName.splice(0, 1).join(" "),
+      familyName: splitName.splice(1).join(" ")
+    };
     r.email = {
       "--primary": r.email
     };
@@ -69,5 +94,20 @@ module.exports = function script() {
     return r;
   };
 
-  this.prepare
+  this.prepareUserImport = (r) => {
+    const parsedTraits = lo.reduce(r.traits, (acc, trait, traitName) => {
+      if (trait && trait.value) {
+        acc[traitName] = trait.value;
+      } else {
+        acc[traitName] = "";
+      }
+      return acc;
+    }, {});
+    const data = {
+      traits: parsedTraits
+    };
+    data.traits.email = r.ident.email;
+    data.traits.anonymous_ids = [r.ident.anonymous_id];
+    return JSON.stringify(data) + "\n";
+  };
 };
