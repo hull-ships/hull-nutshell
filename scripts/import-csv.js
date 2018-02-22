@@ -5,13 +5,13 @@
   loadAndParse(fileName).map(transformLeadsRecords).consume(mapLeadsRecords).map(findContactIdent).filter(filterLeads).map(prepareUserImport).on("data", console.log).pipe(fs.createWriteStream(fileName))
 
   Contacts
-  loadAndParse(fileName).map(transformContactsRecords).map(mapRecords("Contact")).map(prepareUserImport).on("data", console.log).pipe(fs.createWriteStream(fileName))
+  loadAndParse(fileName).map(transformContactsRecords).map(mapRecords("Contact")).filter(filterLeads).map(prepareUserImport).on("data", console.log).pipe(fs.createWriteStream(fileName))
 
   Accounts
   loadAndParse(fileName).map(transformAccountsRecords).map(mapRecords("Account")).on("data", console.log)
 
   Prepare index:
-  cat lengow-import-contacts.json | jq '.traits["nutshell_contact/id"] + " " + .traits.email' > filename
+  cat prepared-import-contacts.json | jq '.traits["nutshell_contact/id"] + " " + .traits.email' > filename
   contactIds = fs.readFileSync(filename)
   indexedContactIds = contactIds.split("\n").map(r => lo.trim(r, '"').split(" ")).filter(r => r[1] !== '').reduce((acc, item) => { acc[item[0]] = item[1]; return acc; }, {})
  */
@@ -33,6 +33,7 @@ module.exports = function script() {
     r.contacts = lo.filter(r.contacts.split(",")).map(id => ({ id: id.replace("-contacts", "") }));
     r.modifiedTime = r.last_modified;
     r.createdTime = r.date_created;
+    r.confidence = r.confidence.replace("%", "");
     return r;
   };
 
@@ -56,6 +57,9 @@ module.exports = function script() {
   };
 
   this.findContactIdent = (r) => {
+    if (indexedContactIds === undefined) {
+      throw new Error("We need indexedContactIds");
+    }
     const contactAnonymousId = r.ident.anonymous_id;
     const id = contactAnonymousId.replace("nutshell-contact:", "");
     try {
@@ -66,7 +70,7 @@ module.exports = function script() {
   };
 
   this.filterLeads = (r) => {
-    return r.ident.email !== "";
+    return r.ident.email !== "" || (r.traits.first_name === "" && r.traits.last_name);
   };
 
   this.mapRecords = (type) => {
@@ -108,6 +112,7 @@ module.exports = function script() {
     };
     data.traits.email = r.ident.email;
     data.traits.anonymous_ids = [r.ident.anonymous_id];
+    data.traits.initial_nutshell_import = true;
     return JSON.stringify(data) + "\n";
   };
 };
