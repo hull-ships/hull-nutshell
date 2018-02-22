@@ -421,4 +421,41 @@ describe("AttributesMapper", () => {
 
     expect(actual).toEqual(expectedTraitsObject);
   });
+
+  test("should render a simplified liquid template", () => {
+    const template = "{{user.email}}-{{user.first_name}}-{{user.traits_company}}-{{user.traits_salesforce/id}}";
+    const hullUser = {
+      account: {
+        created_at: "2017-10-25T10:06:00Z",
+        domain: "hullsfdc.io",
+        employees: 2,
+        external_id: "a9461ad518be40ba-b568-4729-a676-f9c55abd72c9",
+        industry: "Technology",
+        name: "Hull SFDC Testing",
+        plan: "Enterprise",
+        _sales_business_won: "2017-10-25T12:45:00Z"
+      },
+      id: "59f06a5f421a978e920643d7",
+      created_at: "2017-10-25T10:41:35Z",
+      is_approved: false,
+      has_password: false,
+      accepts_marketing: false,
+      email: "sven+sfdc4@hull.io",
+      domain: "hull.io",
+      name: "Sven4 SFDC",
+      last_name: "SFDC",
+      first_name: "Svn4",
+      traits_status: "Lead",
+      "traits_intercom/citygroup": "Stuttgart",
+      traits_company: "Hull Test SFDC GmbH & Co KG",
+      "traits_salesforce_lead/id": "abcdf",
+      "traits_salesforce_contact/id": "1234foo",
+      "traits_salesforce/id": "56789baz",
+      "traits_nutshell_lead/id": "7",
+      "traits_nutshell_lead/rev": "1"
+    };
+    const mapper = new AttributesMapper(CONNECTOR_SETTINGS);
+    const rendered = mapper.renderTemplate(template, hullUser);
+    expect(rendered).toEqual(`${hullUser.email}-${hullUser.first_name}-${hullUser.traits_company}-${hullUser["traits_salesforce/id"]}`);
+  });
 });
