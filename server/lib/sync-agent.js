@@ -85,7 +85,7 @@ class SyncAgent {
         ];
         return this.nutshellClient.findCustomFields(options).then((opsResult) => {
           const customFields = _.map(opsResult.result.Accounts, (field) => {
-            return { value: field.name, label: field.name };
+            return { value: `customFields.${field.name}`, label: field.name };
           });
 
           return _.concat(defaultFields, customFields);
@@ -119,7 +119,7 @@ class SyncAgent {
         ];
         return this.nutshellClient.findCustomFields(options).then((opsResult) => {
           const customFields = _.map(opsResult.result.Contacts, (field) => {
-            return { value: field.name, label: field.name };
+            return { value: `customFields.${field.name}`, label: field.name };
           });
 
           return _.concat(defaultFields, customFields);
@@ -154,7 +154,7 @@ class SyncAgent {
         ];
         return this.nutshellClient.findCustomFields(options).then((opsResult) => {
           const customFields = _.map(opsResult.result.Leads, (field) => {
-            return { value: field.name, label: field.name };
+            return { value: `customFields.${field.name}`, label: field.name };
           });
 
           return _.concat(defaultFields, customFields);
