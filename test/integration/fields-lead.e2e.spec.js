@@ -108,7 +108,7 @@ describe("fieldsLeadAction", () => {
     ];
 
     const customFields = customFieldsData.result.Leads.map((cf) => {
-      return { value: cf.name, label: cf.name };
+      return { value: `customFields.${cf.name}`, label: cf.name };
     });
 
     const res = fieldsLeadAction(req, responseMock);
