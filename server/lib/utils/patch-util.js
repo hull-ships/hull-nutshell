@@ -61,12 +61,12 @@ class PatchUtil implements IPatchUtil {
     }
 
     // Throw an error if one attempts to patch two different objects.
-    if (_.has(newObject, "id") && _.has(currentObject, "id") && newObject.id !== currentObject.id) {
+    if (_.has(newObject, "id") && _.has(currentObject, "id") && _.toString(newObject.id) !== _.toString(currentObject.id)) {
       throw new Error(`The identifier for the hull object ${newObject.id} and nutshell object ${currentObject.id} do not match.`);
     }
 
     // Throw an error if one attempts to patch the same objects, but different revisions.
-    if (_.has(newObject, "rev") && _.has(currentObject, "rev") && newObject.rev !== currentObject.rev) {
+    if (_.has(newObject, "rev") && _.has(currentObject, "rev") && _.toString(newObject.rev) !== _.toString(currentObject.rev)) {
       throw new Error(`The revision for the hull object ${newObject.rev} and nutshell object ${currentObject.rev} do not match.`);
     }
 
