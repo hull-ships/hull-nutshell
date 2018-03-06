@@ -57,9 +57,10 @@ class NutshellClient {
       if (this.metricsClient) {
         const method = req.method;
         // TODO: migrate to connector.service_api.call
-        this.metricsClient.increment("ship.service_api.call", 1, [`method:${method}`]);
+        this.metricsClient.increment("ship.service_api.call", 1, [`method:${method}`, `endpoint:${method}`]);
         this.metricsClient.value("connector.service_api.response_time", elapsed, [
-          `method:${method}`
+          `method:${method}`,
+          `endpoint:${method}`
         ]);
       }
     });
@@ -75,8 +76,7 @@ class NutshellClient {
    */
   _handleError(method: string, err: Object) {
     if (err && this.metricsClient) {
-      console.log(err);
-      this.metricsClient.increment("connector.service_api.error", 1, [`method:${method}`]);
+      this.metricsClient.increment("connector.service_api.error", 1, [`method:${method}`, `endpoint:${method}`]);
     }
   }
 

@@ -64,14 +64,14 @@ class AttributesMapper implements IAttributesMapper {
     _.forEach(mappings, (m) => {
       if (_.get(m, "hull_field_name")) {
         const hullAttribValue = _.get(hullObject, m.hull_field_name);
-        if (!_.isNil(hullAttribValue)) {
+        if (!_.isNil(hullAttribValue) && hullAttribValue !== "") {
           const sAttribName = _.get(m, "nutshell_field_name");
           _.set(sObject, sAttribName, hullAttribValue);
         }
       }
       if (_.get(m, "hull_field_template")) {
         const hullAttribValue = this.renderTemplate(m.hull_field_template, hullObject);
-        if (!_.isNil(hullAttribValue)) {
+        if (!_.isNil(hullAttribValue) && hullAttribValue !== "") {
           const sAttribName = _.get(m, "nutshell_field_name");
           _.set(sObject, sAttribName, hullAttribValue);
         }

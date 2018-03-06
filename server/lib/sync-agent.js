@@ -406,7 +406,7 @@ class SyncAgent {
         await this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
         return this.fetchAdditionalActivites("Contact", currentObjectResponse.result);
       } catch (err) {
-        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing contact", details: err });
+        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing contact", details: _.get(err, "message", "") });
       }
     }));
 
@@ -444,7 +444,7 @@ class SyncAgent {
         }
         return Promise.resolve(true);
       } catch (err) {
-        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.query.error", { reason: "Failed to search leads by name", details: err });
+        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.query.error", { reason: "Failed to search leads by name", details: _.get(err, "message", "") });
       }
     }));
 
@@ -495,7 +495,7 @@ class SyncAgent {
         await this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
         return this.fetchAdditionalActivites("Lead", currentObjectResponse.result);
       } catch (err) {
-        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing lead", details: err });
+        return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing lead", details: _.get(err, "message", "") });
       }
     }));
 

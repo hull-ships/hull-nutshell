@@ -162,6 +162,7 @@ describe("AttributesMapper", () => {
       last_name: "SFDC",
       first_name: "Svn4",
       traits_status: "Lead",
+      traits_title: "",
       "traits_intercom/citygroup": "Stuttgart",
       traits_company: "Hull Test SFDC GmbH & Co KG",
       "traits_salesforce_lead/id": "abcdf",
