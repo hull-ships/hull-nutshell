@@ -327,7 +327,7 @@ class AttributesMapper implements IAttributesMapper {
         if (property === undefined) {
           return "";
         }
-        return _.get(message, property, (defaultValue == null || defaultValue === "") ? "Unknown Value" : defaultValue.trim());
+        return _.get(message, property, defaultValue.trim());
       });
   }
 

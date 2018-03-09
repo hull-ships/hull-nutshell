@@ -424,7 +424,7 @@ describe("AttributesMapper", () => {
   });
 
   test("should render a simplified liquid template", () => {
-    const template = "{{user.email}}-{{user.first_name}}-{{user.traits_company}}-{{user.traits_salesforce/id}}";
+    const template = "{{user.email}}-{{user.first_name}}-{{user.traits_company}}-{{user.traits_salesforce/id}}-{{user.unknown_trait}}-{{user.unknown_trait|Default Value}}";
     const hullUser = {
       account: {
         created_at: "2017-10-25T10:06:00Z",
@@ -457,6 +457,6 @@ describe("AttributesMapper", () => {
     };
     const mapper = new AttributesMapper(CONNECTOR_SETTINGS);
     const rendered = mapper.renderTemplate(template, hullUser);
-    expect(rendered).toEqual(`${hullUser.email}-${hullUser.first_name}-${hullUser.traits_company}-${hullUser["traits_salesforce/id"]}`);
+    expect(rendered).toEqual(`${hullUser.email}-${hullUser.first_name}-${hullUser.traits_company}-${hullUser["traits_salesforce/id"]}--Default Value`);
   });
 });
