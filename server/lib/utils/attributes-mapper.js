@@ -3,6 +3,7 @@ import type { THullObject, THullObjectIdent } from "hull";
 import type { TResourceType, IAttributesMapper } from "../types";
 
 const _ = require("lodash");
+const moment = require("moment");
 const { URL } = require("url");
 
 const { SUPPORTED_RESOURCETYPES, COMPLEX_ARRAY_FIELDS_MAP } = require("../shared");
@@ -276,7 +277,30 @@ class AttributesMapper implements IAttributesMapper {
       });
     }
 
+    if (_.isObject(sObject.customFields)) {
+      _.forEach(sObject.customFields, (value, name) => {
+        const parsedValue = this.parseCustomFieldValue(value);
+        if (resource === "Account") {
+          _.set(hObject, `nutshell/custom_${_.snakeCase(name)}`, { value: parsedValue });
+        } else {
+          _.set(hObject, `nutshell_${_.toLower(resource)}/custom_${_.snakeCase(name)}`, { value: parsedValue });
+        }
+      });
+    }
+
     return hObject;
+  }
+
+  parseCustomFieldValue(value: Object | string): any {
+    if (value && typeof value === "object" && value.currency && value.amount) {
+      return `${value.amount} ${value.currency}`;
+    }
+
+    if (value && typeof value === "object" && value.timestamp) {
+      return moment(value.timestamp, "X").format();
+    }
+
+    return value;
   }
 
   /**

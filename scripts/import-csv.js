@@ -1,8 +1,8 @@
 /*
   USAGE:
 
-  Leads:
-  loadAndParse(fileName).map(transformLeadsRecords).consume(mapLeadsRecords).map(findContactIdent).filter(filterLeads).map(prepareUserImport).on("data", console.log).pipe(fs.createWriteStream(fileName))
+  loadSyncAgent()
+  loadScript("./scripts/import-csv")
 
   Contacts
   loadAndParse(fileName).map(transformContactsRecords).map(mapRecords("Contact")).filter(filterLeads).map(prepareUserImport).on("data", console.log).pipe(fs.createWriteStream(fileName))
@@ -12,8 +12,12 @@
 
   Prepare index:
   cat prepared-import-contacts.json | jq '.traits["nutshell_contact/id"] + " " + .traits.email' > filename
-  contactIds = fs.readFileSync(filename)
+  contactIds = fs.readFileSync(filename).toString()
   indexedContactIds = contactIds.split("\n").map(r => lo.trim(r, '"').split(" ")).filter(r => r[1] !== '').reduce((acc, item) => { acc[item[0]] = item[1]; return acc; }, {})
+  loadScript("./scripts/import-csv")
+
+  Leads:
+  loadAndParse(fileName).map(transformLeadsRecords).consume(mapLeadsRecords).map(findContactIdent).filter(filterLeads).map(prepareUserImport).on("data", console.log).pipe(fs.createWriteStream(fileName))
  */
 module.exports = function script() {
   const {
