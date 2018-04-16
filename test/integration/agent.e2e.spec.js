@@ -222,7 +222,7 @@ describe("Agent", () => {
     agent.handleNutshellResponse("Contact", envelope, contactNewPayload).then(() => {
       expect(traitsMock.mock.calls[0][0]).toEqual(expectedTraitsObject);
       expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.success");
-      expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject });
+      expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject, resource: "Contact" });
       expect(incrementMock.mock.calls[0][0]).toEqual("ship.outgoing.users");
       expect(incrementMock.mock.calls[0][1]).toEqual(1);
       expect(asUserMock.mock.calls[0][0]).toEqual(envelope.message.user);
@@ -428,7 +428,15 @@ describe("Agent", () => {
     const infoMock = jest.fn().mockImplementation(() => {
       return Promise.resolve();
     });
+    const debugMock = jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    });
+    const errorMock = jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    });
     loggerMock.info = infoMock.bind(loggerMock);
+    loggerMock.debug = debugMock.bind(loggerMock);
+    loggerMock.error = errorMock.bind(loggerMock);
     const traitsMock = jest.fn().mockImplementation(() => {
       return Promise.resolve();
     });
@@ -478,7 +486,7 @@ describe("Agent", () => {
     agent.sendUserUpdateMessages(messagesToInsert, false).then(() => {
       expect(traitsMock.mock.calls[0][0]).toEqual(expectedTraitsObject);
       expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.success");
-      expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject });
+      expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject, resource: "Contact" });
       expect(incrementMock.mock.calls[0][0]).toEqual("ship.service_api.call");
       expect(incrementMock.mock.calls[0][1]).toEqual(1);
       expect(incrementMock.mock.calls[1][0]).toEqual("ship.service_api.call");
@@ -532,7 +540,11 @@ describe("Agent", () => {
     const infoMock = jest.fn().mockImplementation(() => {
       return Promise.resolve();
     });
+    const debugMock = jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    });
     loggerMock.info = infoMock.bind(loggerMock);
+    loggerMock.debug = debugMock.bind(loggerMock);
     const traitsMock = jest.fn().mockImplementation(() => {
       return Promise.resolve();
     });
@@ -583,7 +595,7 @@ describe("Agent", () => {
     agent.sendUserUpdateMessages(messagesToUpdate, false).then(() => {
       expect(traitsMock.mock.calls[0][0]).toEqual(expectedTraitsObject);
       expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.success");
-      expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject });
+      expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject, resource: "Contact" });
       expect(incrementMock.mock.calls[0][0]).toEqual("ship.service_api.call");
       expect(incrementMock.mock.calls[0][1]).toEqual(1);
       expect(incrementMock.mock.calls[1][0]).toEqual("ship.service_api.call");
@@ -631,7 +643,11 @@ describe("Agent", () => {
     const infoMock = jest.fn().mockImplementation(() => {
       return Promise.resolve();
     });
+    const debugMock = jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    });
     loggerMock.info = infoMock.bind(loggerMock);
+    loggerMock.debug = debugMock.bind(loggerMock);
     const traitsMock = jest.fn().mockImplementation(() => {
       return Promise.resolve();
     });
