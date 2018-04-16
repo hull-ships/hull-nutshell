@@ -1,8 +1,8 @@
 version: '2'
 services:
-    npm:
-        image: node:8.9
-        entrypoint: npm
+    yarn:
+        image: node:8.10
+        entrypoint: yarn
         command: run start:dev
         environment:
           - LOG_LEVEL=debug

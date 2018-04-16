@@ -170,9 +170,7 @@
       "description": "Specify all fields to send",
       "type": "array",
       "format": "table",
-      "default": [
-        { "hull_field_name": "name", "nutshell_field_name": "name" }
-      ],
+      "default": [],
       "items": {
         "type": "object",
         "properties": {

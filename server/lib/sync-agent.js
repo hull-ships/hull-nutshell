@@ -230,6 +230,10 @@ class SyncAgent {
       };
     });
 
+    envelopes.map((envelope) => {
+      return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.debug("outgoing.user.start");
+    });
+
     // Use for all subsequent calls
     const baseHostname = await this.getApiBaseHostName();
     const searchMax = 10;
@@ -358,7 +362,6 @@ class SyncAgent {
 
     // Re-run the filter to ensure that we handle inserts and updates appropriately
     contactsFilterResult = this.filterUtil.filterContacts(_.concat(contactsFilterResult.toInsert, contactsFilterResult.toUpdate, contactsFilterResult.toSkip), isBatch);
-
     /*
      * --- Process: Contacts.toInsert
      */
@@ -731,7 +734,14 @@ class SyncAgent {
     } else if (resource === "Contact") {
       const asUser = this.hullClient.asUser(_.get(envelope, "message.user", {}));
       return asUser.traits(traitsObj).then(() => {
-        asUser.logger.info("outgoing.user.success", { data: response.result });
+        asUser.logger.info("outgoing.user.success", { data: response.result, resource: "Contact" });
+        this.incrementOutgoingCount(resource);
+        return Promise.resolve();
+      });
+    } else if (resource === "Lead") {
+      const asUser = this.hullClient.asUser(_.get(envelope, "message.user", {}));
+      return asUser.traits(traitsObj).then(() => {
+        asUser.logger.info("outgoing.user.success", { data: response.result, resource: "Lead" });
         this.incrementOutgoingCount(resource);
         return Promise.resolve();
       });
