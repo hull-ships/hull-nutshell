@@ -2,7 +2,27 @@
   "name": "hull-nutshell",
   "version": "0.2.0",
   "description": "Hull Nutshell CRM integration",
-  "main": "index.js",
+  "homepage": "https://github.com/hull-ships/hull-nutshell",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hull-ships/hull-nutshell.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hull-ships/hull-nutshell/issues"
+  },
+  "license": "MIT",
+  "author": "Hull",
+  "keywords": [
+    "hull",
+    "ship",
+    "nutshell",
+    "hull-ship"
+  ],
+  "engines": {
+    "node": "8.11.x",
+    "npm": "5.6.x",
+    "yarn": "1.5.x"
+  },
   "scripts": {
     "build": "yarn run clean && yarn run build:server",
     "build:server": "babel server -d build",
@@ -17,27 +37,6 @@
     "start:dev": "NODE_ENV=development babel-watch -L server",
     "postinstall": "yarn run build"
   },
-  "engines": {
-    "node": "8.10.x",
-    "npm": "5.6.x",
-    "yarn": "1.5.x"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hull-ships/hull-nutshell.git"
-  },
-  "keywords": [
-    "hull",
-    "ship",
-    "nutshell",
-    "hull-ship"
-  ],
-  "author": "Hull",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/hull-ships/hull-nutshell/issues"
-  },
-  "homepage": "https://github.com/hull-ships/hull-nutshell",
   "dependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",

@@ -56,7 +56,7 @@ class FilterUtil implements IFilterUtil {
         if (_.has(envelope.message, "account.nutshell/id")) {
           return results.toUpdate.push(envelope);
         }
-        return results.toInsert.push(envelope);
+        return !this.accountInArray(results.toInsert, envelope) && results.toInsert.push(envelope);
       }
 
       envelope.skipReason = "Account doesn't belong to synchronized segments.";
@@ -152,6 +152,12 @@ class FilterUtil implements IFilterUtil {
       return false;
     }
     return _.size(otherChanges) === 0;
+  }
+
+  accountInArray(array: Array<IUserUpdateEnvelope>, message: IUserUpdateEnvelope): boolean {
+    return _.find(array, (e) => {
+      return _.get(e, "message.user.account.id", "n/a") === _.get(message, "user.account.id");
+    }) !== undefined;
   }
 }
 

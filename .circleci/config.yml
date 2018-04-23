@@ -2,11 +2,13 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
+# Install all dependencies, run `yarn test` and run hull-connector-tester
+#
 version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.10
+      - image: circleci/node:8.11
     working_directory: ~/repo
 
     steps:
@@ -28,5 +30,4 @@ jobs:
 
       # run tests!
       - run: yarn test
-      # deactivate until we have figured out the hull-node version
       - run: npm i --no-save --no-cache hull-connector-tester@latest && ./node_modules/.bin/hull-connector-tester

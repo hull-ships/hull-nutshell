@@ -1,13 +1,11 @@
-version: '2'
+version: '3'
 services:
-    yarn:
-        image: node:8.10
-        entrypoint: yarn
-        command: run start:dev
-        environment:
-          - LOG_LEVEL=debug
-        ports:
-            - "8091:8091"
-        working_dir: /app
-        volumes:
-            - .:/app
+  yarn:
+    image: node:8.11
+    env_file: .env
+    entrypoint: yarn
+    ports:
+      - "$PORT:$PORT"
+    working_dir: /app
+    volumes:
+      - .:/app
