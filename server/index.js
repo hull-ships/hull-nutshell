@@ -1,29 +1,32 @@
-if (process.env.NEW_RELIC_LICENSE_KEY) {
-  console.warn("Starting newrelic agent with key: ", process.env.NEW_RELIC_LICENSE_KEY);
-  require("newrelic"); // eslint-disable-line global-require
-}
 const Hull = require("hull");
 const express = require("express");
 
-const server  = require("./server").default;
+const { middleware } = require("./lib/utils/crypto");
+const server = require("./server");
 
-if (process.env.LOG_LEVEL) {
-  Hull.logger.transports.console.level = process.env.LOG_LEVEL;
+const {
+  LOG_LEVEL,
+  SECRET,
+  PORT
+} = process.env;
+
+if (LOG_LEVEL) {
+  Hull.logger.transports.console.level = LOG_LEVEL;
 }
 
 Hull.logger.transports.console.json = true;
 
 const options = {
-  Hull,
-  hostSecret: process.env.SECRET || "1234",
-  devMode: process.env.NODE_ENV === "development",
-  port: process.env.PORT || 8082
+  hostSecret: SECRET || "1234",
+  port: PORT || 8091
 };
 
-const connector = new Hull.Connector(options);
 const app = express();
+const connector = new Hull.Connector(options);
+
+app.use(middleware(connector.hostSecret));
 connector.setupApp(app);
+
 server(app);
 connector.startApp(app);
 
-Hull.logger.info("connector.started", { port: options.port });

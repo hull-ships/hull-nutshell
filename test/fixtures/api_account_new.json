@@ -1,0 +1,29 @@
+{
+  "result": {
+    "id": 7,
+    "entityType": "Accounts",
+    "rev": "0",
+    "modifiedTime": "2017-11-30T03:08:26+0000",
+    "createdTime": "2017-11-30T03:08:26+0000",
+    "name": "Test Account Hull 1",
+    "htmlUrl": "https://app.nutshell.com/company/7-test-account-hull-1",
+    "accountType": { "id": 1, "name": "Standard Account" },
+    "industry": { "id": 1, "name": "Accounting" },
+    "creator": null,
+    "owner": null,
+    "tags": ["test"],
+    "lastContactedDate": "2017-11-30T03:08:26+0000",
+    "contacts": [],
+    "description": "awesome customer",
+    "url":
+       {
+         "1": "http://hull-test1.io",
+         "--primary": "http://hull-test1.io"
+       },
+    "notes": [],
+    "leads": []
+  },
+  "id": "apeye",
+  "error": null,
+  "jsonrpc": "2.0"
+}

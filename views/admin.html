@@ -1,0 +1,111 @@
+<html>
+  <head>
+    <title>Hull Nutshell</title>
+    <link rel="stylesheet" href="//dd04rofzygnm0.cloudfront.net/releases/master/865f04865d2448286626bac92c518a8f8ea8bafe/stylesheets/neue.css" />
+  </head>
+  <body class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="panel panel-default mt-1">
+            <div class="panel-body text-center">
+                Webhooks Endpoint that should be configured in Nutshell settings <br/>
+                <input class="form-control mb-1" value="https://<%= hostname %>/webhook/?conf=<%= conf %>" />
+            </div>
+        </div>
+      </div>
+    </div>
+    <% if (products && _.size(products)) { -%>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="panel panel-default mt-1">
+          <div class="panel-heading">
+            <h5 class="mt-05 mb-05 text-accented uppercase">Products</h5>
+          </div>
+          <table class="table table-condensed datagrid-table table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Nutshell ID</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% _.forEach(products, (product) => { -%>
+                <tr>
+                  <td style="vertical-align: middle">
+                    <small><%= product.id %></small>
+                  </td>
+                  <td style="vertical-align: middle">
+                    <small><%= product.name %></small>
+                  </td>
+                </tr>
+              <% }) -%>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <% } -%>
+    <% if (markets && _.size(markets)) { -%>
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="panel panel-default mt-1">
+            <div class="panel-heading">
+              <h5 class="mt-05 mb-05 text-accented uppercase">Markets</h5>
+            </div>
+            <table class="table table-condensed datagrid-table table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th>Nutshell ID</th>
+                  <th>Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% _.forEach(markets, (market) => { -%>
+                  <tr>
+                    <td style="vertical-align: middle">
+                      <small><%= market.id %></small>
+                    </td>
+                    <td style="vertical-align: middle">
+                      <small><%= market.name %></small>
+                    </td>
+                  </tr>
+                <% }) -%>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% } -%>
+    <% if (sources && _.size(sources)) { -%>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="panel panel-default mt-1">
+          <div class="panel-heading">
+            <h5 class="mt-05 mb-05 text-accented uppercase">Sources</h5>
+          </div>
+          <table class="table table-condensed datagrid-table table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Nutshell ID</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% _.forEach(sources, (source) => { -%>
+                <tr>
+                  <td style="vertical-align: middle">
+                    <small><%= source.id %></small>
+                  </td>
+                  <td style="vertical-align: middle">
+                    <small><%= source.name %></small>
+                  </td>
+                </tr>
+              <% }) -%>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <% } -%>
+  </body>
+</html>

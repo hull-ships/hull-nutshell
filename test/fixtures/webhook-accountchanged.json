@@ -1,0 +1,170 @@
+{
+    "meta": {},
+    "links": {
+        "events.comments": {
+            "href": "https://app.nutshell.com/rest/comments?parent_id={events.id}",
+            "type": "comments"
+        },
+        "events.actor": {
+            "href": "https://app.nutshell.com/rest/{events.actorType}/{events.actor}",
+            "type": "actors"
+        },
+        "events.payloads": {
+            "href": "https://app.nutshell.com/rest/{events.payloadType}/{events.payloads}",
+            "type": "payloads"
+        },
+        "actors.teams": {
+            "href": "https://app.nutshell.com/rest/teams/{actors.teams}",
+            "type": "teams"
+        },
+        "payloads.creator": {
+            "href": "https://app.nutshell.com/rest/creators/{payloads.creator}",
+            "type": "creators"
+        },
+        "payloads.owner": {
+            "href": "https://app.nutshell.com/rest/owners/{payloads.owner}",
+            "type": "owners"
+        },
+        "payloads.territory": {
+            "href": "https://app.nutshell.com/rest/territories/{payloads.territory}",
+            "type": "territories"
+        },
+        "payloads.tags": {
+            "href": "https://app.nutshell.com/rest/tags/{payloads.tags}",
+            "type": "tags"
+        },
+        "payloads.files": {
+            "href": "https://app.nutshell.com/rest/accounts/{accounts.id}/files",
+            "type": "files"
+        },
+        "payloads.relatedFiles": {
+            "href": "https://app.nutshell.com/rest/accounts/{accounts.id}/relatedfiles",
+            "type": "files"
+        },
+        "payloads.followup": {
+            "href": "https://app.nutshell.com/rest/followups/{payloads.followup}",
+            "type": "followups"
+        },
+        "payloads.recurringTask": {
+            "href": "https://app.nutshell.com/rest/tasks/{payloads.recurringTask}",
+            "type": "tasks"
+        },
+        "payloads.contacts": {
+            "href": "https://app.nutshell.com/rest/contacts/{payloads.contacts}",
+            "type": "contacts"
+        },
+        "payloads.accountType": {
+            "href": "https://app.nutshell.com/rest/accountTypes/{payloads.accountType}",
+            "type": "accountTypes"
+        },
+        "payloads.industry": {
+            "href": "https://app.nutshell.com/rest/industries/{payloads.industry}",
+            "type": "industries"
+        }
+    },
+    "events": [
+        {
+            "id": "123-events",
+            "type": "events",
+            "createdTime": 1512575199,
+            "actorType": "users",
+            "payloadType": "accounts",
+            "action": "update",
+            "changes": [
+                {
+                    "attribute": "name",
+                    "oldValue": "New Account Name",
+                    "newValue": "Demo account"
+                }
+            ],
+            "links": {
+                "comments": [],
+                "actor": "1-users",
+                "payloads": [
+                    "7-accounts"
+                ]
+            }
+        }
+    ],
+    "actors": [
+        {
+            "id": "1-users",
+            "type": "users",
+            "name": "Sven",
+            "firstName": "Sven",
+            "modifiedTime": 1512008683,
+            "isEnabled": true,
+            "isAdministrator": true,
+            "isViewingRestricted": false,
+            "emails": [
+                "sven+dev@hull.io"
+            ],
+            "sendForUser": [],
+            "emailSignature": "",
+            "phonecallerType": "",
+            "avatarUrl": "https://app.nutshell.com/avatar/users/1/273679/71c94dfa06532c969b508f6ce17cd31a1afd816da4a6ff580a4cc8c2e07c2af6/1512008683",
+            "initials": "S",
+            "links": {
+                "teams": []
+            }
+        }
+    ],
+    "payloads": [
+        {
+            "id": "7-accounts",
+            "type": "accounts",
+            "name": "Demo account",
+            "description": null,
+            "emails": [],
+            "addresses": [],
+            "phones": [
+                {
+                    "isPrimary": true,
+                    "name": "cell",
+                    "value": {
+                        "countryCode": "1",
+                        "number": "7175550467",
+                        "extension": null,
+                        "numberFormatted": "717-555-0467",
+                        "E164": "+17175550467"
+                    }
+                },
+                {
+                    "isPrimary": false,
+                    "name": "office",
+                    "value": {
+                        "countryCode": "1",
+                        "number": "8770009237",
+                        "extension": null,
+                        "numberFormatted": "877-000-9237",
+                        "E164": "+18770009237"
+                    }
+                }
+            ],
+            "urls": [
+                {
+                    "isPrimary": true,
+                    "name": "url",
+                    "value": "http://hull-test1.io"
+                }
+            ],
+            "href": "https://app.nutshell.com/rest/accounts/7-accounts",
+            "avatarUrl": "https://app.nutshell.com/avatar/accounts/7/273679/074efc43bc69679a57b3a22eb0ddae15e00cd45644f7f4faec7614a296d9c831/1512575199",
+            "initials": "Da",
+            "htmlUrl": "https://app.nutshell.com/company/7-demo-account",
+            "links": {
+                "creator": null,
+                "owner": null,
+                "territory": null,
+                "tags": [],
+                "files": [],
+                "relatedFiles": [],
+                "followup": null,
+                "recurringTask": null,
+                "contacts": [],
+                "accountType": "1-accountTypes",
+                "industry": null
+            }
+        }
+    ]
+}

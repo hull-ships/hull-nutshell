@@ -1,0 +1,13 @@
+{
+   "result":[
+    {
+       "stub":true,
+       "id":1,
+       "rev":"0",
+       "entityType":"Markets",
+       "name":"U.S."
+    }],
+ "id":"apeye",
+ "error":null,
+ "jsonrpc":"2.0"
+}

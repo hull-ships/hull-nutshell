@@ -1,0 +1,51 @@
+{
+  "result":[
+     {
+        "stub":true,
+        "id":4,
+        "rev":"1",
+        "entityType":"Products",
+        "modifiedTime":"2018-01-11T15:45:26+0000",
+        "createdTime":"2018-01-11T15:45:26+0000",
+        "name":"Feasibility Study"
+     },
+     {
+        "stub":true,
+        "id":2,
+        "rev":"1",
+        "entityType":"Products",
+        "modifiedTime":"2018-01-11T15:45:25+0000",
+        "createdTime":"2018-01-11T15:45:25+0000",
+        "name":"Sunblade Battery Pack"
+     },
+     {
+        "stub":true,
+        "id":3,
+        "rev":"1",
+        "entityType":"Products",
+        "modifiedTime":"2018-01-11T15:45:26+0000",
+        "createdTime":"2018-01-11T15:45:26+0000",
+        "name":"Sundog"
+     },
+     {
+        "stub":true,
+        "id":1,
+        "rev":"1",
+        "entityType":"Products",
+        "modifiedTime":"2018-01-11T15:45:25+0000",
+        "createdTime":"2018-01-11T15:45:25+0000",
+        "name":"Sunrazor"
+     },
+     {
+        "stub":true,
+        "id":5,
+        "rev":"1",
+        "entityType":"Products",
+        "modifiedTime":"2018-01-11T15:45:26+0000",
+        "createdTime":"2018-01-11T15:45:26+0000",
+        "name":"Turnkey Installation Service"
+     }],
+  "id":"apeye",
+  "error":null,
+  "jsonrpc":"2.0"
+}
