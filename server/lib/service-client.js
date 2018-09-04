@@ -415,7 +415,8 @@ class NutshellClient {
       },
       orderBy: "time",
       orderDirection: "DESC",
-      stubResponses: false
+      stubResponses: false,
+      limit: this.findTimelineLimit
     };
     return new Promise((resolve, reject) => {
       const client = this._initHttpsClient({ userId: this.userId, apiKey: this.apiKey, host: options.host });
