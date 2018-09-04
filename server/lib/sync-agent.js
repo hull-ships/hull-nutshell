@@ -53,6 +53,7 @@ class SyncAgent {
     const result: INutshellClientOptions = {
       userId: _.get(settings, "api_username", ""),
       apiKey: _.get(settings, "api_key", ""),
+      logger: this.hullClient.logger,
       metricsClient
     };
     return result;

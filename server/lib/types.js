@@ -38,6 +38,7 @@ export interface INutshellClientOptions {
   userId: string;
   apiKey: string;
   metricsClient?: IMetricsClient;
+  logger?: ILogger;
 }
 
 export interface INutshellClientResponse {

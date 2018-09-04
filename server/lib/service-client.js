@@ -1,5 +1,5 @@
 // @flow
-import type { INutshellClientOptions, INutshellClientResponse, INutshellOperationOptions, IMetricsClient, TResourceType } from "./types";
+import type { INutshellClientOptions, INutshellClientResponse, INutshellOperationOptions, IMetricsClient, TResourceType, ILogger } from "./types";
 
 const rpc = require("jayson");
 const _ = require("lodash");
@@ -30,9 +30,14 @@ class NutshellClient {
    */
   metricsClient: IMetricsClient;
 
+  logger: ILogger;
+
   constructor(options: INutshellClientOptions) {
     this.userId = options.userId;
     this.apiKey = options.apiKey;
+    if (options.logger) {
+      this.logger = options.logger;
+    }
     if (_.has(options, "metricsClient")) {
       _.set(this, "metricsClient", options.metricsClient);
     }
@@ -54,8 +59,13 @@ class NutshellClient {
     client.on("response", (req) => {
       const hrTime = process.hrtime(start);
       const elapsed = (hrTime[0] * 1000) + (hrTime[1] / 1000000);
+      const method = req.method;
+
+      if (this.logger && this.logger.debug) {
+        this.logger.debug("connector.service_api.response_time", { method, elapsed });
+      }
+
       if (this.metricsClient) {
-        const method = req.method;
         // TODO: migrate to connector.service_api.call
         this.metricsClient.increment("ship.service_api.call", 1, [`method:${method}`, `endpoint:${method}`]);
         this.metricsClient.value("connector.service_api.response_time", elapsed, [
