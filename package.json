@@ -21,7 +21,7 @@
   "engines": {
     "node": "8.11.x",
     "npm": "5.6.x",
-    "yarn": "1.5.x"
+    "yarn": "1.6.x"
   },
   "scripts": {
     "build": "yarn run clean && yarn run build:server",
@@ -47,7 +47,7 @@
     "cors": "^2.8.4",
     "express": "^4.16.2",
     "hogan.js": "^3.0.2",
-    "hull": "0.13.14",
+    "hull": "0.13.16",
     "jayson": "^2.0.4",
     "json-rpc2": "^1.0.2",
     "lodash": "^4.17.4",
