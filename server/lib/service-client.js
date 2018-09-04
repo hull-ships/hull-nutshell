@@ -32,11 +32,17 @@ class NutshellClient {
 
   logger: ILogger;
 
+  findTimelineLimit: number;
+
   constructor(options: INutshellClientOptions) {
     this.userId = options.userId;
     this.apiKey = options.apiKey;
     if (options.logger) {
       this.logger = options.logger;
+    }
+
+    if (options.findTimelineLimit) {
+      this.findTimelineLimit = options.findTimelineLimit;
     }
     if (_.has(options, "metricsClient")) {
       _.set(this, "metricsClient", options.metricsClient);

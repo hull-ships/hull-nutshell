@@ -39,6 +39,7 @@ export interface INutshellClientOptions {
   apiKey: string;
   metricsClient?: IMetricsClient;
   logger?: ILogger;
+  findTimelineLimit: number;
 }
 
 export interface INutshellClientResponse {

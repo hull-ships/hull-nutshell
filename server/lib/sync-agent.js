@@ -54,6 +54,7 @@ class SyncAgent {
       userId: _.get(settings, "api_username", ""),
       apiKey: _.get(settings, "api_key", ""),
       logger: this.hullClient.logger,
+      findTimelineLimit: settings.find_timeline_limit,
       metricsClient
     };
     return result;
