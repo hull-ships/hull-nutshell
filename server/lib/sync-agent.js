@@ -3,6 +3,7 @@ import type { THullUserUpdateMessage, THullConnector, THullReqContext } from "hu
 import type { IMetricsClient, ILogger, IFilterUtil, IFilterResult, IAttributesMapper, IDropdownEntry, INutshellOperationOptions, INutshellClientOptions, INutshellClientResponse, IPatchUtil, IUserUpdateEnvelope, TResourceType } from "./types";
 
 const _ = require("lodash");
+const moment = require("moment");
 const NutshellClient = require("./service-client");
 const uuid = require("uuid/v4");
 const cacheManager = require("cache-manager");
@@ -409,7 +410,7 @@ class SyncAgent {
           return await this.handleNutshellResponse("Contact", envelope, response);
         }
         await this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
-        return this.fetchAdditionalActivites("Contact", currentObjectResponse.result);
+        return this.fetchAdditionalActivites("Contact", currentObjectResponse.result, envelope.message);
       } catch (err) {
         return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing contact", details: _.get(err, "message", "") });
       }
@@ -498,7 +499,7 @@ class SyncAgent {
           return await this.handleNutshellResponse("Lead", envelope, response);
         }
         await this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
-        return this.fetchAdditionalActivites("Lead", currentObjectResponse.result);
+        return this.fetchAdditionalActivites("Lead", currentObjectResponse.result, envelope.message);
       } catch (err) {
         return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to update an existing lead", details: _.get(err, "message", "") });
       }
@@ -628,7 +629,7 @@ class SyncAgent {
     return Promise.resolve(_.isObject(body));
   }
 
-  async fetchAdditionalActivites(objectType: TResourceType, nutshellObject: Object) {
+  async fetchAdditionalActivites(objectType: TResourceType, nutshellObject: Object, message?: Object) {
     const baseHostname = await this.getApiBaseHostName();
     const options: INutshellOperationOptions = {
       host: baseHostname,
@@ -638,8 +639,24 @@ class SyncAgent {
     const filteredActivities = _.get(response, "result", []).filter(p => this.webhookUtil.isAdditionalActivity(p));
     const hullIdent = this.attributesMapper.mapToHullIdentObject(objectType, nutshellObject);
 
+    let latestTrackedEventCreatedAt = null;
+
+    if (message && message.events) {
+      latestTrackedEventCreatedAt = _.chain(message.events)
+        .filter(event => event.event_source === "nutshell")
+        .sortBy(event => new Date(event.created_at))
+        .last()
+        .get("created_at")
+        .value();
+    }
+
     return Promise.all(filteredActivities.map((activity) => {
       const hullTrack = this.webhookUtil.getActivityHullTrack(activity);
+
+      if (latestTrackedEventCreatedAt && moment(hullTrack.context.created_at).isAfter(moment(latestTrackedEventCreatedAt)) === false) {
+        return Promise.resolve();
+      }
+
       const asUser = this.hullClient.asUser(hullIdent);
       return asUser.track(hullTrack.name, hullTrack.params, hullTrack.context)
         .then(() => asUser.logger.info("incoming.event.success", hullTrack))
