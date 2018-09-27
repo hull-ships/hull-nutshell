@@ -7,10 +7,12 @@ const moment = require("moment");
 const NutshellClient = require("./service-client");
 const uuid = require("uuid/v4");
 const cacheManager = require("cache-manager");
+
 const AttributesMapper = require("./utils/attributes-mapper");
 const PatchUtil = require("./utils/patch-util");
 const FilterUtil = require("./utils/filter-util");
 const WebhookUtil = require("./utils/webhook-util");
+const DeduplicationUtil = require("./utils/deduplication-util");
 
 class SyncAgent {
   synchronizedSegments: string[];
@@ -33,7 +35,9 @@ class SyncAgent {
 
   patchUtil: IPatchUtil;
 
-  webhookUtil: Object;
+  webhookUtil: *;
+
+  deduplicationUtil: *
 
   constructor(ctx: THullReqContext) {
     const { ship: connector, client: hullClient, metric: metricsClient } = ctx;
@@ -48,6 +52,7 @@ class SyncAgent {
     this.patchUtil = new PatchUtil(connector.private_settings);
     this.filterUtil = new FilterUtil(connector.private_settings);
     this.webhookUtil = new WebhookUtil();
+    this.deduplicationUtil = new DeduplicationUtil();
   }
 
   composeNutshellClientOptions(settings: Object, metricsClient: IMetricsClient): INutshellClientOptions {
@@ -227,7 +232,8 @@ class SyncAgent {
      *    envelope accordingly, otherwise the edit operation will fail.
      * 4) Execute all insert/update operations against the Nutshell API.
      */
-    const envelopes: Array<IUserUpdateEnvelope> = _.map(messages, (m) => {
+    const deduplicatedMessages = this.deduplicationUtil.deduplicateUserMessages(messages);
+    const envelopes: Array<IUserUpdateEnvelope> = _.map(deduplicatedMessages, (m) => {
       return {
         message: m
       };
@@ -567,6 +573,9 @@ class SyncAgent {
         await Promise.all(promises);
       } else if (this.webhookUtil.isObjectUpdate(p)) {
         const objectType = this.webhookUtil.getObjectType(p);
+        if (objectType === undefined) {
+          return;
+        }
         // We potentially have the correct data but
         // the payload is lacking the revision number,
         // so we need to fetch the entire object from the API

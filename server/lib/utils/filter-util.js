@@ -54,7 +54,7 @@ class FilterUtil implements IFilterUtil {
 
       if (this.matchesWhitelistedSegments(envelope)) {
         if (_.has(envelope.message, "account.nutshell/id")) {
-          return results.toUpdate.push(envelope);
+          return !this.accountInArray(results.toUpdate, envelope) && results.toUpdate.push(envelope);
         }
         return !this.accountInArray(results.toInsert, envelope) && results.toInsert.push(envelope);
       }

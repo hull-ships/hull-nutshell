@@ -1,4 +1,6 @@
 /* @flow */
+import type { TResourceType } from "../types";
+
 const _ = require("lodash");
 const moment = require("moment");
 
@@ -31,11 +33,11 @@ class WebhookUtil {
     return createEvent === undefined;
   }
 
-  getObjectType(payload: Object): string {
+  getObjectType(payload: Object): TResourceType | void {
     const type = _.find(SUPPORTED_RESOURCETYPES, (t) => {
       return this.getPluralObjectType(t) === _.get(payload, "type");
     });
-    return _.toString(type);
+    return type;
   }
 
   getLinkedAccountId(payload: Object): string {
