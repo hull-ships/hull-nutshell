@@ -272,4 +272,23 @@ describe("PatchUtil", () => {
     const util = new PatchUtil(CONNECTOR_SETTINGS);
     expect(() => util.createPatchObject("Account", newObject, currentObject)).toThrow(expectedMessage);
   });
+
+  test("should throw an error if the rev doesn't match", () => {
+    const currentObject = require("../fixtures/api_lead_get").result; // eslint-disable-line global-require
+    const newObject = {
+      note: "Lisa Williams\n Message :     / \nRate:  C\nExpected Value: 320\n----------------------"
+    };
+
+    const util = new PatchUtil({
+      lead_attributes_outbound: [
+        {
+          hull_field_name: "",
+          nutshell_field_name: "note",
+          hull_field_template: "{{user.traits_nutshell/notemarkup}}\n Message :  {{user.traits_message}} / {{user.traits_name}} \n-------",
+          overwrite: false
+        }
+      ]
+    });
+    console.log(util.createPatchObject("Lead", newObject, currentObject));
+  });
 });

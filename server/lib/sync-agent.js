@@ -755,21 +755,21 @@ class SyncAgent {
     if (resource === "Account") {
       const asAccount = this.hullClient.asAccount(_.get(envelope, "message.user.account", {}));
       return asAccount.traits(traitsObj).then(() => {
-        asAccount.logger.info("outgoing.account.success", { data: response.result, writtenData });
+        asAccount.logger.info("outgoing.account.success", { writtenData });
         this.incrementOutgoingCount(resource);
         return Promise.resolve();
       });
     } else if (resource === "Contact") {
       const asUser = this.hullClient.asUser(_.get(envelope, "message.user", {}));
       return asUser.traits(traitsObj).then(() => {
-        asUser.logger.info("outgoing.user.success", { data: response.result, writtenData, resource: "Contact" });
+        asUser.logger.info("outgoing.user.success", { writtenData, resource: "Contact" });
         this.incrementOutgoingCount(resource);
         return Promise.resolve();
       });
     } else if (resource === "Lead") {
       const asUser = this.hullClient.asUser(_.get(envelope, "message.user", {}));
       return asUser.traits(traitsObj).then(() => {
-        asUser.logger.info("outgoing.user.success", { data: response.result, writtenData, resource: "Lead" });
+        asUser.logger.info("outgoing.user.success", { writtenData, resource: "Lead" });
         this.incrementOutgoingCount(resource);
         return Promise.resolve();
       });

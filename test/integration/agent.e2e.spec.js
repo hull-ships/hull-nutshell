@@ -219,10 +219,10 @@ describe("Agent", () => {
       "nutshell_contact/contacted_count": { value: sObject.contactedCount }
     };
 
-    agent.handleNutshellResponse("Contact", envelope, contactNewPayload).then(() => {
+    agent.handleNutshellResponse("Contact", envelope, contactNewPayload, {}).then(() => {
       expect(traitsMock.mock.calls[0][0]).toEqual(expectedTraitsObject);
       expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.success");
-      expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject, resource: "Contact" });
+      expect(infoMock.mock.calls[0][1]).toEqual({ resource: "Contact", writtenData: {} });
       expect(incrementMock.mock.calls[0][0]).toEqual("ship.outgoing.users");
       expect(incrementMock.mock.calls[0][1]).toEqual(1);
       expect(asUserMock.mock.calls[0][0]).toEqual(envelope.message.user);
@@ -337,10 +337,10 @@ describe("Agent", () => {
       "nutshell/last_contacted_at": { value: sObject.lastContactedDate }
     };
 
-    agent.handleNutshellResponse("Account", envelope, accountNewPayload).then(() => {
+    agent.handleNutshellResponse("Account", envelope, accountNewPayload, {}).then(() => {
       expect(traitsMock.mock.calls[0][0]).toEqual(expectedTraitsObject);
       expect(infoMock.mock.calls[0][0]).toEqual("outgoing.account.success");
-      expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject });
+      expect(infoMock.mock.calls[0][1]).toEqual({ writtenData: {} });
       expect(incrementMock.mock.calls[0][0]).toEqual("ship.outgoing.accounts");
       expect(incrementMock.mock.calls[0][1]).toEqual(1);
       expect(asAccountMock.mock.calls[0][0]).toEqual(envelope.message.user.account);
@@ -486,7 +486,7 @@ describe("Agent", () => {
     agent.sendUserUpdateMessages(messagesToInsert, false).then(() => {
       expect(traitsMock.mock.calls[0][0]).toEqual(expectedTraitsObject);
       expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.success");
-      expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject, resource: "Contact", writtenData: { email: "sven+sfdc4@hull.io", name: "Sven4 SFDC" } });
+      expect(infoMock.mock.calls[0][1]).toEqual({ resource: "Contact", writtenData: { email: "sven+sfdc4@hull.io", name: "Sven4 SFDC" } });
       expect(incrementMock.mock.calls[0][0]).toEqual("ship.service_api.call");
       expect(incrementMock.mock.calls[0][1]).toEqual(1);
       expect(incrementMock.mock.calls[1][0]).toEqual("ship.service_api.call");
@@ -595,7 +595,7 @@ describe("Agent", () => {
     agent.sendUserUpdateMessages(messagesToUpdate, false).then(() => {
       expect(traitsMock.mock.calls[0][0]).toEqual(expectedTraitsObject);
       expect(infoMock.mock.calls[0][0]).toEqual("outgoing.user.success");
-      expect(infoMock.mock.calls[0][1]).toEqual({ data: sObject, resource: "Contact", writtenData: { name: "Sven4 SFDC Updated", rev: "1" } });
+      expect(infoMock.mock.calls[0][1]).toEqual({ resource: "Contact", writtenData: { name: "Sven4 SFDC Updated", rev: "1" } });
       expect(incrementMock.mock.calls[0][0]).toEqual("ship.service_api.call");
       expect(incrementMock.mock.calls[0][1]).toEqual(1);
       expect(incrementMock.mock.calls[1][0]).toEqual("ship.service_api.call");
