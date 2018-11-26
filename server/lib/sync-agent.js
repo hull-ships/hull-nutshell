@@ -294,7 +294,7 @@ class SyncAgent {
 
         try {
           const response = await this.nutshellClient.createAccount(data, options);
-          await this.handleNutshellResponse("Account", envelope, response);
+          await this.handleNutshellResponse("Account", envelope, response, data);
           _.set(envelope, "currentNutshellAccount", response.result);
           _.set(envelope, "message.user.account.nutshell/id", _.get(response.result, "id", null));
           _.set(envelope, "message.user.account.nutshell/rev", _.get(response.result, "rev", null));
@@ -321,7 +321,7 @@ class SyncAgent {
             reqId = uuid();
             _.set(options, "requestId", reqId);
             const response = await this.nutshellClient.editAccount(_.get(newObject, "id"), _.get(newObject, "rev"), patchResult.patchObject, options);
-            await this.handleNutshellResponse("Account", envelope, response);
+            await this.handleNutshellResponse("Account", envelope, response, patchResult.patchObject);
           } else {
             this.hullClient.asAccount(_.get(envelope, "message.user.account", {})).logger.info("outgoing.account.skip", { reason: "Data already in sync with Nutshell." });
           }
@@ -386,7 +386,7 @@ class SyncAgent {
         _.set(envelope, "currentNutshellContact", response.result);
         _.set(envelope, "message.user.traits_nutshell_contact/id", _.get(response.result, "id", null));
         _.set(envelope, "message.user.traits_nutshell_contact/rev", _.get(response.result, "rev", null));
-        return await this.handleNutshellResponse("Contact", envelope, response);
+        return await this.handleNutshellResponse("Contact", envelope, response, data);
       } catch (err) {
         return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to create a new user", details: err });
       }
@@ -413,7 +413,7 @@ class SyncAgent {
           reqId = uuid();
           _.set(options, "requestId", reqId);
           const response = await this.nutshellClient.editContact(_.get(newObject, "id"), _.get(newObject, "rev"), patchResult.patchObject, options);
-          return await this.handleNutshellResponse("Contact", envelope, response);
+          return await this.handleNutshellResponse("Contact", envelope, response, patchResult.patchObject);
         }
         await this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
         return this.fetchAdditionalActivites("Contact", currentObjectResponse.result, envelope.message);
@@ -475,7 +475,7 @@ class SyncAgent {
       };
       try {
         const response = await this.nutshellClient.createLead(data, options);
-        return await this.handleNutshellResponse("Lead", envelope, response);
+        return await this.handleNutshellResponse("Lead", envelope, response, data);
       } catch (err) {
         return this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to create a new user", details: _.get(err, "message", "") });
       }
@@ -502,7 +502,7 @@ class SyncAgent {
           reqId = uuid();
           _.set(options, "requestId", reqId);
           const response = await this.nutshellClient.editLead(_.get(newObject, "id"), _.get(newObject, "rev"), patchResult.patchObject, options);
-          return await this.handleNutshellResponse("Lead", envelope, response);
+          return await this.handleNutshellResponse("Lead", envelope, response, patchResult.patchObject);
         }
         await this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.info("outgoing.user.skip", { reason: "Data already in sync with Nutshell." });
         return this.fetchAdditionalActivites("Lead", currentObjectResponse.result, envelope.message);
@@ -739,14 +739,14 @@ class SyncAgent {
       });
   }
 
-  handleNutshellResponse(resource: TResourceType, envelope: IUserUpdateEnvelope, response: INutshellClientResponse): Promise<*> {
+  handleNutshellResponse(resource: TResourceType, envelope: IUserUpdateEnvelope, response: INutshellClientResponse, writtenData: Object): Promise<*> {
     if (!_.isNil(response.error)) {
       if (resource === "Account") {
-        this.hullClient.asAccount(_.get(envelope, "message.user.account", {})).logger.error("outgoing.account.error", { reason: "Failed to execute an operation for an account", details: response });
+        this.hullClient.asAccount(_.get(envelope, "message.user.account", {})).logger.error("outgoing.account.error", { reason: "Failed to execute an operation for an account", details: response, writtenData });
       } else if (resource === "Contact") {
-        this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to execute an operation for a contact", details: response });
+        this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to execute an operation for a contact", details: response, writtenData });
       } else if (resource === "Lead") {
-        this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to execute an operation for a lead", details: response });
+        this.hullClient.asUser(_.get(envelope, "message.user", {})).logger.error("outgoing.user.error", { reason: "Failed to execute an operation for a lead", details: response, writtenData });
       }
       return Promise.resolve();
     }
@@ -755,21 +755,21 @@ class SyncAgent {
     if (resource === "Account") {
       const asAccount = this.hullClient.asAccount(_.get(envelope, "message.user.account", {}));
       return asAccount.traits(traitsObj).then(() => {
-        asAccount.logger.info("outgoing.account.success", { data: response.result });
+        asAccount.logger.info("outgoing.account.success", { data: response.result, writtenData });
         this.incrementOutgoingCount(resource);
         return Promise.resolve();
       });
     } else if (resource === "Contact") {
       const asUser = this.hullClient.asUser(_.get(envelope, "message.user", {}));
       return asUser.traits(traitsObj).then(() => {
-        asUser.logger.info("outgoing.user.success", { data: response.result, resource: "Contact" });
+        asUser.logger.info("outgoing.user.success", { data: response.result, writtenData, resource: "Contact" });
         this.incrementOutgoingCount(resource);
         return Promise.resolve();
       });
     } else if (resource === "Lead") {
       const asUser = this.hullClient.asUser(_.get(envelope, "message.user", {}));
       return asUser.traits(traitsObj).then(() => {
-        asUser.logger.info("outgoing.user.success", { data: response.result, resource: "Lead" });
+        asUser.logger.info("outgoing.user.success", { data: response.result, writtenData, resource: "Lead" });
         this.incrementOutgoingCount(resource);
         return Promise.resolve();
       });
