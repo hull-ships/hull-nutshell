@@ -77,7 +77,10 @@ class PatchUtil implements IPatchUtil {
       if (_.get(this.singleArrayFieldsMap, `${resource}.${m.nutshell_field_name}`)) {
         const arrayMapping = _.get(this.singleArrayFieldsMap, `${resource}.${m.nutshell_field_name}`);
         const newValue = _.get(newObject, newObjectAttrName);
-        const foundValue = _.find(_.get(currentObject, arrayMapping.array, []), { [arrayMapping.param]: newValue });
+        let foundValue = _.find(_.get(currentObject, arrayMapping.array, []), { [arrayMapping.param]: newValue });
+        if (_.isUndefined(foundValue) && arrayMapping.optionalParam) {
+          foundValue = _.find(_.get(currentObject, arrayMapping.array, []), { [arrayMapping.optionalParam]: newValue });
+        }
         if (_.isUndefined(foundValue)) {
           _.set(result.patchObject, newObjectAttrName, newValue);
           result.hasChanges = true;

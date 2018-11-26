@@ -21,7 +21,8 @@ const SINGLE_ARRAY_FIELDS_MAP = {
   Lead: {
     note: {
       array: "notes",
-      param: "note"
+      param: "note",
+      optionalParam: "noteMarkup"
     }
   },
   Contact: {
