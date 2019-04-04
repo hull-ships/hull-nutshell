@@ -1,6 +1,6 @@
 {
   "name" : "Nutshell",
-  "tags": ["outgoing","batch", "oneColumn", "smart-notifier"],
+  "tags": ["outgoing","batch", "oneColumn", "smart-notifier", "single-install"],
   "description" : "Send Users as Leads or Contacts to Nutshell with custom mappings",
   "version" : "0.3.0",
   "source": "nutshell",
