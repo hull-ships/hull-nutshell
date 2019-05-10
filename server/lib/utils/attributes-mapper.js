@@ -124,47 +124,47 @@ class AttributesMapper implements IAttributesMapper {
     // TODO: Implement for webhooks
     const hObject = {};
     if (resource === "Account") {
-      _.set(hObject, "nutshell/id", { value: sObject.id });
-      _.set(hObject, "nutshell/rev", { value: sObject.rev });
-      _.set(hObject, "nutshell/updated_at", { value: sObject.modifiedTime });
+      _.set(hObject, "nutshell/id", { value: sObject.id, operation: "set" });
+      _.set(hObject, "nutshell/rev", { value: sObject.rev, operation: "set" });
+      _.set(hObject, "nutshell/updated_at", { value: sObject.modifiedTime, operation: "set" });
       _.set(hObject, "nutshell/created_at", { value: sObject.createdTime, operation: "setIfNull" });
     } else {
-      _.set(hObject, `nutshell_${_.toLower(resource)}/id`, { value: sObject.id });
-      _.set(hObject, `nutshell_${_.toLower(resource)}/rev`, { value: sObject.rev });
-      _.set(hObject, `nutshell_${_.toLower(resource)}/updated_at`, { value: sObject.modifiedTime });
+      _.set(hObject, `nutshell_${_.toLower(resource)}/id`, { value: sObject.id, operation: "set" });
+      _.set(hObject, `nutshell_${_.toLower(resource)}/rev`, { value: sObject.rev, operation: "set" });
+      _.set(hObject, `nutshell_${_.toLower(resource)}/updated_at`, { value: sObject.modifiedTime, operation: "set" });
       _.set(hObject, `nutshell_${_.toLower(resource)}/created_at`, { value: sObject.createdTime, operation: "setIfNull" });
     }
 
     if (resource === "Contact") {
       if (_.has(sObject, "name.givenName") && !_.isNil(_.get(sObject, "name.givenName"))) {
         _.set(hObject, "first_name", { value: _.get(sObject, "name.givenName"), operation: "setIfNull" });
-        _.set(hObject, "nutshell_contact/first_name", { value: _.get(sObject, "name.givenName") });
+        _.set(hObject, "nutshell_contact/first_name", { value: _.get(sObject, "name.givenName"), operation: "set" });
       }
       if (_.has(sObject, "name.familyName") && !_.isNil(_.get(sObject, "name.familyName"))) {
         _.set(hObject, "last_name", { value: _.get(sObject, "name.familyName"), operation: "setIfNull" });
-        _.set(hObject, "nutshell_contact/last_name", { value: _.get(sObject, "name.familyName") });
+        _.set(hObject, "nutshell_contact/last_name", { value: _.get(sObject, "name.familyName"), operation: "set" });
       }
       if (_.has(sObject, "htmlUrl") && !_.isNil(_.get(sObject, "htmlUrl"))) {
-        _.set(hObject, "nutshell_contact/link", { value: _.get(sObject, "htmlUrl") });
+        _.set(hObject, "nutshell_contact/link", { value: _.get(sObject, "htmlUrl"), operation: "set" });
       }
       if (_.has(sObject, "lastContactedDate") && !_.isNil(_.get(sObject, "lastContactedDate"))) {
-        _.set(hObject, "nutshell_contact/last_contacted_at", { value: _.get(sObject, "lastContactedDate") });
+        _.set(hObject, "nutshell_contact/last_contacted_at", { value: _.get(sObject, "lastContactedDate"), operation: "set" });
       }
       if (_.has(sObject, "contactedCount") && !_.isNil(_.get(sObject, "contactedCount"))) {
-        _.set(hObject, "nutshell_contact/contacted_count", { value: _.get(sObject, "contactedCount") });
+        _.set(hObject, "nutshell_contact/contacted_count", { value: _.get(sObject, "contactedCount"), operation: "set" });
       }
       if (_.has(sObject, "tags") && !_.isNil(_.get(sObject, "tags")) && !_.isEmpty(_.get(sObject, "tags"))) {
-        _.set(hObject, "nutshell_contact/tags", { value: _.get(sObject, "tags") });
+        _.set(hObject, "nutshell_contact/tags", { value: _.get(sObject, "tags"), operation: "set" });
       }
       if (_.has(sObject, "description") && !_.isNil(_.get(sObject, "description"))) {
-        _.set(hObject, "nutshell_contact/description", { value: _.get(sObject, "description") });
+        _.set(hObject, "nutshell_contact/description", { value: _.get(sObject, "description"), operation: "set" });
       }
       if (_.has(sObject, "email")) {
         _.forIn(_.get(sObject, "email"), (v, k) => {
           if (k === "--primary") {
             _.set(hObject, "email", { value: v, operation: "setIfNull" });
           } else {
-            _.set(hObject, `nutshell_contact/email${k}`, { value: v });
+            _.set(hObject, `nutshell_contact/email${k}`, { value: v, operation: "set" });
           }
         });
       }
@@ -173,38 +173,38 @@ class AttributesMapper implements IAttributesMapper {
         _.set(hObject, "name", { value: _.get(sObject, "name"), operation: "setIfNull" });
       }
       if (_.has(sObject, "name") && !_.isNil(_.get(sObject, "name"))) {
-        _.set(hObject, "nutshell/name", { value: _.get(sObject, "name") });
+        _.set(hObject, "nutshell/name", { value: _.get(sObject, "name"), operation: "set" });
       }
       if (_.has(sObject, "htmlUrl") && !_.isNil(_.get(sObject, "htmlUrl"))) {
-        _.set(hObject, "nutshell/link", { value: _.get(sObject, "htmlUrl") });
+        _.set(hObject, "nutshell/link", { value: _.get(sObject, "htmlUrl"), operation: "set" });
       }
       if (_.has(sObject, "accountType") && !_.isNil(_.get(sObject, "accountType.id"))) {
-        _.set(hObject, "nutshell/accounttype_id", { value: _.get(sObject, "accountType.id") });
+        _.set(hObject, "nutshell/accounttype_id", { value: _.get(sObject, "accountType.id"), operation: "set" });
       }
       if (_.has(sObject, "accountType") && !_.isNil(_.get(sObject, "accountType.name"))) {
-        _.set(hObject, "nutshell/accounttype_name", { value: _.get(sObject, "accountType.name") });
+        _.set(hObject, "nutshell/accounttype_name", { value: _.get(sObject, "accountType.name"), operation: "set" });
       }
       if (_.has(sObject, "industry") && !_.isNil(_.get(sObject, "industry.id"))) {
-        _.set(hObject, "nutshell/industry_id", { value: _.get(sObject, "industry.id") });
+        _.set(hObject, "nutshell/industry_id", { value: _.get(sObject, "industry.id"), operation: "set" });
       }
       if (_.has(sObject, "industry") && !_.isNil(_.get(sObject, "industry.name"))) {
-        _.set(hObject, "nutshell/industry_name", { value: _.get(sObject, "industry.name") });
+        _.set(hObject, "nutshell/industry_name", { value: _.get(sObject, "industry.name"), operation: "set" });
       }
       if (_.has(sObject, "tags") && !_.isNil(_.get(sObject, "tags")) && !_.isEmpty(_.get(sObject, "tags"))) {
-        _.set(hObject, "nutshell/tags", { value: _.get(sObject, "tags") });
+        _.set(hObject, "nutshell/tags", { value: _.get(sObject, "tags"), operation: "set" });
       }
       if (_.has(sObject, "lastContactedDate") && !_.isNil(_.get(sObject, "lastContactedDate"))) {
-        _.set(hObject, "nutshell/last_contacted_at", { value: _.get(sObject, "lastContactedDate") });
+        _.set(hObject, "nutshell/last_contacted_at", { value: _.get(sObject, "lastContactedDate"), operation: "set" });
       }
       if (_.has(sObject, "description") && !_.isNil(_.get(sObject, "description"))) {
-        _.set(hObject, "nutshell/description", { value: _.get(sObject, "description") });
+        _.set(hObject, "nutshell/description", { value: _.get(sObject, "description"), operation: "set" });
       }
       if (_.has(sObject, "url")) {
         _.forIn(_.get(sObject, "url"), (v, k) => {
           if (k === "--primary") {
             _.set(hObject, "domain", { value: this.normalizeUrl(v), operation: "setIfNull" });
           } else {
-            _.set(hObject, `nutshell/url${k}`, { value: v });
+            _.set(hObject, `nutshell/url${k}`, { value: v, operation: "set" });
           }
         });
       }
@@ -213,48 +213,48 @@ class AttributesMapper implements IAttributesMapper {
         _.set(hObject, "name", { value: _.get(sObject, "name"), operation: "setIfNull" });
       }
       if (_.has(sObject, "htmlUrl") && !_.isNil(_.get(sObject, "htmlUrl"))) {
-        _.set(hObject, "nutshell_lead/link", { value: _.get(sObject, "htmlUrl") });
+        _.set(hObject, "nutshell_lead/link", { value: _.get(sObject, "htmlUrl"), operation: "set" });
       }
       if (_.has(sObject, "milestone.id") && !_.isNil(_.get(sObject, "milestone.id"))) {
-        _.set(hObject, "nutshell_lead/milestone_id", { value: _.get(sObject, "milestone.id") });
+        _.set(hObject, "nutshell_lead/milestone_id", { value: _.get(sObject, "milestone.id"), operation: "set" });
       }
       if (_.has(sObject, "milestone.name") && !_.isNil(_.get(sObject, "milestone.name"))) {
-        _.set(hObject, "nutshell_lead/milestone_name", { value: _.get(sObject, "milestone.name") });
+        _.set(hObject, "nutshell_lead/milestone_name", { value: _.get(sObject, "milestone.name"), operation: "set" });
       }
       if (_.has(sObject, "lastContactedDate") && !_.isNil(_.get(sObject, "lastContactedDate"))) {
-        _.set(hObject, "nutshell_lead/last_contacted_at", { value: _.get(sObject, "lastContactedDate") });
+        _.set(hObject, "nutshell_lead/last_contacted_at", { value: _.get(sObject, "lastContactedDate"), operation: "set" });
       }
       if (_.has(sObject, "dueTime") && !_.isNil(_.get(sObject, "dueTime"))) {
-        _.set(hObject, "nutshell_lead/due_at", { value: _.get(sObject, "dueTime") });
+        _.set(hObject, "nutshell_lead/due_at", { value: _.get(sObject, "dueTime"), operation: "set" });
       }
       if (_.has(sObject, "closedTime") && !_.isNil(_.get(sObject, "closedTime"))) {
-        _.set(hObject, "nutshell_lead/closed_at", { value: _.get(sObject, "closedTime") });
+        _.set(hObject, "nutshell_lead/closed_at", { value: _.get(sObject, "closedTime"), operation: "set" });
       }
       if (_.has(sObject, "estimatedValue.amount") && !_.isNil(_.get(sObject, "estimatedValue.amount"))) {
-        _.set(hObject, "nutshell_lead/estimated_value_amount", { value: _.get(sObject, "estimatedValue.amount") });
+        _.set(hObject, "nutshell_lead/estimated_value_amount", { value: _.get(sObject, "estimatedValue.amount"), operation: "set" });
       }
       if (_.has(sObject, "estimatedValue.currency") && !_.isNil(_.get(sObject, "estimatedValue.currency"))) {
-        _.set(hObject, "nutshell_lead/estimated_value_currency", { value: _.get(sObject, "estimatedValue.currency") });
+        _.set(hObject, "nutshell_lead/estimated_value_currency", { value: _.get(sObject, "estimatedValue.currency"), operation: "set" });
       }
       if (_.has(sObject, "value.amount") && !_.isNil(_.get(sObject, "value.amount"))) {
-        _.set(hObject, "nutshell_lead/value_amount", { value: _.get(sObject, "value.amount") });
+        _.set(hObject, "nutshell_lead/value_amount", { value: _.get(sObject, "value.amount"), operation: "set" });
       }
       if (_.has(sObject, "value.currency") && !_.isNil(_.get(sObject, "value.currency"))) {
-        _.set(hObject, "nutshell_lead/value_currency", { value: _.get(sObject, "value.currency") });
+        _.set(hObject, "nutshell_lead/value_currency", { value: _.get(sObject, "value.currency"), operation: "set" });
       }
       if (_.has(sObject, "market.id") && !_.isNil(_.get(sObject, "market.id"))) {
-        _.set(hObject, "nutshell_lead/market_id", { value: _.get(sObject, "market.id") });
+        _.set(hObject, "nutshell_lead/market_id", { value: _.get(sObject, "market.id"), operation: "set" });
       }
       if (_.has(sObject, "market.name") && !_.isNil(_.get(sObject, "market.name"))) {
-        _.set(hObject, "nutshell_lead/market_name", { value: _.get(sObject, "market.name") });
+        _.set(hObject, "nutshell_lead/market_name", { value: _.get(sObject, "market.name"), operation: "set" });
       }
 
       if (_.has(sObject, "assignee.name") && !_.isNil(_.get(sObject, "assignee.name"))) {
-        _.set(hObject, "nutshell_lead/assignee_name", { value: _.get(sObject, "assignee.name") });
+        _.set(hObject, "nutshell_lead/assignee_name", { value: _.get(sObject, "assignee.name"), operation: "set" });
       }
 
       if (_.has(sObject, "assignee.emails") && !_.isNil(_.get(sObject, "assignee.emails"))) {
-        _.set(hObject, "nutshell_lead/assignee_emails", { value: _.get(sObject, "assignee.emails", []).join(", ") });
+        _.set(hObject, "nutshell_lead/assignee_emails", { value: _.get(sObject, "assignee.emails", []).join(", "), operation: "set" });
       }
       const regularLeadMappings = [
         "description",
@@ -269,9 +269,9 @@ class AttributesMapper implements IAttributesMapper {
       _.forEach(regularLeadMappings, (m) => {
         if (_.has(sObject, m) && !_.isNil(_.get(sObject, m))) {
           if (resource === "Account") {
-            _.set(hObject, `nutshell/${_.snakeCase(m)}`, { value: _.get(sObject, m) });
+            _.set(hObject, `nutshell/${_.snakeCase(m)}`, { value: _.get(sObject, m), operation: "set" });
           } else {
-            _.set(hObject, `nutshell_${_.toLower(resource)}/${_.snakeCase(m)}`, { value: _.get(sObject, m) });
+            _.set(hObject, `nutshell_${_.toLower(resource)}/${_.snakeCase(m)}`, { value: _.get(sObject, m), operation: "set" });
           }
         }
       });
@@ -281,9 +281,9 @@ class AttributesMapper implements IAttributesMapper {
       _.forEach(sObject.customFields, (value, name) => {
         const parsedValue = this.parseCustomFieldValue(value);
         if (resource === "Account") {
-          _.set(hObject, `nutshell/custom_${_.snakeCase(name)}`, { value: parsedValue });
+          _.set(hObject, `nutshell/custom_${_.snakeCase(name)}`, { value: parsedValue, operation: "set" });
         } else {
-          _.set(hObject, `nutshell_${_.toLower(resource)}/custom_${_.snakeCase(name)}`, { value: parsedValue });
+          _.set(hObject, `nutshell_${_.toLower(resource)}/custom_${_.snakeCase(name)}`, { value: parsedValue, operation: "set" });
         }
       });
     }
