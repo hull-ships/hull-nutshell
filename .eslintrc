@@ -49,7 +49,7 @@
     "prefer-destructuring": [
       0
     ],
-    "flowtype-errors/show-errors": 2
+    "flowtype-errors/show-errors": 0
   },
   "extends": [
     "airbnb-base",
