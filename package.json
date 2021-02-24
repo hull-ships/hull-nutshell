@@ -69,8 +69,7 @@
     "flow-typed": "^2.6.2",
     "jest": "^21.2.1",
     "nock": "^9.6.1",
-    "rimraf": "^2.7.1",
-    "webpack": "^1.15.0"
+    "rimraf": "^2.7.1"
   },
   "jest": {
     "collectCoverage": true,
