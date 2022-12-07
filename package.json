@@ -45,7 +45,7 @@
     "bottleneck": "^1.16.0",
     "cache-manager": "^2.5.0",
     "cors": "^2.8.4",
-    "express": "^4.16.2",
+    "express": "^4.17.3",
     "hogan.js": "^3.0.2",
     "hull": "0.13.16",
     "jayson": "^2.0.4",
